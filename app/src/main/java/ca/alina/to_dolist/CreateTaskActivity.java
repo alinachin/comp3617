@@ -26,6 +26,8 @@ public class CreateTaskActivity extends AppCompatActivity {
 
     public void cancelButtonPressed(final View view) {
         // do NOT save changes to DB
+
+        setResult(RESULT_CANCELED);
         finish();
     }
 
@@ -34,7 +36,7 @@ public class CreateTaskActivity extends AppCompatActivity {
 
         // create row in DB & commit
 
-
+        setResult(RESULT_OK);
         finish();
     }
 }
