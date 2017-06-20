@@ -1,29 +1,40 @@
 package ca.alina.to_dolist;
 
-import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
+
+import ca.alina.to_dolist.database.schema.DaoSession;
+import ca.alina.to_dolist.database.schema.TaskDao;
 
 public class CreateTaskActivity extends AppCompatActivity {
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_task);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        // TODO generate suggested values
+
+
+        // populate EditorFragment fields w/ values
+        // use Bundle? https://stackoverflow.com/a/10798580
     }
 
+    public void cancelButtonPressed(final View view) {
+        // do NOT save changes to DB
+        finish();
+    }
+
+    public void saveButtonPressed(final View view) {
+        // request values from editor fragment (?)
+
+        // create row in DB & commit
+
+
+        finish();
+    }
 }
