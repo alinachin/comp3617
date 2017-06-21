@@ -5,11 +5,18 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import org.greenrobot.greendao.database.Database;
+
+import java.util.Date;
+
+import ca.alina.to_dolist.database.DatabaseHelper;
 import ca.alina.to_dolist.database.schema.DaoSession;
+import ca.alina.to_dolist.database.schema.Task;
 import ca.alina.to_dolist.database.schema.TaskDao;
 
 public class CreateTaskActivity extends AppCompatActivity {
 
+    private DatabaseHelper helper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +29,8 @@ public class CreateTaskActivity extends AppCompatActivity {
 
         // populate EditorFragment fields w/ values
         // use Bundle? https://stackoverflow.com/a/10798580
+
+        helper = DatabaseHelper.getInstance(this);
     }
 
     public void cancelButtonPressed(final View view) {
@@ -35,6 +44,19 @@ public class CreateTaskActivity extends AppCompatActivity {
         // request values from editor fragment (?)
 
         // create row in DB & commit
+
+        // TODO hook up to UI
+        // dummy task
+        final Task task;
+        task = new Task();
+        task.setName("shopping");
+        task.setNotes("");
+        task.setStartTime(new Date());
+        task.setIsAlarm(false);
+        task.setIsDone(false);
+        task.setIsRecurring(false);
+        task.setIsHidden(false);
+        helper.insertTask(task);
 
         setResult(RESULT_OK);
         finish();

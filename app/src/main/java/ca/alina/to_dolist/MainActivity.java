@@ -54,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
                 // Task was created
 
                 Toast.makeText(this, "Refreshing task list", Toast.LENGTH_LONG).show();
+
+                // TODO read from DB
             }
         }
     }
