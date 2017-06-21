@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import ca.alina.to_dolist.database.schema.DaoMaster;
 import ca.alina.to_dolist.database.schema.DaoSession;
@@ -103,19 +104,28 @@ public class DatabaseHelper implements AsyncOperationListener {
         }
     }
 
-    public ArrayList<Task> getOneDayTasks(final Date day) {
+    public List<Task> getOneDayList(final Date day) {
+        final List<Task> results;
         final Date startDate;  // inclusive
         final Date endDate;  // exclusive
 
         startDate = getBeginningOfDay(day);
         endDate = getEndofDay(day);
 
-        // TODO query
+        // build query
+        results = taskDao.queryBuilder()
+                .where(TaskDao.Properties.StartTime.between(startDate, endDate))
+                .orderAsc(TaskDao.Properties.StartTime)
+                .list();
 
-        return null;
+        return results;
     }
 
     // ridiculous helper methods
+
+    public Date now() {
+        return new Date();
+    }
 
     private Date getBeginningOfDay(final Date day) {
         final Date result;

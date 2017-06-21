@@ -6,15 +6,25 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import ca.alina.to_dolist.database.DatabaseHelper;
+import ca.alina.to_dolist.database.schema.Task;
+
 public class MainActivity extends AppCompatActivity {
 
     // request codes for activities e.g. CreateTask
     private static final int CREATE_TASK_REQUEST = 1;
+
+    private DatabaseHelper helper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
+        helper = DatabaseHelper.getInstance(this);
     }
 
     /** Opens the task editor.
@@ -55,9 +67,24 @@ public class MainActivity extends AppCompatActivity {
 
                 Toast.makeText(this, "Refreshing task list", Toast.LENGTH_LONG).show();
 
-                // TODO read from DB
+                // read from DB
+                refreshView();
             }
         }
+    }
+
+    /** Refreshes the list of tasks displayed by this activity.
+     *
+     */
+    protected void refreshView() {
+        List<Task> tasks;
+        tasks = helper.getOneDayList(helper.now());
+
+        List<String> taskNames = new ArrayList<String>();
+        for (Task t : tasks) {
+            taskNames.add(t.getName());
+        }
+        Log.d("MainActivity", taskNames.toString());  // TODO connect to adapter
     }
 
     @Override

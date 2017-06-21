@@ -51,7 +51,7 @@ public class CreateTaskActivity extends AppCompatActivity {
         task = new Task();
         task.setName("shopping");
         task.setNotes("");
-        task.setStartTime(new Date());
+        task.setStartTime(helper.now());
         task.setIsAlarm(false);
         task.setIsDone(false);
         task.setIsRecurring(false);
