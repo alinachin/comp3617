@@ -3,16 +3,10 @@ package ca.alina.to_dolist;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
-
-import org.greenrobot.greendao.database.Database;
-
-import java.util.Date;
 
 import ca.alina.to_dolist.database.DatabaseHelper;
-import ca.alina.to_dolist.database.schema.DaoSession;
+import ca.alina.to_dolist.database.DateHelper;
 import ca.alina.to_dolist.database.schema.Task;
-import ca.alina.to_dolist.database.schema.TaskDao;
 
 public class CreateTaskActivity extends AppCompatActivity {
 
@@ -51,7 +45,7 @@ public class CreateTaskActivity extends AppCompatActivity {
         task = new Task();
         task.setName("shopping");
         task.setNotes("");
-        task.setStartTime(helper.now());
+        task.setStartTime(DateHelper.now());
         task.setIsAlarm(false);
         task.setIsDone(false);
         task.setIsRecurring(false);
