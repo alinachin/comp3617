@@ -1,22 +1,19 @@
 package ca.alina.to_dolist.database;
 
 import android.content.Context;
-import android.database.sqlite.SQLiteException;
 
 import org.greenrobot.greendao.async.AsyncOperation;
 import org.greenrobot.greendao.async.AsyncOperationListener;
 import org.greenrobot.greendao.async.AsyncSession;
 
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import ca.alina.to_dolist.database.schema.DaoMaster;
 import ca.alina.to_dolist.database.schema.DaoSession;
 import ca.alina.to_dolist.database.schema.Task;
 import ca.alina.to_dolist.database.schema.TaskDao;
+
 
 /**
  * Created by Alina on 2017-06-20.
@@ -35,6 +32,7 @@ public class DatabaseHelper implements AsyncOperationListener {
         final DaoMaster daoMaster;
 
         mHelper = new DaoMaster.DevOpenHelper(context, "tasks.db", null);
+
         daoMaster = new DaoMaster(mHelper.getReadableDatabase());
         daoSession = daoMaster.newSession();
         asyncSession = daoSession.startAsyncSession();
@@ -77,7 +75,7 @@ public class DatabaseHelper implements AsyncOperationListener {
             task.setIsDone(false);
         }
         else {  // check
-            task.setMarkedDoneTime(new Date());
+            task.setMarkedDoneTime(DateHelper.now());
             task.setIsDone(true);
         }
 
@@ -107,10 +105,10 @@ public class DatabaseHelper implements AsyncOperationListener {
     public List<Task> getOneDayList(final Date day) {
         final List<Task> results;
         final Date startDate;  // inclusive
-        final Date endDate;  // exclusive
+        final Date endDate;  // inclusive
 
-        startDate = getBeginningOfDay(day);
-        endDate = getEndofDay(day);
+        startDate = DateHelper.getBeginningOfDay(day);
+        endDate = DateHelper.getEndOfDay(day);
 
         // build query
         results = taskDao.queryBuilder()
@@ -121,42 +119,4 @@ public class DatabaseHelper implements AsyncOperationListener {
         return results;
     }
 
-    // ridiculous helper methods
-
-    public Date now() {
-        return new Date();
-    }
-
-    private Date getBeginningOfDay(final Date day) {
-        final Date result;
-        final Calendar calendar;
-
-        calendar = new GregorianCalendar();
-        calendar.setTime(day);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-
-        result = calendar.getTime();
-
-        return result;
-    }
-
-    private Date getEndofDay(final Date day) {
-        final Date result;
-        final Calendar calendar;
-
-        calendar = new GregorianCalendar();
-        calendar.setTime(day);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        calendar.add(Calendar.DAY_OF_YEAR, 1);
-
-        result = calendar.getTime();
-
-        return result;
-    }
 }

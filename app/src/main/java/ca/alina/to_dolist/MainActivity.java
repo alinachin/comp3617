@@ -13,10 +13,10 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import ca.alina.to_dolist.database.DatabaseHelper;
+import ca.alina.to_dolist.database.DateHelper;
 import ca.alina.to_dolist.database.schema.Task;
 
 public class MainActivity extends AppCompatActivity {
@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     /** Opens the task editor.
      * No task is added unless the user explicitly clicks Save. When the task editor is closed,
      * IF a new task was successfully added, this screen should refresh the list of tasks.
-     * @param view
+     * @param view The View attached to this handler
      */
     public void createTask(final View view) {
         final Intent intent;
@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
      */
     protected void refreshView() {
         List<Task> tasks;
-        tasks = helper.getOneDayList(helper.now());
+        tasks = helper.getOneDayList(DateHelper.now());
 
         List<String> taskNames = new ArrayList<String>();
         for (Task t : tasks) {
