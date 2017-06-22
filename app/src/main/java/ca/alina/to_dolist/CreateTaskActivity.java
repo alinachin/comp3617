@@ -1,16 +1,19 @@
 package ca.alina.to_dolist;
 
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
 
 import ca.alina.to_dolist.database.DatabaseHelper;
 import ca.alina.to_dolist.database.DateHelper;
 import ca.alina.to_dolist.database.schema.Task;
 
-public class CreateTaskActivity extends AppCompatActivity {
+public class CreateTaskActivity extends AppCompatActivity implements BasicEditor.OnFragmentInteractionListener {
 
     private DatabaseHelper helper;
+    private BasicEditor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,6 +21,7 @@ public class CreateTaskActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_task);
 
+        editor = (BasicEditor) getSupportFragmentManager().findFragmentById(R.id.create_task_editor);
         // TODO generate suggested values
 
 
@@ -35,24 +39,19 @@ public class CreateTaskActivity extends AppCompatActivity {
     }
 
     public void saveButtonPressed(final View view) {
-        // request values from editor fragment (?)
+        final Task task;
+        // grab values from editor fragment
+        task = editor.getTask();
 
         // create row in DB & commit
-
-        // TODO hook up to UI
-        // dummy task
-        final Task task;
-        task = new Task();
-        task.setName("shopping");
-        task.setNotes("");
-        task.setStartTime(DateHelper.now());
-        task.setIsAlarm(false);
-        task.setIsDone(false);
-        task.setIsRecurring(false);
-        task.setIsHidden(false);
         helper.insertTask(task);
 
         setResult(RESULT_OK);
         finish();
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+        // TODO
     }
 }

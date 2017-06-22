@@ -33,16 +33,10 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-       FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
         helper = DatabaseHelper.getInstance(this);
+
+        // TODO testing purposes only
+        helper.debugDeleteAll();
     }
 
     /** Opens the task editor.
@@ -65,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 // Task was created
 
-                Toast.makeText(this, "Refreshing task list", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Refreshing task list", Toast.LENGTH_SHORT).show();
 
                 // read from DB
                 refreshView();
@@ -78,13 +72,14 @@ public class MainActivity extends AppCompatActivity {
      */
     protected void refreshView() {
         List<Task> tasks;
-        tasks = helper.getOneDayList(DateHelper.now());
+        tasks = helper.debugGetAllTasks();
 
         List<String> taskNames = new ArrayList<String>();
         for (Task t : tasks) {
             taskNames.add(t.getName());
         }
-        Log.d("MainActivity", taskNames.toString());  // TODO connect to adapter
+        // TODO connect to adapter
+        Toast.makeText(this, taskNames.toString(), Toast.LENGTH_LONG).show();
     }
 
     @Override

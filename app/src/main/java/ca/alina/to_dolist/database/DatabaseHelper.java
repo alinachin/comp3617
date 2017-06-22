@@ -119,4 +119,13 @@ public class DatabaseHelper implements AsyncOperationListener {
         return results;
     }
 
+    // TODO remove
+    public List<Task> debugGetAllTasks() {
+        return taskDao.loadAll();
+    }
+
+    public void debugDeleteAll() {
+        taskDao.deleteAll();
+    }
+
 }

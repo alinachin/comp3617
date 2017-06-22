@@ -7,6 +7,10 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+
+import ca.alina.to_dolist.database.DateHelper;
+import ca.alina.to_dolist.database.schema.Task;
 
 
 /**
@@ -19,6 +23,9 @@ public class BasicEditor extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
+    private Task task;
+    private View view;
+
     public BasicEditor() {
         // Required empty public constructor
     }
@@ -27,14 +34,34 @@ public class BasicEditor extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
+        // TODO use builder class?
+        task = new Task();
+        task.setName(""); /* can edit */
+        task.setStartTime(DateHelper.now()); /* can edit */
+        task.setNotes("");
+        task.setIsAlarm(false);
+        task.setIsDone(false);
+        task.setIsRecurring(false);
+        task.setIsHidden(false);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_basic_editor, container, false);
+        view = inflater.inflate(R.layout.fragment_basic_editor, container, false);
+        return view;
+    }
+
+    public Task getTask() {
+        final EditText nameField;
+
+        if (view != null) {
+            nameField = (EditText) view.findViewById(R.id.taskName);
+            task.setName(nameField.getText().toString());
+        }
+
+        return task;
     }
 
 

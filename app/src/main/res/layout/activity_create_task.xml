@@ -28,7 +28,7 @@
         app:layout_constraintRight_toRightOf="parent" />
 
     <fragment
-        android:id="@+id/fragment"
+        android:id="@+id/create_task_editor"
         android:name="ca.alina.to_dolist.BasicEditor"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
