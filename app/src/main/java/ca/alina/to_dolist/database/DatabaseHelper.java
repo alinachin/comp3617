@@ -102,6 +102,7 @@ public class DatabaseHelper implements AsyncOperationListener {
         }
     }
 
+    // TODO test: not working?
     public List<Task> getOneDayList(final Date day) {
         final List<Task> results;
         final Date startDate;  // inclusive

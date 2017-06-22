@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="60dp">
+    android:layout_height="72dp">
 
     <android.support.constraint.Guideline
         android:id="@+id/guidelineLeft"
@@ -26,16 +26,29 @@
         android:orientation="vertical"
         app:layout_constraintGuide_end="40dp" />
 
+    <!-- adapter hides this if unneeded -->
     <TextView
-        android:id="@+id/time"
+        android:id="@+id/dateDisplay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="0dp"
         android:layout_marginTop="0dp"
+        android:text="Tuesday May 14"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="32dp" />
+
+    <TextView
+        android:id="@+id/timeDisplay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="8dp"
         android:text="6:00pm"
         android:textSize="12sp"
         app:layout_constraintStart_toStartOf="@id/guidelineLeft"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/dateDisplay" />
 
     <!-- TODO add padding -->
     <ImageView
@@ -43,24 +56,24 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="0dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="4dp"
         app:layout_constraintStart_toStartOf="@id/guidelineLeft"
-        app:layout_constraintTop_toBottomOf="@id/time"
+        app:layout_constraintTop_toBottomOf="@id/timeDisplay"
         app:srcCompat="@drawable/material_checkbox" />
 
     <TextView
         android:id="@+id/taskName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="0dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginRight="0dp"
         android:layout_marginStart="72dp"
         android:text="make pasta"
         android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/guidelineTextRight"
-        android:layout_marginRight="0dp"
         app:layout_constraintBottom_toBottomOf="@id/checkbox"
-        android:layout_marginBottom="0dp" />
+        app:layout_constraintRight_toLeftOf="@id/guidelineTextRight"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
         android:id="@+id/editButton"

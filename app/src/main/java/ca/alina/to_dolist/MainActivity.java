@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -25,6 +26,8 @@ public class MainActivity extends AppCompatActivity {
     private static final int CREATE_TASK_REQUEST = 1;
 
     private DatabaseHelper helper;
+    //private ListView listView;
+    private TaskAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,9 +37,14 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         helper = DatabaseHelper.getInstance(this);
-
         // TODO testing purposes only
         helper.debugDeleteAll();
+
+
+        ListView listView = (ListView) findViewById(R.id.smartList);
+        // TODO test!!
+        adapter = new TaskAdapter(this, R.layout.list_item_2line, helper.debugGetAllTasks());
+        listView.setAdapter(adapter);
     }
 
     /** Opens the task editor.
@@ -72,14 +80,17 @@ public class MainActivity extends AppCompatActivity {
      */
     protected void refreshView() {
         List<Task> tasks;
-        tasks = helper.debugGetAllTasks();
+        tasks = helper.debugGetAllTasks();  // TODO rerun actual (pre-built) query
 
-        List<String> taskNames = new ArrayList<String>();
-        for (Task t : tasks) {
-            taskNames.add(t.getName());
-        }
-        // TODO connect to adapter
-        Toast.makeText(this, taskNames.toString(), Toast.LENGTH_LONG).show();
+//        List<String> taskNames = new ArrayList<String>();
+//        for (Task t : tasks) {
+//            taskNames.add(t.getName());
+//        }
+//        Toast.makeText(this, taskNames.toString(), Toast.LENGTH_LONG).show();
+
+        // update adapter
+        adapter.clear();
+        adapter.addAll(tasks);
     }
 
     @Override
