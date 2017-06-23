@@ -3,86 +3,70 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="72dp">
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/editButton"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_chevron_right_black_24dp" />
 
     <android.support.constraint.Guideline
         android:id="@+id/guidelineLeft"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_begin="16dp" />
-
-    <android.support.constraint.Guideline
-        android:id="@+id/guidelineRight"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_end="16dp" />
-
-    <android.support.constraint.Guideline
-        android:id="@+id/guidelineTextRight"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_end="40dp" />
+        app:layout_constraintGuide_begin="16dp"
+        tools:layout_editor_absoluteY="0dp"
+        tools:layout_editor_absoluteX="16dp" />
 
     <!-- adapter hides this if unneeded -->
     <TextView
         android:id="@+id/dateDisplay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="0dp"
         android:text="Tuesday May 14"
-        android:textSize="14sp"
+        android:textSize="@dimen/date_oneline_size"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="32dp" />
+        tools:layout_editor_absoluteX="0dp" />
 
     <TextView
         android:id="@+id/timeDisplay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="0dp"
         android:layout_marginTop="8dp"
         android:text="6:00pm"
-        android:textSize="12sp"
+        android:textSize="@dimen/task_time_size"
         app:layout_constraintStart_toStartOf="@id/guidelineLeft"
-        app:layout_constraintTop_toBottomOf="@+id/dateDisplay" />
+        app:layout_constraintTop_toBottomOf="@+id/dateDisplay"
+        tools:layout_editor_absoluteX="16dp" />
 
     <!-- TODO add padding -->
-    <ImageView
-        android:id="@+id/checkbox"
+    <CheckBox
+        android:id="@+id/checkBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="3dp"
+        android:textSize="@dimen/task_name_size"
         app:layout_constraintStart_toStartOf="@id/guidelineLeft"
-        app:layout_constraintTop_toBottomOf="@id/timeDisplay"
-        app:srcCompat="@drawable/material_checkbox" />
+        app:layout_constraintTop_toBottomOf="@+id/timeDisplay"
+        tools:layout_editor_absoluteX="16dp" />
 
     <TextView
         android:id="@+id/taskName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="0dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="0dp"
-        android:layout_marginStart="72dp"
         android:text="make pasta"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="@id/checkbox"
-        app:layout_constraintRight_toLeftOf="@id/guidelineTextRight"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <ImageView
-        android:id="@+id/editButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="0dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintBottom_toBottomOf="@+id/checkbox"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/ic_chevron_right_black_24dp" />
+        android:textSize="@dimen/task_name_size"
+        android:layout_marginStart="72dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/editButton"
+        app:layout_constraintBaseline_toBaselineOf="@+id/checkBox" />
 
 </android.support.constraint.ConstraintLayout>
