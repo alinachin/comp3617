@@ -5,16 +5,19 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <ImageView
+    <ImageButton
         android:id="@+id/editButton"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
+        android:background="@android:color/transparent"
+        android:focusable="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_chevron_right_black_24dp" />
+        app:srcCompat="@drawable/ic_chevron_right_black_24dp"
+        android:contentDescription="@string/task_edit_btn_caption" />
 
     <android.support.constraint.Guideline
         android:id="@+id/guidelineLeft"
@@ -30,7 +33,7 @@
         android:id="@+id/dateDisplay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Tuesday May 14"
+        tools:text="Tuesday May 14"
         android:textSize="@dimen/date_oneline_size"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -41,7 +44,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="6:00pm"
+        tools:text="6:00pm"
         android:textSize="@dimen/task_time_size"
         app:layout_constraintStart_toStartOf="@id/guidelineLeft"
         app:layout_constraintTop_toBottomOf="@+id/dateDisplay"
@@ -62,11 +65,11 @@
         android:id="@+id/taskName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="make pasta"
-        android:textSize="@dimen/task_name_size"
         android:layout_marginStart="72dp"
-        app:layout_constraintStart_toStartOf="parent"
+        android:textSize="@dimen/task_name_size"
+        app:layout_constraintBaseline_toBaselineOf="@+id/checkBox"
         app:layout_constraintEnd_toStartOf="@+id/editButton"
-        app:layout_constraintBaseline_toBaselineOf="@+id/checkBox" />
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="make pasta" />
 
 </android.support.constraint.ConstraintLayout>
