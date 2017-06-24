@@ -1,0 +1,22 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ListPreference
+        android:defaultValue="30"
+        android:entries="@array/pref_task_length_titles"
+        android:entryValues="@array/pref_task_length_values"
+        android:key="task_length"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/pref_task_length_display" />
+
+    <!-- TODO extend DialogFragment -->
+    <!-- should open Google Sign-In activity -->
+    <EditTextPreference
+        android:defaultValue="@string/pref_backup_default_value"
+        android:key="backup"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/pref_backup_display" />
+
+
+</PreferenceScreen>

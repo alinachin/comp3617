@@ -28,6 +28,9 @@ public class DatabaseHelper implements AsyncOperationListener {
     private AsyncSession asyncSession;
     private TaskDao taskDao;
 
+    // TODO move to builder class
+    private int taskLengthLastUsed;  // initialize to "default task length" from settings
+
     private DatabaseHelper(final Context context) {
         final DaoMaster daoMaster;
 

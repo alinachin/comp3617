@@ -2,6 +2,7 @@ package ca.alina.to_dolist;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -36,13 +37,16 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // TODO set from which xml file?
+        PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
+        PreferenceManager.setDefaultValues(this, R.xml.pref_notification, false);
+
         helper = DatabaseHelper.getInstance(this);
         // TODO testing purposes only
         helper.debugDeleteAll();
 
 
         ListView listView = (ListView) findViewById(R.id.smartList);
-        // TODO test!!
         adapter = new TaskAdapter(this, R.layout.list_item_2line, helper.debugGetAllTasks());
         listView.setAdapter(adapter);
     }
@@ -66,7 +70,6 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == CREATE_TASK_REQUEST) {
             if (resultCode == RESULT_OK) {
                 // Task was created
-
                 Toast.makeText(this, "Refreshing task list", Toast.LENGTH_SHORT).show();
 
                 // read from DB
@@ -109,6 +112,8 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
             return true;
         }
 
