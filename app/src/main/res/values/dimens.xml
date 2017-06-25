@@ -1,6 +1,5 @@
 <resources>
     <dimen name="fab_margin">16dp</dimen>
-    <dimen name="list_lr_margin">16dp</dimen>
     <dimen name="task_name_size">16sp</dimen>
     <dimen name="task_time_size">12sp</dimen>
     <dimen name="date_oneline_size">14sp</dimen>
