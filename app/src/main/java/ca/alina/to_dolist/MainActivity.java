@@ -134,15 +134,17 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CREATE_TASK_REQUEST) {
             if (resultCode == RESULT_OK) {
-                // Task was created
+                // task was created
                 //Toast.makeText(this, "Refreshing task list", Toast.LENGTH_SHORT).show();
-
                 // read from DB
                 refreshView();
             }
         }
         else if (requestCode == EDIT_TASK_REQUEST) {
-            // TODO
+            if (resultCode == RESULT_OK) {
+                // task may have been edited, deleted etc.
+                refreshView();
+            }
         }
     }
 

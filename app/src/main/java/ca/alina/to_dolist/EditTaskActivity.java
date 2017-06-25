@@ -122,7 +122,7 @@ public class EditTaskActivity extends AppCompatActivity {
                             dialog.cancel();
                         }
                     });
-            builder.create();
+            builder.show();
             return true;
         }
 
