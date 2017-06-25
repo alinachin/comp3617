@@ -23,16 +23,11 @@ import ca.alina.to_dolist.database.schema.Task;
 
 public class TaskAdapter extends ArrayAdapter<Task> {
     private DatabaseHelper helper;
-    private SparseBooleanArray itemsDone;
-    // for multi-select
-    // private SparseBooleanArray mSelectedItems;
 
     public TaskAdapter(Context context, int resource, List<Task> tasks) {
         super(context, resource, tasks);
-        //mSelectedItems = new SparseBooleanArray();
 
         helper = DatabaseHelper.getInstance(context);
-        itemsDone = new SparseBooleanArray();
     }
 
     //public TaskAdapter(Context context, int resource, DatabaseHelper helper, DatabaseHelper.Query dataset)
@@ -58,7 +53,6 @@ public class TaskAdapter extends ArrayAdapter<Task> {
 
         Task p = getItem(position);
 
-        // TODO create separate layout files for checked/unchecked list_items?
         if (p != null) {
             // set TextViews etc.
             viewHolder.taskName.setText(p.getName());
@@ -75,6 +69,7 @@ public class TaskAdapter extends ArrayAdapter<Task> {
                     toggleDone(position, me.isChecked());
                 }
             });
+            // TODO create separate layout files for checked/unchecked list_items?
             // set other appearance properties for done/not done state
             View bgView = convertView.findViewById(R.id.listItemBg);
             if (viewHolder.done.isChecked()) {
@@ -84,7 +79,6 @@ public class TaskAdapter extends ArrayAdapter<Task> {
                 bgView.setBackgroundResource(R.drawable.list_item_bg);
             }
         }
-
 
         return convertView;
     }
@@ -96,40 +90,6 @@ public class TaskAdapter extends ArrayAdapter<Task> {
 
         notifyDataSetChanged();
     }
-
-    // multi-select methods
-    // https://www.mindstick.com/Articles/1577/android-delete-multiple-selected-items-in-listview
-
-//    public void toggleSelection(int position) {
-//        selectView(position, !mSelectedItems.get(position));
-//    }
-//
-//    // Remove selection after unchecked
-//    public void removeSelection() {
-//        mSelectedItems = new  SparseBooleanArray();
-//        notifyDataSetChanged();
-//    }
-//
-//    // Item checked on selection
-//    public void selectView(int position, boolean value) {
-//        if (value)
-//            mSelectedItems.put(position, value);
-//        else
-//            mSelectedItems.delete(position);
-//
-//        notifyDataSetChanged();
-//    }
-//
-//    // Get number of selected items
-//    public int getSelectedCount() {
-//        return mSelectedItems.size();
-//    }
-//
-//
-//    public SparseBooleanArray getSelectedIds() {
-//        return mSelectedItems;
-//    }
-
 
     static class ViewHolder {
         TextView date;

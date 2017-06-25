@@ -48,10 +48,6 @@ public class MainActivity extends AppCompatActivity {
         PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
 
         helper = DatabaseHelper.getInstance(this);
-        // TODO testing purposes only
-        helper.debugDeleteAll();
-
-
         listView = (ListView) findViewById(R.id.smartList);
         adapter = new TaskAdapter(this, R.layout.list_item_2line, helper.debugGetAllTasks());
         listView.setAdapter(adapter);
@@ -69,52 +65,51 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        //listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-//        listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
-//
-//            @Override
-//            public void onItemCheckedStateChanged(ActionMode mode, int position,
-//                                                  long id, boolean checked) {
-//                // Here you can do something when items are selected/de-selected,
-//                // such as update the title in the CAB
-//                mode.setTitle(listView.getCheckedItemCount());
-//                adapter.toggleSelection(position);
-//            }
-//
-//            @Override
-//            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-//                // Respond to clicks on the actions in the CAB
-//                switch (item.getItemId()) {
-//                    case R.id.menu_delete:
-//                        deleteSelectedItems();
-//                        mode.finish(); // Action picked, so close the CAB
-//                        return true;
-//                    default:
-//                        return false;
-//                }
-//            }
-//
-//            @Override
-//            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-//                // Inflate the menu for the CAB
-//                MenuInflater inflater = mode.getMenuInflater();
-//                inflater.inflate(R.menu.context, menu);
-//                return true;
-//            }
-//
-//            @Override
-//            public void onDestroyActionMode(ActionMode mode) {
-//                // Here you can make any necessary updates to the activity when
-//                // the CAB is removed. By default, selected items are deselected/unchecked.
-//            }
-//
-//            @Override
-//            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-//                // Here you can perform updates to the CAB due to
-//                // an invalidate() request
-//                return false;
-//            }
-//        });
+        listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+        listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
+
+            @Override
+            public void onItemCheckedStateChanged(ActionMode mode, int position,
+                                                  long id, boolean checked) {
+                // Here you can do something when items are selected/de-selected,
+                // such as update the title in the CAB
+                mode.setTitle(Integer.valueOf(listView.getCheckedItemCount()).toString());
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                // Respond to clicks on the actions in the CAB
+                switch (item.getItemId()) {
+                    case R.id.menu_delete:
+                        deleteSelectedItems();
+                        mode.finish(); // Action picked, so close the CAB
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+
+            @Override
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                // Inflate the menu for the CAB
+                MenuInflater inflater = mode.getMenuInflater();
+                inflater.inflate(R.menu.context, menu);
+                return true;
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode mode) {
+                // Here you can make any necessary updates to the activity when
+                // the CAB is removed. By default, selected items are deselected/unchecked.
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                // Here you can perform updates to the CAB due to
+                // an invalidate() request
+                return false;
+            }
+        });
     }
 
     /** Opens the task editor.
@@ -159,6 +154,7 @@ public class MainActivity extends AppCompatActivity {
 
     // TODO move into TaskAdapter
     protected void deleteSelectedItems() {
+        //Log.e("MainActivity", "deleting items");
         // get selected items from list
         SparseBooleanArray checkedPositions = listView.getCheckedItemPositions();
         // https://stackoverflow.com/a/6931618
@@ -166,8 +162,7 @@ public class MainActivity extends AppCompatActivity {
             List<Task> tasks = new LinkedList<Task>();
             for (int i=0; i<checkedPositions.size(); i++) {
                 if (checkedPositions.valueAt(i)) {
-                    Task item = (Task) listView.getAdapter().getItem(
-                            checkedPositions.keyAt(i));
+                    Task item = (Task) adapter.getItem(checkedPositions.keyAt(i));
                     tasks.add(item);
                 }
             }

@@ -19,10 +19,22 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CreateTaskActivity" />
+        <activity
+            android:name=".CreateTaskActivity"
+            android:label="@string/title_activity_create_task"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".SettingsActivity"
-            android:label="@string/title_activity_settings">
+            android:label="@string/title_activity_settings"></activity>
+        <activity
+            android:name=".EditTaskActivity"
+            android:label="@string/title_activity_edit_task"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="ca.alina.to_dolist.MainActivity" />
         </activity>
     </application>
 

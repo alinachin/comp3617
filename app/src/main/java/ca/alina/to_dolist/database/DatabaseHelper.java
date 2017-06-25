@@ -1,6 +1,7 @@
 package ca.alina.to_dolist.database;
 
 import android.content.Context;
+import android.util.Log;
 
 import org.greenrobot.greendao.async.AsyncOperation;
 import org.greenrobot.greendao.async.AsyncOperationListener;
@@ -131,8 +132,9 @@ public class DatabaseHelper implements AsyncOperationListener {
     }
 
     public void deleteSelectedTasks(final List<Task> tasks) {
-        //taskDao.deleteInTx(tasks);  // blocking version
-        asyncSession.deleteInTx(Task.class, tasks);
+        //Log.e("DatabaseHelper", "deleting selected tasks");
+        taskDao.deleteInTx(tasks);  // blocking version
+        //asyncSession.deleteInTx(Task.class, tasks);
     }
 
     // TODO remove

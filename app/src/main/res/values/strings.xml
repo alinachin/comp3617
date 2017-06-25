@@ -16,6 +16,8 @@
     <string name="pref_task_length_display">Default task length</string>
     <string name="pref_backup_display">Backup to Google Drive</string>
     <string name="pref_backup_default_value">None</string>
+    <string name="editor_save">Done</string>
+    <string name="editor_cancel">Cancel</string>
 
     <string-array name="pref_task_length_titles">
         <item>15 minutes</item>
@@ -35,4 +37,6 @@
         <item>120</item>
         <item>-1</item>
     </string-array>
+    <string name="title_activity_create_task"></string>
+    <string name="title_activity_edit_task"></string>
 </resources>
