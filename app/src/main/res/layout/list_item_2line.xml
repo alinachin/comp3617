@@ -4,7 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:descendantFocusability="blocksDescendants">
+    android:descendantFocusability="blocksDescendants"
+    android:id="@+id/listItemBg"
+    android:background="@drawable/list_item_bg">
 
     <ImageButton
         android:id="@+id/listItemEditBtn"
@@ -13,7 +15,6 @@
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
         android:background="@android:color/transparent"
-        android:focusable="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"

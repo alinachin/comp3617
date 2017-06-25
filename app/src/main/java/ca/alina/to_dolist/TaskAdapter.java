@@ -1,6 +1,7 @@
 package ca.alina.to_dolist;
 
 import android.content.Context;
+import android.graphics.drawable.ColorDrawable;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -65,11 +66,6 @@ public class TaskAdapter extends ArrayAdapter<Task> {
             viewHolder.time.setText(DateHelper.formatTime(d));
             viewHolder.date.setText(DateHelper.formatDateOneLine(d));
 
-            // set bg as selected/unselected
-//            if (mSelectedItems.get(position)) {
-//                viewHolder.taskName.setBackgroundColor(Color.RED); // todo use state drawable
-//            }
-
             // set CHECKBOX for done/not done state
             viewHolder.done.setChecked(p.getIsDone());
             viewHolder.done.setOnClickListener(new View.OnClickListener() {
@@ -80,7 +76,13 @@ public class TaskAdapter extends ArrayAdapter<Task> {
                 }
             });
             // set other appearance properties for done/not done state
-
+            View bgView = convertView.findViewById(R.id.listItemBg);
+            if (viewHolder.done.isChecked()) {
+                bgView.setBackgroundResource(R.drawable.list_item_bg_done);
+            }
+            else {
+                bgView.setBackgroundResource(R.drawable.list_item_bg);
+            }
         }
 
 

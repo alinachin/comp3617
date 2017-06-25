@@ -62,8 +62,8 @@ public class MainActivity extends AppCompatActivity {
                 CheckBox checkBox =  ((TaskAdapter.ViewHolder) view.getTag()).done;
                 checkBox.toggle();
 
-                boolean checked = checkBox.isChecked();
-                Toast.makeText(getBaseContext(), "setting checked: " + checked, Toast.LENGTH_SHORT).show();
+//                boolean checked = checkBox.isChecked();
+//                Toast.makeText(getBaseContext(), "setting checked: " + checked, Toast.LENGTH_SHORT).show();
                 adapter.toggleDone(position, checkBox.isChecked());
             }
         });
