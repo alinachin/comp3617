@@ -148,11 +148,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private Notification getNotification(String content) {
-        Notification.Builder builder = new Notification.Builder(this);
-        builder.setContentTitle(content);
-        builder.setContentText("3 seconds have passed");
-        builder.setSmallIcon(R.drawable.ic_check_box_black_24dp);
-        builder.setDefaults(Notification.DEFAULT_ALL);
+        Notification.Builder builder = new Notification.Builder(this)
+                .setContentTitle(content)
+                .setContentText("3 seconds have passed")
+                .setSmallIcon(R.drawable.ic_check_box_black_24dp)
+                .setDefaults(Notification.DEFAULT_ALL);
+        Intent openAppIntent = new Intent(this, MainActivity.class);
+        // open to default list?
+        PendingIntent pendingIntent =
+                PendingIntent.getActivity(this, 11011, openAppIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+        builder.setContentIntent(pendingIntent);
         return builder.build();
     }
 
