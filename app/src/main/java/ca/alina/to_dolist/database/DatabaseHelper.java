@@ -69,10 +69,15 @@ public class DatabaseHelper implements AsyncOperationListener {
 //        taskDao = daoSession.getTaskDao();
 //    }
 
+    // TODO implement
     @Override
-    public void onAsyncOperationCompleted(AsyncOperation operation) { }
+    public void onAsyncOperationCompleted(AsyncOperation operation) {
+        // check AsyncOperation.isFailed() and/or AsyncOperation.getThrowable()
 
-    public void toggleChecked(Task task, boolean isChecked) {
+        // switch
+    }
+
+    public void toggleDone(Task task, boolean isChecked) {
         if (isChecked) {  // uncheck
             task.setMarkedDoneTime(null);
             task.setIsDone(false);
@@ -121,6 +126,11 @@ public class DatabaseHelper implements AsyncOperationListener {
                 .list();
 
         return results;
+    }
+
+    public void deleteSelectedTasks(final List<Task> tasks) {
+        //taskDao.deleteInTx(tasks);  // blocking version
+        asyncSession.deleteInTx(Task.class, tasks);
     }
 
     // TODO remove
