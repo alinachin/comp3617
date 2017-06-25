@@ -1,7 +1,12 @@
 package ca.alina.to_dolist;
 
+import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -61,9 +66,6 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 CheckBox checkBox =  ((TaskAdapter.ViewHolder) view.getTag()).done;
                 checkBox.toggle();
-
-//                boolean checked = checkBox.isChecked();
-//                Toast.makeText(getBaseContext(), "setting checked: " + checked, Toast.LENGTH_SHORT).show();
                 adapter.toggleDone(position, checkBox.isChecked());
             }
         });
@@ -128,7 +130,31 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(intent, CREATE_TASK_REQUEST);
     }
 
+    public void testNotification(final View view) {
+        scheduleNotification(getNotification("Task name here"), 3000);
+    }
 
+    private void scheduleNotification(Notification notification, int delay) {
+
+        Intent notificationIntent = new Intent(this, NotificationPublisher.class);
+        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, 1);
+        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION, notification);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        long futureInMillis = SystemClock.elapsedRealtime() + delay;
+        AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent);
+    }
+
+    private Notification getNotification(String content) {
+        Notification.Builder builder = new Notification.Builder(this);
+        builder.setContentTitle(content);
+        builder.setContentText("3 seconds have passed");
+        builder.setSmallIcon(R.drawable.ic_check_box_black_24dp);
+        builder.setDefaults(Notification.DEFAULT_ALL);
+        return builder.build();
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -136,7 +162,6 @@ public class MainActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 // task was created
                 //Toast.makeText(this, "Refreshing task list", Toast.LENGTH_SHORT).show();
-                // read from DB
                 refreshView();
             }
         }
@@ -149,9 +174,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // TODO move into TaskAdapter, make it extend BaseAdapter, pass it the helper instance
-    /** Refreshes the list of tasks displayed by this activity.
-     *
-     */
+    /** Refreshes the list of tasks displayed by this activity. */
     protected void refreshView() {
         List<Task> tasks;
         tasks = helper.debugGetAllTasks();  // TODO rerun actual (pre-built) query
