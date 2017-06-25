@@ -2,6 +2,7 @@ package ca.alina.to_dolist;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,7 +16,7 @@ import ca.alina.to_dolist.database.DatabaseHelper;
 import ca.alina.to_dolist.database.DateHelper;
 import ca.alina.to_dolist.database.schema.Task;
 
-public class CreateTaskActivity extends AppCompatActivity implements BasicEditor.OnFragmentInteractionListener {
+public class CreateTaskActivity extends AppCompatActivity {
 
     private DatabaseHelper helper;
     private BasicEditor editor;
@@ -30,7 +31,14 @@ public class CreateTaskActivity extends AppCompatActivity implements BasicEditor
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        editor = (BasicEditor) getSupportFragmentManager().findFragmentById(R.id.create_task_editor);
+        editor = new BasicEditor();
+        // set editor
+
+        // tell editor we want to edit existing task
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(BasicEditor.EXISTING_TASK_KEY, false);
+        editor.setArguments(bundle);
+
         // TODO generate suggested values
 
 
@@ -38,16 +46,10 @@ public class CreateTaskActivity extends AppCompatActivity implements BasicEditor
         // use Bundle? https://stackoverflow.com/a/10798580
 
         helper = DatabaseHelper.getInstance(this);
-    }
 
-    public void cancelButtonPressed(final View view) {
-        // do NOT save changes to DB
-        setResult(RESULT_CANCELED);
-        finish();
-    }
-
-    public void saveButtonPressed(final View view) {
-        save();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.add(R.id.create_task_container, editor, "createTask");
+        transaction.commit();
     }
 
     private void save() {
@@ -62,10 +64,10 @@ public class CreateTaskActivity extends AppCompatActivity implements BasicEditor
         finish();
     }
 
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-        // TODO
-    }
+//    @Override
+//    public void onFragmentInteraction(Uri uri) {
+//        // TODO
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

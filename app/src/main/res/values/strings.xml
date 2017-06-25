@@ -39,4 +39,8 @@
     </string-array>
     <string name="title_activity_create_task"></string>
     <string name="title_activity_edit_task"></string>
+    <string name="editor_delete">Delete</string>
+    <string name="alert_confirm_delete">Delete this task?</string>
+    <string name="alert_yes">Delete</string>
+    <string name="alert_no">Cancel</string>
 </resources>

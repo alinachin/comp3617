@@ -32,7 +32,8 @@ import ca.alina.to_dolist.database.schema.Task;
 public class MainActivity extends AppCompatActivity {
 
     // request codes for activities e.g. CreateTask
-    private static final int CREATE_TASK_REQUEST = 1;
+    static final int CREATE_TASK_REQUEST = 1;
+    static final int EDIT_TASK_REQUEST = 2;
 
     private DatabaseHelper helper;
     private ListView listView;
@@ -49,7 +50,10 @@ public class MainActivity extends AppCompatActivity {
 
         helper = DatabaseHelper.getInstance(this);
         listView = (ListView) findViewById(R.id.smartList);
-        adapter = new TaskAdapter(this, R.layout.list_item_2line, helper.debugGetAllTasks());
+        adapter = new TaskAdapter(
+                MainActivity.this,
+                R.layout.list_item_2line,
+                helper.debugGetAllTasks());
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -136,6 +140,9 @@ public class MainActivity extends AppCompatActivity {
                 // read from DB
                 refreshView();
             }
+        }
+        else if (requestCode == EDIT_TASK_REQUEST) {
+            // TODO
         }
     }
 

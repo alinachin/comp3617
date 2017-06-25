@@ -146,6 +146,10 @@ public class DatabaseHelper implements AsyncOperationListener {
         taskDao.deleteAll();
     }
 
+    public Task getTask(long taskId) {
+        return taskDao.load(taskId);
+    }
+
     public static class Query {
         // TODO hold a prebuilt GreenDAO query
     }

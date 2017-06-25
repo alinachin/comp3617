@@ -1,6 +1,8 @@
 package ca.alina.to_dolist;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -8,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.util.Date;
@@ -45,23 +48,24 @@ public class TaskAdapter extends ArrayAdapter<Task> {
             viewHolder.time = (TextView) convertView.findViewById(R.id.listItemTime);
             viewHolder.taskName = (TextView) convertView.findViewById(android.R.id.text1);
             viewHolder.done = (CheckBox) convertView.findViewById(R.id.listItemDoneCheckBox);
+            viewHolder.editBtn = (ImageButton) convertView.findViewById(R.id.listItemEditBtn);
             convertView.setTag(viewHolder);
         }
         else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        Task p = getItem(position);
+        final Task task = getItem(position);
 
-        if (p != null) {
+        if (task != null) {
             // set TextViews etc.
-            viewHolder.taskName.setText(p.getName());
-            Date d = p.getStartTime();
+            viewHolder.taskName.setText(task.getName());
+            Date d = task.getStartTime();
             viewHolder.time.setText(DateHelper.formatTime(d));
             viewHolder.date.setText(DateHelper.formatDateOneLine(d));
 
             // set CHECKBOX for done/not done state
-            viewHolder.done.setChecked(p.getIsDone());
+            viewHolder.done.setChecked(task.getIsDone());
             viewHolder.done.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -78,6 +82,17 @@ public class TaskAdapter extends ArrayAdapter<Task> {
             else {
                 bgView.setBackgroundResource(R.drawable.list_item_bg);
             }
+
+            viewHolder.editBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intentEdit = new Intent(getContext(), EditTaskActivity.class);
+                    intentEdit.putExtra(EditTaskActivity.TAG_INTENT, task.getId());
+                    ((Activity) getContext()).startActivityForResult(
+                            intentEdit,
+                            MainActivity.EDIT_TASK_REQUEST);
+                }
+            });
         }
 
         return convertView;
@@ -96,5 +111,6 @@ public class TaskAdapter extends ArrayAdapter<Task> {
         TextView time;
         TextView taskName;
         CheckBox done;
+        ImageButton editBtn;
     }
 }
