@@ -113,17 +113,17 @@ public class BasicEditor extends Fragment {
             getActivity().finish();
         }
 
-        if (!existingTask) {
-            // TODO use builder class?
-            task = new Task();
-            task.setName(""); /* can edit */
-            task.setStartTime(DateHelper.now()); /* can edit */
-            task.setNotes("");
-            task.setIsAlarm(false);
-            task.setIsDone(false);
-            task.setIsRecurring(false);
-            task.setIsHidden(false);
-        }
+//        if (!existingTask) {
+//            // TODO use builder class?
+//            task = new Task();
+//            task.setName(""); /* can edit */
+//            task.setStartTime(DateHelper.now()); /* can edit */
+//            task.setNotes("");
+//            task.setIsAlarm(false);
+//            task.setIsDone(false);
+//            task.setIsRecurring(false);
+//            task.setIsHidden(false);
+//        }
         // otherwise assume task was set already
 
         populate();

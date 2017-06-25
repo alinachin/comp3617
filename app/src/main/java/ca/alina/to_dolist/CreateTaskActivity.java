@@ -39,11 +39,17 @@ public class CreateTaskActivity extends AppCompatActivity {
         bundle.putBoolean(BasicEditor.EXISTING_TASK_KEY, false);
         editor.setArguments(bundle);
 
-        // TODO generate suggested values
+        // TODO generate suggested values - use builder class?
+        Task task = new Task();
+        task.setName(""); /* can edit */
+        task.setStartTime(DateHelper.now()); /* can edit */
+        task.setNotes("");
+        task.setIsAlarm(false);
+        task.setIsDone(false);
+        task.setIsRecurring(false);
+        task.setIsHidden(false);
 
-
-        // populate EditorFragment fields w/ values
-        // use Bundle? https://stackoverflow.com/a/10798580
+        editor.setTask(task);
 
         helper = DatabaseHelper.getInstance(this);
 
