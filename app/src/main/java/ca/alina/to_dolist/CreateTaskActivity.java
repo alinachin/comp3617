@@ -43,7 +43,7 @@ public class CreateTaskActivity extends AppCompatActivity implements BasicEditor
         // grab values from editor fragment
         task = editor.getTask();
 
-        // create row in DB & commit
+        // TODO use builder/factory class
         helper.insertTask(task);
 
         setResult(RESULT_OK);

@@ -64,6 +64,13 @@ public class BasicEditor extends Fragment {
         return task;
     }
 
+    public void setTask(final Task task) {
+        // TODO mirror getTask() - populate fields
+        if (view != null) {
+
+        }
+    }
+
 
 //    public void onButtonPressed(Uri uri) {
 //        if (mListener != null) {

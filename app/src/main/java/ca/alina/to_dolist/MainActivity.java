@@ -16,6 +16,8 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
+import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -53,8 +55,18 @@ public class MainActivity extends AppCompatActivity {
         listView = (ListView) findViewById(R.id.smartList);
         adapter = new TaskAdapter(this, R.layout.list_item_2line, helper.debugGetAllTasks());
         listView.setAdapter(adapter);
-        // TODO
-        //listView.setOnItemClickListener();
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                CheckBox checkBox =  ((TaskAdapter.ViewHolder) view.getTag()).done;
+                checkBox.toggle();
+
+                boolean checked = checkBox.isChecked();
+                Toast.makeText(getBaseContext(), "setting checked: " + checked, Toast.LENGTH_SHORT).show();
+                adapter.toggleDone(position, checkBox.isChecked());
+            }
+        });
 
 
         //listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);

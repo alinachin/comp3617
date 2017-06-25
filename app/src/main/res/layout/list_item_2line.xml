@@ -3,10 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:descendantFocusability="blocksDescendants">
 
     <ImageButton
-        android:id="@+id/editButton"
+        android:id="@+id/listItemEditBtn"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:paddingLeft="16dp"
@@ -30,7 +31,7 @@
 
     <!-- adapter hides this if unneeded -->
     <TextView
-        android:id="@+id/dateDisplay"
+        android:id="@+id/listItemDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         tools:text="Tuesday May 14"
@@ -40,25 +41,25 @@
         tools:layout_editor_absoluteX="0dp" />
 
     <TextView
-        android:id="@+id/timeDisplay"
+        android:id="@+id/listItemTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         tools:text="6:00pm"
         android:textSize="@dimen/task_time_size"
         app:layout_constraintStart_toStartOf="@id/guidelineLeft"
-        app:layout_constraintTop_toBottomOf="@+id/dateDisplay"
+        app:layout_constraintTop_toBottomOf="@+id/listItemDate"
         tools:layout_editor_absoluteX="16dp" />
 
     <!-- TODO add padding -->
     <CheckBox
-        android:id="@+id/checkBox"
+        android:id="@+id/listItemDoneCheckBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="3dp"
         android:textSize="@dimen/task_name_size"
         app:layout_constraintStart_toStartOf="@id/guidelineLeft"
-        app:layout_constraintTop_toBottomOf="@+id/timeDisplay"
+        app:layout_constraintTop_toBottomOf="@+id/listItemTime"
         tools:layout_editor_absoluteX="16dp" />
 
     <TextView
@@ -67,8 +68,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="72dp"
         android:textSize="@dimen/task_name_size"
-        app:layout_constraintBaseline_toBaselineOf="@+id/checkBox"
-        app:layout_constraintEnd_toStartOf="@+id/editButton"
+        app:layout_constraintBaseline_toBaselineOf="@+id/listItemDoneCheckBox"
+        app:layout_constraintEnd_toStartOf="@+id/listItemEditBtn"
         app:layout_constraintStart_toStartOf="parent"
         tools:text="make pasta" />
 

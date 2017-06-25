@@ -31,6 +31,8 @@ public class DatabaseHelper implements AsyncOperationListener {
     // TODO move to builder class
     private int taskLengthLastUsed;  // initialize to "default task length" from settings
 
+    // TODO public static final queries
+
     private DatabaseHelper(final Context context) {
         final DaoMaster daoMaster;
 
@@ -78,13 +80,13 @@ public class DatabaseHelper implements AsyncOperationListener {
     }
 
     public void toggleDone(Task task, boolean isChecked) {
-        if (isChecked) {  // uncheck
+        if (isChecked) {
             task.setMarkedDoneTime(null);
-            task.setIsDone(false);
+            task.setIsDone(true);
         }
         else {  // check
             task.setMarkedDoneTime(DateHelper.now());
-            task.setIsDone(true);
+            task.setIsDone(false);
         }
 
         // commit changes
@@ -103,7 +105,7 @@ public class DatabaseHelper implements AsyncOperationListener {
 
     public void updateTask(Task task) {
         try {
-            taskDao.update(task);
+            taskDao.update(task);  // TODO use asyncSession
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -142,4 +144,7 @@ public class DatabaseHelper implements AsyncOperationListener {
         taskDao.deleteAll();
     }
 
+    public static class Query {
+        // TODO hold a prebuilt GreenDAO query
+    }
 }
