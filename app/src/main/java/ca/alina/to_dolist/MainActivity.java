@@ -4,12 +4,14 @@ import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
@@ -73,22 +75,45 @@ public class MainActivity extends AppCompatActivity {
 
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
+            private int itemCount() { return listView.getCheckedItemCount(); }
 
             @Override
             public void onItemCheckedStateChanged(ActionMode mode, int position,
                                                   long id, boolean checked) {
                 // Here you can do something when items are selected/de-selected,
                 // such as update the title in the CAB
-                mode.setTitle(Integer.valueOf(listView.getCheckedItemCount()).toString());
+                mode.setTitle(Integer.toString(itemCount()));
             }
 
             @Override
-            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            public boolean onActionItemClicked(final ActionMode mode, MenuItem item) {
                 // Respond to clicks on the actions in the CAB
                 switch (item.getItemId()) {
                     case R.id.menu_delete:
-                        deleteSelectedItems();
-                        mode.finish(); // Action picked, so close the CAB
+                        //Log.e("MainActivity", "Delete in multi-select mode pressed");
+                        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                        String message = getResources().getQuantityString(
+                                R.plurals.alert_confirm_multi_delete,
+                                itemCount(),
+                                itemCount());
+                        builder.setMessage(message)
+                                .setPositiveButton(R.string.alert_yes, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                        deleteSelectedItems();
+                                        mode.finish(); // Action picked, so close the CAB
+                                    }
+                                })
+                                .setNegativeButton(R.string.alert_no, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.cancel();
+                                    }
+                                });
+                        builder.show();
+//                        deleteSelectedItems();
+//                        mode.finish(); // Action picked, so close the CAB
                         return true;
                     default:
                         return false;

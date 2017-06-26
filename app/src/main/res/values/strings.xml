@@ -42,4 +42,8 @@
     <string name="alert_confirm_delete">Delete this task?</string>
     <string name="alert_yes">Delete</string>
     <string name="alert_no">Cancel</string>
+    <plurals name="alert_confirm_multi_delete">
+        <item quantity="one">Delete %1$d task?</item>
+        <item quantity="other">Delete %1$d tasks?</item>
+    </plurals>
 </resources>

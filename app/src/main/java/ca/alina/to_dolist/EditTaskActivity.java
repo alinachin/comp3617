@@ -106,7 +106,7 @@ public class EditTaskActivity extends AppCompatActivity {
             return true;
         }
         if (id == R.id.action_delete) {
-            Log.e("EditTaskActivity", "Delete menubutton pressed");
+            //Log.e("EditTaskActivity", "Delete menubutton pressed");
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage(R.string.alert_confirm_delete)
                     .setPositiveButton(R.string.alert_yes, new DialogInterface.OnClickListener() {
