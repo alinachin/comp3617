@@ -37,14 +37,6 @@ public class EditTaskActivity extends AppCompatActivity {
 
         helper = DatabaseHelper.getInstance(this);
 
-        editor = new BasicEditor();
-        // set editor
-
-        // tell editor we want to edit existing task
-        Bundle bundle = new Bundle();
-        bundle.putBoolean(BasicEditor.EXISTING_TASK_KEY, true);
-        editor.setArguments(bundle);
-
         // get task to edit from intent
         Intent callingIntent = getIntent();
         long taskId = callingIntent.getLongExtra(TAG_INTENT, -1L);
@@ -54,7 +46,10 @@ public class EditTaskActivity extends AppCompatActivity {
             setResult(RESULT_CANCELED);
             finish();
         }
-        Log.e("EditTaskActivity", "Editing task: " + task.getName());
+//        Log.e("EditTaskActivity", "Editing task: " + task.getName());
+
+        // set editor
+        editor = new BasicEditor();
         // pass task to editor fragment
         editor.setTask(task);
 

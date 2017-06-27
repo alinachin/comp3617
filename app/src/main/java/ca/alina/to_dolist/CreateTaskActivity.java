@@ -31,14 +31,6 @@ public class CreateTaskActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        editor = new BasicEditor();
-        // set editor
-
-        // tell editor we want to edit existing task
-        Bundle bundle = new Bundle();
-        bundle.putBoolean(BasicEditor.EXISTING_TASK_KEY, false);
-        editor.setArguments(bundle);
-
         // TODO generate suggested values - use builder class?
         Task task = new Task();
         task.setName(""); /* can edit */
@@ -49,6 +41,8 @@ public class CreateTaskActivity extends AppCompatActivity {
         task.setIsRecurring(false);
         task.setIsHidden(false);
 
+        // set editor
+        editor = new BasicEditor();
         editor.setTask(task);
 
         helper = DatabaseHelper.getInstance(this);

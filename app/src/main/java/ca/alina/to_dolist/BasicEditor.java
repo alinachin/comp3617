@@ -3,13 +3,13 @@ package ca.alina.to_dolist;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import ca.alina.to_dolist.database.DateHelper;
 import ca.alina.to_dolist.database.schema.Task;
 
 
@@ -21,13 +21,14 @@ import ca.alina.to_dolist.database.schema.Task;
 // */
 public class BasicEditor extends Fragment {
 
-    static final String TASK_PID_KEY = "taskPid";
-    static final String EXISTING_TASK_KEY = "editorType";
+//    static final String TASK_PID_KEY = "taskPid";
+//    static final String EXISTING_TASK_KEY = "editorType";
 
 //    private OnFragmentInteractionListener mListener;
 
     private Task task;
-    private View view;
+    private View rootView;
+    private EditText nameField;
 
     public BasicEditor() {
         // Required empty public constructor
@@ -41,16 +42,20 @@ public class BasicEditor extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+//        Log.e("BasicEditor", "begin onCreateView()");
+
         // Inflate the layout for this fragment
-        view = inflater.inflate(R.layout.fragment_basic_editor, container, false);
-        return view;
+        rootView = inflater.inflate(R.layout.fragment_basic_editor, container, false);
+        nameField = (EditText) rootView.findViewById(R.id.taskName);
+        return rootView;
     }
 
+    /** Retrieve values from editor fields and put in Task
+     *
+     * @return Task with user's changes
+     */
     public Task getTask() {
-        final EditText nameField;
-
-        if (view != null) {
-            nameField = (EditText) view.findViewById(R.id.taskName);
+        if (rootView != null) {
             task.setName(nameField.getText().toString());
         }
 
@@ -58,20 +63,32 @@ public class BasicEditor extends Fragment {
     }
 
     public void setTask(final Task task) {
+//        Log.e("BasicEditor", "begin setTask()");
         this.task = task;
         populate();
     }
 
+    /** Populate editor fields with Task fields */
     protected void populate() {
-        final EditText nameField;
-
         // mirror getTask() - populate fields
-        if (view != null) {
-            nameField = (EditText) view.findViewById(R.id.taskName);
+        if (rootView != null) {
+//            Log.e("BasicEditor", "begin populate()");
+
             nameField.setText(task.getName());
         }
     }
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        if (task == null) {
+            Toast.makeText(getActivity(), "Could not open task", Toast.LENGTH_SHORT).show();
+            getActivity().finish();
+        }
+
+        populate();
+    }
 
 //    public void onButtonPressed(Uri uri) {
 //        if (mListener != null) {
@@ -96,38 +113,6 @@ public class BasicEditor extends Fragment {
 //        mListener = null;
     }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        boolean existingTask;
-        if (getArguments() == null) {
-            existingTask = false;
-        }
-        else {
-            existingTask = getArguments().getBoolean(EXISTING_TASK_KEY);
-        }
-
-        if ((task == null) && (existingTask)) {
-            Toast.makeText(getActivity(), "Could not open task", Toast.LENGTH_LONG).show();
-            getActivity().finish();
-        }
-
-//        if (!existingTask) {
-//            // TODO use builder class?
-//            task = new Task();
-//            task.setName(""); /* can edit */
-//            task.setStartTime(DateHelper.now()); /* can edit */
-//            task.setNotes("");
-//            task.setIsAlarm(false);
-//            task.setIsDone(false);
-//            task.setIsRecurring(false);
-//            task.setIsHidden(false);
-//        }
-        // otherwise assume task was set already
-
-        populate();
-    }
 
 //    /**
 //     * This interface must be implemented by activities that contain this
