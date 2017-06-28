@@ -60,8 +60,11 @@ public class CreateTaskActivity extends AppCompatActivity {
         // TODO use builder/factory class
         helper.insertTask(task);
 
-        // TODO use helper class
-
+        // use helper class
+        NotificationHelper nHelper = new NotificationHelper(this);
+        NotificationHelper.Params params = nHelper.new Params();
+        params.setName(task.getName());
+        nHelper.scheduleNotification(params, 3000);
 
         setResult(RESULT_OK);
         finish();
