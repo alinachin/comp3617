@@ -156,34 +156,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void testNotification(final View view) {
-        scheduleNotification(getNotification("Task name here"), 3000);
-    }
-
-    private void scheduleNotification(Notification notification, int delay) {
-
-        Intent notificationIntent = new Intent(this, NotificationPublisher.class);
-        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, 1);
-        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION, notification);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        long futureInMillis = SystemClock.elapsedRealtime() + delay;
-        AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent);
-    }
-
-    private Notification getNotification(String content) {
-        Notification.Builder builder = new Notification.Builder(this)
-                .setContentTitle(content)
-                .setContentText("3 seconds have passed")
-                .setSmallIcon(R.drawable.ic_check_box_black_24dp)
-                .setDefaults(Notification.DEFAULT_ALL);
-        Intent openAppIntent = new Intent(this, MainActivity.class);
-        // open to default list?
-        PendingIntent pendingIntent =
-                PendingIntent.getActivity(this, 11011, openAppIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-        builder.setContentIntent(pendingIntent);
-        return builder.build();
+        NotificationHelper.scheduleNotification(this,
+                NotificationHelper.getNotification(this, "Task name here"), 3000);
     }
 
     @Override
