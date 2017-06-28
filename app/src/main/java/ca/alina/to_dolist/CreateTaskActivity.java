@@ -60,6 +60,9 @@ public class CreateTaskActivity extends AppCompatActivity {
         // TODO use builder/factory class
         helper.insertTask(task);
 
+        // TODO use helper class
+
+
         setResult(RESULT_OK);
         finish();
     }

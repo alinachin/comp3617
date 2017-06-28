@@ -1,9 +1,5 @@
 package ca.alina.to_dolist;
 
-import android.app.AlarmManager;
-import android.app.Notification;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -156,8 +152,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void testNotification(final View view) {
-        NotificationHelper.scheduleNotification(this,
-                NotificationHelper.getNotification(this, "Task name here"), 3000);
+        NotificationHelper nHelper = new NotificationHelper(this);
+        NotificationHelper.Params params = nHelper.new Params();
+        params.setName("Task name here");
+        nHelper.scheduleNotification(params, 3000);
     }
 
     @Override
