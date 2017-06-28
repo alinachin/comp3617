@@ -62,7 +62,7 @@ public class CreateTaskActivity extends AppCompatActivity {
 
         // use helper class
         NotificationHelper nHelper = new NotificationHelper(this);
-        NotificationHelper.Params params = nHelper.new Params();
+        NotificationHelper.Params params = new NotificationHelper.Params();
         params.setName(task.getName());
         nHelper.scheduleNotification(params, 3000);
 

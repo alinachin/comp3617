@@ -153,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void testNotification(final View view) {
         NotificationHelper nHelper = new NotificationHelper(this);
-        NotificationHelper.Params params = nHelper.new Params();
+        NotificationHelper.Params params = new NotificationHelper.Params();
         params.setName("Task name here");
         nHelper.scheduleNotification(params, 3000);
     }

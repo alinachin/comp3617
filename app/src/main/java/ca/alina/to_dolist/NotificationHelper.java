@@ -61,7 +61,7 @@ class NotificationHelper {
         return builder.build();
     }
 
-    class Params {
+    static class Params {
         private String name;
 
         public void setName(final String name) {

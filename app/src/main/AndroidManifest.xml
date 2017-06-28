@@ -25,7 +25,8 @@
             android:name=".CreateTaskActivity"
             android:label="@string/title_activity_create_task"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar.Editor" />
+            android:theme="@style/AppTheme.NoActionBar.Editor"
+            android:windowSoftInputMode="stateVisible" />
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings"
@@ -38,7 +39,8 @@
             android:name=".EditTaskActivity"
             android:label="@string/title_activity_edit_task"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar.Editor">
+            android:theme="@style/AppTheme.NoActionBar.Editor"
+            android:windowSoftInputMode="stateVisible">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="ca.alina.to_dolist.MainActivity" />

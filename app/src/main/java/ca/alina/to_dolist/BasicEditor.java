@@ -47,6 +47,8 @@ public class BasicEditor extends Fragment {
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_basic_editor, container, false);
         nameField = (EditText) rootView.findViewById(R.id.taskName);
+
+        // set click handler for startTimeIconButton
         return rootView;
     }
 
@@ -88,6 +90,18 @@ public class BasicEditor extends Fragment {
         }
 
         populate();
+    }
+
+    public void updateEndTimeFromStartTime(final View view) {
+        // when startTime loses focus/gets set from TimePicker,
+        // update endTime to be [default time period] after startTime
+    }
+
+    private boolean validate() {
+        // nameField must not be empty
+
+
+        return true;
     }
 
 //    public void onButtonPressed(Uri uri) {

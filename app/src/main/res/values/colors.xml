@@ -8,4 +8,6 @@
     <color name="listBgSelected">#FF0000</color>
     <color name="listBgDone">#E0E0E0</color>
     <color name="listBgSelectedDone">#AA0000</color>
+    <color name="tintBtnDisabled">#E0E0E0</color>
+    <color name="tintBtnEnabled">#000000</color>
 </resources>
