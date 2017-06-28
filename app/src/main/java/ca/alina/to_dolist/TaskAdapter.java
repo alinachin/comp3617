@@ -3,8 +3,6 @@ package ca.alina.to_dolist;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
-import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,10 +22,10 @@ import ca.alina.to_dolist.database.schema.Task;
  * Created by Alina on 2017-06-22.
  */
 
-public class TaskAdapter extends ArrayAdapter<Task> {
+class TaskAdapter extends ArrayAdapter<Task> {
     private DatabaseHelper helper;
 
-    public TaskAdapter(Context context, int resource, List<Task> tasks) {
+    TaskAdapter(Context context, int resource, List<Task> tasks) {
         super(context, resource, tasks);
 
         helper = DatabaseHelper.getInstance(context);
@@ -58,6 +56,8 @@ public class TaskAdapter extends ArrayAdapter<Task> {
         final Task task = getItem(position);
 
         if (task != null) {
+            View bgView = convertView.findViewById(R.id.listItemBg);
+
             // set TextViews etc.
             viewHolder.taskName.setText(task.getName());
             Date d = task.getStartTime();
@@ -73,9 +73,8 @@ public class TaskAdapter extends ArrayAdapter<Task> {
                     toggleDone(position, me.isChecked());
                 }
             });
-            // TODO create separate layout files for checked/unchecked list_items?
+
             // set other appearance properties for done/not done state
-            View bgView = convertView.findViewById(R.id.listItemBg);
             if (viewHolder.done.isChecked()) {
                 bgView.setBackgroundResource(R.drawable.list_item_bg_done);
             }

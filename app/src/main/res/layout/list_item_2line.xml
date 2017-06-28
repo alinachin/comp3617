@@ -67,7 +67,7 @@
         android:id="@android:id/text1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="72dp"
+        android:layout_marginStart="@dimen/task_name_left_margin"
         android:textSize="@dimen/task_name_size"
         app:layout_constraintBaseline_toBaselineOf="@+id/listItemDoneCheckBox"
         app:layout_constraintEnd_toStartOf="@+id/listItemEditBtn"
