@@ -5,6 +5,7 @@ package ca.alina.to_dolist.database;
  */
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalTime;
 
 import java.util.Date;
 
@@ -38,6 +39,23 @@ public final class DateHelper {
 
         DateTime dt = new DateTime(day);
         DateTime resultDt = dt.plusDays(1).withTimeAtStartOfDay().minusMillis(1);
+        result = resultDt.toDate();
+
+        return result;
+    }
+
+    /** Set the time only.
+     *
+     * @param date The date to change.
+     * @param time The new time to set.
+     * @return date with only its time changed.
+     */
+    public static Date changeTime(final Date date, final Date time) {
+        final Date result;
+
+        final DateTime dt = new DateTime(date);
+        final LocalTime lt = new LocalTime(time);
+        final DateTime resultDt = dt.withTime(lt);
         result = resultDt.toDate();
 
         return result;

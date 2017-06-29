@@ -10,6 +10,9 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.text.DateFormat;
+
+import ca.alina.to_dolist.database.DateHelper;
 import ca.alina.to_dolist.database.schema.Task;
 
 
@@ -29,6 +32,8 @@ public class BasicEditor extends Fragment {
     private Task task;
     private View rootView;
     private EditText nameField;
+    private EditText startTimeField;
+    private DateFormat timeFormat;
 
     public BasicEditor() {
         // Required empty public constructor
@@ -47,6 +52,7 @@ public class BasicEditor extends Fragment {
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_basic_editor, container, false);
         nameField = (EditText) rootView.findViewById(R.id.taskName);
+        startTimeField = (EditText) rootView.findViewById(R.id.startTime);
 
         // set click handler for startTimeIconButton
         return rootView;
@@ -59,6 +65,17 @@ public class BasicEditor extends Fragment {
     public Task getTask() {
         if (rootView != null) {
             task.setName(nameField.getText().toString());
+            try {
+                task.setStartTime(DateHelper.changeTime(
+                        task.getStartTime(),
+                        timeFormat.parse(startTimeField.getText().toString()))
+                );
+            }
+            catch (java.text.ParseException e) {
+                Log.e("BasicEditor", "invalid start time in startTimeField");
+                task.setStartTime(DateHelper.autoStartTime());
+            }
+            // if switch is on task.setEndTime() otherwise task.setEndTime(null)
         }
 
         return task;
@@ -77,6 +94,7 @@ public class BasicEditor extends Fragment {
 //            Log.e("BasicEditor", "begin populate()");
 
             nameField.setText(task.getName());
+            startTimeField.setText(timeFormat.format(task.getStartTime()));
         }
     }
 
@@ -113,6 +131,8 @@ public class BasicEditor extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+
+        timeFormat = android.text.format.DateFormat.getTimeFormat(context.getApplicationContext());
 //        if (context instanceof OnFragmentInteractionListener) {
 //            mListener = (OnFragmentInteractionListener) context;
 //        } else {

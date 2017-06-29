@@ -27,12 +27,15 @@ import static ca.alina.to_dolist.R.id.date;
 
 class TaskAdapter extends ArrayAdapter<Task> {
     private DatabaseHelper helper;
-
+    private DateFormat timeFormat;
+    private DateFormat dateFormat;
 
     TaskAdapter(Context context, int resource, List<Task> tasks) {
         super(context, resource, tasks);
 
         helper = DatabaseHelper.getInstance(context);
+        timeFormat = android.text.format.DateFormat.getTimeFormat(context.getApplicationContext());
+        dateFormat = android.text.format.DateFormat.getMediumDateFormat(context.getApplicationContext());
     }
 
     //public TaskAdapter(Context context, int resource, DatabaseHelper helper, DatabaseHelper.Query dataset)
@@ -65,8 +68,7 @@ class TaskAdapter extends ArrayAdapter<Task> {
             // set TextViews etc.
             viewHolder.taskName.setText(task.getName());
             Date d = task.getStartTime();
-            DateFormat timeFormat = android.text.format.DateFormat.getTimeFormat(getContext().getApplicationContext());
-            DateFormat dateFormat = android.text.format.DateFormat.getMediumDateFormat(getContext().getApplicationContext());
+
             viewHolder.time.setText(timeFormat.format(d));
             viewHolder.date.setText(dateFormat.format(d));
 
