@@ -11,6 +11,7 @@ import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -18,12 +19,15 @@ import ca.alina.to_dolist.database.DatabaseHelper;
 import ca.alina.to_dolist.database.DateHelper;
 import ca.alina.to_dolist.database.schema.Task;
 
+import static ca.alina.to_dolist.R.id.date;
+
 /**
  * Created by Alina on 2017-06-22.
  */
 
 class TaskAdapter extends ArrayAdapter<Task> {
     private DatabaseHelper helper;
+
 
     TaskAdapter(Context context, int resource, List<Task> tasks) {
         super(context, resource, tasks);
@@ -61,8 +65,10 @@ class TaskAdapter extends ArrayAdapter<Task> {
             // set TextViews etc.
             viewHolder.taskName.setText(task.getName());
             Date d = task.getStartTime();
-            viewHolder.time.setText(DateHelper.formatTime(d));
-            viewHolder.date.setText(DateHelper.formatDateOneLine(d));
+            DateFormat timeFormat = android.text.format.DateFormat.getTimeFormat(getContext().getApplicationContext());
+            DateFormat dateFormat = android.text.format.DateFormat.getMediumDateFormat(getContext().getApplicationContext());
+            viewHolder.time.setText(timeFormat.format(d));
+            viewHolder.date.setText(dateFormat.format(d));
 
             // set CHECKBOX for done/not done state
             viewHolder.done.setChecked(task.getIsDone());

@@ -31,10 +31,16 @@ public class CreateTaskActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
+        helper = DatabaseHelper.getInstance(this);
+
+        addEditor();
+    }
+
+    private void addEditor() {
         // TODO generate suggested values - use builder class?
         Task task = new Task();
         task.setName(""); /* can edit */
-        task.setStartTime(DateHelper.now()); /* can edit */
+        task.setStartTime(DateHelper.autoStartTime()); /* can edit */
         task.setNotes("");
         task.setIsAlarm(false);
         task.setIsDone(false);
@@ -44,8 +50,6 @@ public class CreateTaskActivity extends AppCompatActivity {
         // set editor
         editor = new BasicEditor();
         editor.setTask(task);
-
-        helper = DatabaseHelper.getInstance(this);
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.add(R.id.create_task_container, editor, "createTask");
@@ -57,7 +61,7 @@ public class CreateTaskActivity extends AppCompatActivity {
         // grab values from editor fragment
         task = editor.getTask();
 
-        // TODO use builder/factory class
+        // TODO validate
         helper.insertTask(task);
 
         // use helper class

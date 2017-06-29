@@ -48,6 +48,10 @@ public class EditTaskActivity extends AppCompatActivity {
         }
 //        Log.e("EditTaskActivity", "Editing task: " + task.getName());
 
+        addEditor();
+    }
+
+    private void addEditor() {
         // set editor
         editor = new BasicEditor();
         // pass task to editor fragment

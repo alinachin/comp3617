@@ -13,6 +13,16 @@ public final class DateHelper {
         return new Date();
     }
 
+    public static Date autoStartTime() {
+        final Date result;
+
+        final DateTime dt = new DateTime();
+        final DateTime resultDt = dt.plusHours(1).withMinuteOfHour(0);
+        result = resultDt.toDate();
+
+        return result;
+    }
+
     public static Date getBeginningOfDay(final Date day) {
         final Date result;
 
