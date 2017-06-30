@@ -7,7 +7,8 @@
     android:descendantFocusability="blocksDescendants"
     android:id="@+id/listItemBg"
     android:background="@drawable/list_item_bg"
-    android:paddingBottom="8dp">
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp">
 
     <ImageButton
         android:id="@+id/listItemEditBtn"
@@ -41,13 +42,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="0dp" />
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="4dp" />
+    <!-- TODO adjust margin, add underline? -->
 
     <TextView
         android:id="@+id/listItemTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         tools:text="6:00pm"
         android:textSize="@dimen/task_time_size"
         app:layout_constraintStart_toStartOf="@id/guidelineLeft"
