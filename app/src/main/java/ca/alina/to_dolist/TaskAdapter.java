@@ -16,6 +16,7 @@ import android.widget.TextView;
 import org.joda.time.LocalDate;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
@@ -50,7 +51,9 @@ class TaskAdapter extends ArrayAdapter<Task> {
 
         helper = DatabaseHelper.getInstance(context);
         timeFormat = android.text.format.DateFormat.getTimeFormat(context.getApplicationContext());
-        dateFormat = android.text.format.DateFormat.getMediumDateFormat(context.getApplicationContext());
+        dateFormat = android.text.format.DateFormat.getLongDateFormat(context.getApplicationContext());
+        dateFormat = new SimpleDateFormat(context.getResources().getString(R.string.list_date_format),
+                context.getResources().getConfiguration().locale);
 
         this.listType = listType;
         if (listType.equals(SMART_LIST)) {
