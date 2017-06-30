@@ -3,16 +3,10 @@ package ca.alina.to_dolist;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.preference.PreferenceManager;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
-import android.util.Log;
-import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.MenuInflater;
 import android.view.View;
@@ -22,15 +16,8 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.ListView;
-import android.widget.Toast;
-
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 
 import ca.alina.to_dolist.database.DatabaseHelper;
-import ca.alina.to_dolist.database.DateHelper;
-import ca.alina.to_dolist.database.schema.Task;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -52,11 +39,13 @@ public class MainActivity extends AppCompatActivity {
         PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
 
         helper = DatabaseHelper.getInstance(this);
-        listView = (ListView) findViewById(R.id.smartList);
+
         adapter = new TaskAdapter(
                 MainActivity.this,
                 R.layout.list_item_2line,
-                helper.debugGetAllTasks());
+                TaskAdapter.SMART_LIST);
+
+        listView = (ListView) findViewById(R.id.smartList);
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -97,7 +86,8 @@ public class MainActivity extends AppCompatActivity {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         dialog.dismiss();
-                                        deleteSelectedItems();
+                                        //deleteSelectedItems();
+                                        adapter.deleteSelectedItems(listView.getCheckedItemPositions());
                                         mode.finish(); // Action picked, so close the CAB
                                     }
                                 })
@@ -108,8 +98,6 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                 });
                         builder.show();
-//                        deleteSelectedItems();
-//                        mode.finish(); // Action picked, so close the CAB
                         return true;
                     default:
                         return false;
@@ -164,49 +152,16 @@ public class MainActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 // task was created
                 //Toast.makeText(this, "Refreshing task list", Toast.LENGTH_SHORT).show();
-                refreshView();
+                //refreshView();
+                adapter.refresh();
             }
         }
         else if (requestCode == EDIT_TASK_REQUEST) {
             if (resultCode == RESULT_OK) {
                 // task may have been edited, deleted etc.
-                refreshView();
+                //refreshView();
+                adapter.refresh();
             }
-        }
-    }
-
-    // TODO move into TaskAdapter, make it extend BaseAdapter, pass it the helper instance
-    /** Refreshes the list of tasks displayed by this activity. */
-    protected void refreshView() {
-        List<Task> tasks;
-        tasks = helper.debugGetAllTasks();  // TODO rerun actual (pre-built) query
-
-        // update adapter
-        adapter.clear();
-        adapter.addAll(tasks);
-    }
-
-    // TODO move into TaskAdapter
-    protected void deleteSelectedItems() {
-        //Log.e("MainActivity", "deleting items");
-        // get selected items from list
-        SparseBooleanArray checkedPositions = listView.getCheckedItemPositions();
-        // https://stackoverflow.com/a/6931618
-        if (checkedPositions != null) {
-            List<Task> tasks = new LinkedList<Task>();
-            for (int i=0; i<checkedPositions.size(); i++) {
-                if (checkedPositions.valueAt(i)) {
-                    Task item = (Task) adapter.getItem(checkedPositions.keyAt(i));
-                    tasks.add(item);
-                }
-            }
-
-            // tell helper to delete these items
-            helper.deleteSelectedTasks(tasks);
-
-            // refresh list
-            // TODO do this as a callback from deleteSelectedTasks instead
-            refreshView();
         }
     }
 

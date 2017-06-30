@@ -6,6 +6,10 @@ import android.util.Log;
 import org.greenrobot.greendao.async.AsyncOperation;
 import org.greenrobot.greendao.async.AsyncOperationListener;
 import org.greenrobot.greendao.async.AsyncSession;
+import org.greenrobot.greendao.query.Query;
+import org.greenrobot.greendao.query.QueryBuilder;
+import org.greenrobot.greendao.query.WhereCondition;
+import org.joda.time.LocalDate;
 
 import java.util.Date;
 import java.util.List;
@@ -29,6 +33,8 @@ public class DatabaseHelper implements AsyncOperationListener {
     private AsyncSession asyncSession;
     private TaskDao taskDao;
 
+    private static final int LIMIT_SMART_LIST = 20;
+
     // TODO move to builder class
     private int taskLengthLastUsed;  // initialize to "default task length" from settings
 
@@ -41,13 +47,16 @@ public class DatabaseHelper implements AsyncOperationListener {
 
         daoMaster = new DaoMaster(mHelper.getReadableDatabase());
         daoSession = daoMaster.newSession();
+        // TODO remove
         asyncSession = daoSession.startAsyncSession();
         asyncSession.setListener(this);
 
         taskDao = daoSession.getTaskDao();
+
+        // debug
+        QueryBuilder.LOG_SQL = true;
     }
 
-    // TODO doublecheck Singleton pattern
     public synchronized static DatabaseHelper getInstance(final Context context) {
         if (instance == null) {
             instance = new DatabaseHelper(context);
@@ -72,7 +81,7 @@ public class DatabaseHelper implements AsyncOperationListener {
 //        taskDao = daoSession.getTaskDao();
 //    }
 
-    // TODO implement
+    // TODO remove
     @Override
     public void onAsyncOperationCompleted(AsyncOperation operation) {
         // check AsyncOperation.isFailed() and/or AsyncOperation.getThrowable()
@@ -113,9 +122,7 @@ public class DatabaseHelper implements AsyncOperationListener {
         }
     }
 
-    // TODO test: not working?
-    public List<Task> getOneDayList(final Date day) {
-        final List<Task> results;
+    public TaskQuery getOneDayList(final LocalDate day) {
         final Date startDate;  // inclusive
         final Date endDate;  // inclusive
 
@@ -123,12 +130,29 @@ public class DatabaseHelper implements AsyncOperationListener {
         endDate = DateHelper.getEndOfDay(day);
 
         // build query
-        results = taskDao.queryBuilder()
+        return new TaskQuery(taskDao.queryBuilder()
                 .where(TaskDao.Properties.StartTime.between(startDate, endDate))
                 .orderAsc(TaskDao.Properties.StartTime)
-                .list();
+                .build());
+    }
 
-        return results;
+    public TaskQuery getSmartList() {
+        final Date startToday;
+        final Date endToday;
+
+        startToday = DateHelper.getBeginningOfDay(new LocalDate());
+        endToday = DateHelper.getEndOfDay(new LocalDate());
+
+        QueryBuilder<Task> qb = taskDao.queryBuilder();
+        WhereCondition notDone = TaskDao.Properties.IsDone.eq(false);
+        WhereCondition expired = TaskDao.Properties.StartTime.lt(startToday);
+        WhereCondition isToday = TaskDao.Properties.StartTime.between(startToday, endToday);
+        WhereCondition todayOrAfter = TaskDao.Properties.StartTime.ge(startToday);
+
+        qb.whereOr(qb.and(notDone, expired), todayOrAfter).limit(LIMIT_SMART_LIST);
+        qb.orderAsc(TaskDao.Properties.StartTime);
+
+        return new TaskQuery(qb.build());
     }
 
     public void deleteSelectedTasks(final List<Task> tasks) {
@@ -150,7 +174,16 @@ public class DatabaseHelper implements AsyncOperationListener {
         return taskDao.load(taskId);
     }
 
-    public static class Query {
+    public static class TaskQuery {
         // TODO hold a prebuilt GreenDAO query
+        final Query<Task> query;
+
+        TaskQuery(Query<Task> query) {
+            this.query = query;
+        }
+
+        public List<Task> run() {
+            return query.list();
+        }
     }
 }

@@ -3,6 +3,8 @@ package ca.alina.to_dolist;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,34 +13,61 @@ import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import org.joda.time.LocalDate;
+
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import ca.alina.to_dolist.database.DatabaseHelper;
-import ca.alina.to_dolist.database.DateHelper;
 import ca.alina.to_dolist.database.schema.Task;
-
-import static ca.alina.to_dolist.R.id.date;
 
 /**
  * Created by Alina on 2017-06-22.
  */
 
 class TaskAdapter extends ArrayAdapter<Task> {
+    static final String SMART_LIST = "smart";
     private DatabaseHelper helper;
     private DateFormat timeFormat;
     private DateFormat dateFormat;
+    private String listType;  // either SMART_LIST or a date
+    private DatabaseHelper.TaskQuery query;
 
-    TaskAdapter(Context context, int resource, List<Task> tasks) {
-        super(context, resource, tasks);
+//    TaskAdapter(Context context, int resource, List<Task> tasks) {
+//        super(context, resource, tasks);
+//
+//        helper = DatabaseHelper.getInstance(context);
+//        timeFormat = android.text.format.DateFormat.getTimeFormat(context.getApplicationContext());
+//        dateFormat = android.text.format.DateFormat.getMediumDateFormat(context.getApplicationContext());
+//    }
+
+    TaskAdapter(Context context, int resource, String listType) {
+        super(context, resource, new ArrayList<Task>());
 
         helper = DatabaseHelper.getInstance(context);
         timeFormat = android.text.format.DateFormat.getTimeFormat(context.getApplicationContext());
         dateFormat = android.text.format.DateFormat.getMediumDateFormat(context.getApplicationContext());
-    }
 
-    //public TaskAdapter(Context context, int resource, DatabaseHelper helper, DatabaseHelper.Query dataset)
+        this.listType = listType;
+        if (listType.equals(SMART_LIST)) {
+            query = helper.getSmartList();
+        }
+        else {
+            // parse listType into LocalDate
+            try {
+                query = helper.getOneDayList(LocalDate.parse(listType));
+            }
+            catch (IllegalArgumentException e) {
+                Log.e("TaskAdapter", "Invalid listType (must be date yyyy-MM-DD)");
+                query = helper.getSmartList();
+            }
+        }
+
+        refresh();
+    }
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
@@ -105,12 +134,40 @@ class TaskAdapter extends ArrayAdapter<Task> {
         return convertView;
     }
 
-    public void toggleDone(int position, boolean checked) {
+    /** Refreshes the this adapter's contents */
+    void refresh() {
+        // rerun query
+        List<Task> tasks = query.run();
+        this.clear();
+        this.addAll(tasks);
+    }
+
+    void toggleDone(int position, boolean checked) {
         // tell helper to mark done/not done
         Task task = getItem(position);
         helper.toggleDone(task, checked);
 
         notifyDataSetChanged();
+    }
+
+    void deleteSelectedItems(SparseBooleanArray positions) {
+        if (positions != null) {
+            List<Task> tasks = new LinkedList<Task>();
+            for (int i=0; i<positions.size(); i++) {
+                if (positions.valueAt(i)) {
+                    Task item = (Task) getItem(positions.keyAt(i));
+                    tasks.add(item);
+                }
+            }
+
+            // tell helper to delete these items
+            helper.deleteSelectedTasks(tasks);
+
+            // refresh list
+            // TODO do this as a callback from deleteSelectedTasks instead
+            //refreshView();
+            refresh();
+        }
     }
 
     static class ViewHolder {

@@ -4,7 +4,10 @@ package ca.alina.to_dolist.database;
  * Created by Alina on 2017-06-21.
  */
 
+import android.util.Log;
+
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 
 import java.util.Date;
@@ -25,23 +28,23 @@ public final class DateHelper {
     }
 
     public static Date getBeginningOfDay(final Date day) {
-        final Date result;
+        DateTime resultDt = new DateTime(day).withTimeAtStartOfDay();
+        return resultDt.toDate();
+    }
 
-        DateTime dt = new DateTime(day);
-        DateTime resultDt = dt.withTimeAtStartOfDay();
-        result = resultDt.toDate();
-
-        return result;
+    public static Date getBeginningOfDay(LocalDate day) {
+        DateTime resultDt = day.toDateTimeAtStartOfDay();
+        return resultDt.toDate();
     }
 
     public static Date getEndOfDay(final Date day) {
-        final Date result;
+        DateTime resultDt = new DateTime(day).plusDays(1).withTimeAtStartOfDay().minusMillis(1);
+        return resultDt.toDate();
+    }
 
-        DateTime dt = new DateTime(day);
-        DateTime resultDt = dt.plusDays(1).withTimeAtStartOfDay().minusMillis(1);
-        result = resultDt.toDate();
-
-        return result;
+    public static Date getEndOfDay(LocalDate day) {
+        DateTime resultDt = day.toDateTimeAtStartOfDay().plusDays(1).minusMillis(1);
+        return resultDt.toDate();
     }
 
     /** Set the time only.
@@ -51,25 +54,13 @@ public final class DateHelper {
      * @return date with only its time changed.
      */
     public static Date changeTime(final Date date, final Date time) {
-        final Date result;
-
         final DateTime dt = new DateTime(date);
         final LocalTime lt = new LocalTime(time);
+
         final DateTime resultDt = dt.withTime(lt);
-        result = resultDt.toDate();
-
-        return result;
+        return resultDt.toDate();
     }
 
-    public static String formatDateOneLine(final Date date) {
-        // TODO e.g. "Tuesday May 14"
-        return "tuesdaymay14";
-    }
-
-    public static String formatTime(final Date date) {
-        // TODO e.g. "9:00 am"
-        return "(00am";
-    }
 
     public static String formatWeekday(final Date date) {
         // TODO e.g. "Tuesday"
@@ -85,4 +76,6 @@ public final class DateHelper {
         // TODO e.g. "Today" or "" if nothing fits
         return "fooday";
     }
+
+
 }
