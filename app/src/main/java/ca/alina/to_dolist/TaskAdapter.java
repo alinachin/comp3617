@@ -22,6 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import ca.alina.to_dolist.database.DatabaseHelper;
+import ca.alina.to_dolist.database.DateHelper;
 import ca.alina.to_dolist.database.schema.Task;
 
 /**
@@ -96,10 +97,18 @@ class TaskAdapter extends ArrayAdapter<Task> {
 
             // set TextViews etc.
             viewHolder.taskName.setText(task.getName());
-            Date d = task.getStartTime();
 
-            viewHolder.time.setText(timeFormat.format(d));
-            viewHolder.date.setText(dateFormat.format(d));
+            Date taskStartTime = task.getStartTime();
+            viewHolder.time.setText(timeFormat.format(taskStartTime));
+            viewHolder.date.setText(dateFormat.format(taskStartTime));
+
+            // hide date depending on 1) list type 2) previous item = same day
+            if (!listType.equals(SMART_LIST) || (position > 0 && DateHelper.sameDay(
+                    taskStartTime,
+                    getItem(position-1).getStartTime()
+            ))) {
+                viewHolder.date.setVisibility(View.GONE);
+            }
 
             // set CHECKBOX for done/not done state
             viewHolder.done.setChecked(task.getIsDone());

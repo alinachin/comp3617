@@ -47,6 +47,10 @@ public final class DateHelper {
         return resultDt.toDate();
     }
 
+    public static boolean sameDay(Date date1, Date date2) {
+        return ( new LocalDate(date1).equals(new LocalDate(date2)) );
+    }
+
     /** Set the time only.
      *
      * @param date The date to change.
