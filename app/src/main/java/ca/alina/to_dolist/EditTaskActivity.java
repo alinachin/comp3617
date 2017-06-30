@@ -77,9 +77,7 @@ public class EditTaskActivity extends AppCompatActivity {
 
     private void delete() {
         // should have the task already
-        List<Task> t = new ArrayList<>();
-        t.add(task);
-        helper.deleteSelectedTasks(t);
+        helper.deleteTask(task);
 
         setResult(RESULT_OK);
         finish();

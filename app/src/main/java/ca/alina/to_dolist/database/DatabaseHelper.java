@@ -24,13 +24,11 @@ import ca.alina.to_dolist.database.schema.TaskDao;
  * Created by Alina on 2017-06-20.
  */
 
-public class DatabaseHelper implements AsyncOperationListener {
+public class DatabaseHelper {
 
     private static DatabaseHelper instance; // singleton
 
-    private DaoMaster.DevOpenHelper mHelper;
     private DaoSession daoSession;
-    private AsyncSession asyncSession;
     private TaskDao taskDao;
 
     private static final int LIMIT_SMART_LIST = 20;
@@ -39,15 +37,10 @@ public class DatabaseHelper implements AsyncOperationListener {
     private int taskLengthLastUsed;  // initialize to "default task length" from settings
 
     private DatabaseHelper(final Context context) {
-        final DaoMaster daoMaster;
+        DaoMaster.DevOpenHelper mHelper = new DaoMaster.DevOpenHelper(context, "tasks.db", null);
+        DaoMaster daoMaster = new DaoMaster(mHelper.getWritableDatabase());
 
-        mHelper = new DaoMaster.DevOpenHelper(context, "tasks.db", null);
-
-        daoMaster = new DaoMaster(mHelper.getReadableDatabase());
         daoSession = daoMaster.newSession();
-        // TODO remove
-        asyncSession = daoSession.startAsyncSession();
-        asyncSession.setListener(this);
 
         taskDao = daoSession.getTaskDao();
 
@@ -60,31 +53,6 @@ public class DatabaseHelper implements AsyncOperationListener {
             instance = new DatabaseHelper(context);
         }
         return instance;
-    }
-
-    // Unneeded - open DB once for the application scope
-//    public void openDatabaseForReading() throws SQLiteException {
-//        final DaoMaster daoMaster = new DaoMaster(mHelper.getReadableDatabase());
-//        daoSession = daoMaster.newSession();
-//        asyncSession = daoSession.startAsyncSession();
-//        asyncSession.setListener(this);
-//        taskDao = daoSession.getTaskDao();
-//    }
-//
-//    public void openDatabaseForWriting() throws SQLiteException {
-//        final DaoMaster daoMaster = new DaoMaster(mHelper.getWritableDatabase());
-//        daoSession = daoMaster.newSession();
-//        asyncSession = daoSession.startAsyncSession();
-//        asyncSession.setListener(this);
-//        taskDao = daoSession.getTaskDao();
-//    }
-
-    // TODO remove
-    @Override
-    public void onAsyncOperationCompleted(AsyncOperation operation) {
-        // check AsyncOperation.isFailed() and/or AsyncOperation.getThrowable()
-
-        // switch
     }
 
     public void toggleDone(Task task, boolean isChecked) {
@@ -157,7 +125,17 @@ public class DatabaseHelper implements AsyncOperationListener {
     public void deleteSelectedTasks(final List<Task> tasks) {
         //Log.e("DatabaseHelper", "deleting selected tasks");
         taskDao.deleteInTx(tasks);  // blocking version
-        //asyncSession.deleteInTx(Task.class, tasks);
+    }
+
+    public void deleteTask(Task task) {
+        taskDao.delete(task);
+    }
+
+    public void deleteSelectedTasks(final List<Task> tasks, AsyncOperationListener callback) {
+        Log.e("DatabaseHelper", "async deleting selected tasks");
+        AsyncSession session = daoSession.startAsyncSession();
+        session.setListenerMainThread(callback);
+        session.deleteInTx(Task.class, tasks);
     }
 
     // TODO remove
@@ -173,8 +151,10 @@ public class DatabaseHelper implements AsyncOperationListener {
         return taskDao.load(taskId);
     }
 
+    /**
+     * Holds a prebuilt GreenDAO query
+     */
     public static class TaskQuery {
-        // TODO hold a prebuilt GreenDAO query
         final Query<Task> query;
 
         TaskQuery(Query<Task> query) {
@@ -183,6 +163,12 @@ public class DatabaseHelper implements AsyncOperationListener {
 
         public List<Task> run() {
             return query.list();
+        }
+
+        public void runAsync(AsyncOperationListener callback) {
+            AsyncSession session = getInstance(null).daoSession.startAsyncSession();
+            session.setListenerMainThread(callback);
+            session.queryList(query);
         }
     }
 }

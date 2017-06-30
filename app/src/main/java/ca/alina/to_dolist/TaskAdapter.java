@@ -13,6 +13,8 @@ import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import org.greenrobot.greendao.async.AsyncOperation;
+import org.greenrobot.greendao.async.AsyncOperationListener;
 import org.joda.time.LocalDate;
 
 import java.text.DateFormat;
@@ -34,7 +36,6 @@ class TaskAdapter extends ArrayAdapter<Task> {
     static final String SMART_LIST = "smart";
     private DatabaseHelper helper;
     private DateFormat timeFormat;
-    private DateFormat dateFormat;
     private String listType;  // either SMART_LIST or a date
     private DatabaseHelper.TaskQuery query;
 
@@ -51,9 +52,7 @@ class TaskAdapter extends ArrayAdapter<Task> {
 
         helper = DatabaseHelper.getInstance(context);
         timeFormat = android.text.format.DateFormat.getTimeFormat(context.getApplicationContext());
-        dateFormat = android.text.format.DateFormat.getLongDateFormat(context.getApplicationContext());
-        dateFormat = new SimpleDateFormat(context.getResources().getString(R.string.list_date_format),
-                context.getResources().getConfiguration().locale);
+        //dateFormat = DateHelper.getOneLineFormat(context);
 
         this.listType = listType;
         if (listType.equals(SMART_LIST)) {
@@ -103,7 +102,6 @@ class TaskAdapter extends ArrayAdapter<Task> {
 
             Date taskStartTime = task.getStartTime();
             viewHolder.time.setText(timeFormat.format(taskStartTime));
-            viewHolder.date.setText(dateFormat.format(taskStartTime));
 
             // hide date depending on 1) list type 2) previous item = same day
             if (!listType.equals(SMART_LIST) || (position > 0 && DateHelper.sameDay(
@@ -114,6 +112,8 @@ class TaskAdapter extends ArrayAdapter<Task> {
             }
             else {
                 viewHolder.date.setVisibility(View.VISIBLE);
+                //viewHolder.date.setText(dateFormat.format(taskStartTime));
+                viewHolder.date.setText(DateHelper.formatOneLineDate(getContext(), taskStartTime));
             }
 
             // set CHECKBOX for done/not done state
@@ -176,12 +176,14 @@ class TaskAdapter extends ArrayAdapter<Task> {
             }
 
             // tell helper to delete these items
-            helper.deleteSelectedTasks(tasks);
-
-            // refresh list
-            // TODO do this as a callback from deleteSelectedTasks instead
-            //refreshView();
-            refresh();
+            //helper.deleteSelectedTasks(tasks);
+            helper.deleteSelectedTasks(tasks, new AsyncOperationListener() {
+                @Override
+                public void onAsyncOperationCompleted(AsyncOperation operation) {
+                    // TODO check if operation failed
+                    refresh();
+                }
+            });
         }
     }
 
