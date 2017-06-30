@@ -112,6 +112,9 @@ class TaskAdapter extends ArrayAdapter<Task> {
             ))) {
                 viewHolder.date.setVisibility(View.GONE);
             }
+            else {
+                viewHolder.date.setVisibility(View.VISIBLE);
+            }
 
             // set CHECKBOX for done/not done state
             viewHolder.done.setChecked(task.getIsDone());

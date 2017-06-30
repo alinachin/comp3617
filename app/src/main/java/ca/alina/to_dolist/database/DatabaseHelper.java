@@ -38,8 +38,6 @@ public class DatabaseHelper implements AsyncOperationListener {
     // TODO move to builder class
     private int taskLengthLastUsed;  // initialize to "default task length" from settings
 
-    // TODO public static final queries
-
     private DatabaseHelper(final Context context) {
         final DaoMaster daoMaster;
 
@@ -145,11 +143,12 @@ public class DatabaseHelper implements AsyncOperationListener {
 
         QueryBuilder<Task> qb = taskDao.queryBuilder();
         WhereCondition notDone = TaskDao.Properties.IsDone.eq(false);
+        WhereCondition notHidden = TaskDao.Properties.IsHidden.eq(false);
         WhereCondition expired = TaskDao.Properties.StartTime.lt(startToday);
         WhereCondition isToday = TaskDao.Properties.StartTime.between(startToday, endToday);
         WhereCondition todayOrAfter = TaskDao.Properties.StartTime.ge(startToday);
 
-        qb.whereOr(qb.and(notDone, expired), todayOrAfter).limit(LIMIT_SMART_LIST);
+        qb.whereOr(qb.and(notHidden, expired), todayOrAfter).limit(LIMIT_SMART_LIST);
         qb.orderAsc(TaskDao.Properties.StartTime);
 
         return new TaskQuery(qb.build());
