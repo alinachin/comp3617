@@ -9,14 +9,13 @@
     tools:showIn="@layout/activity_main"
     tools:context="ca.alina.to_dolist.MainActivity">
 
-    <include
-        android:id="@+id/smartDateDisplay"
-        layout="@layout/big_date"
+    <ca.alina.to_dolist.BigDatePopupButton
+        android:id="@+id/bigDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="0dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
         app:layout_constraintStart_toStartOf="parent" />
 
     <ListView
@@ -24,26 +23,13 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="0dp"
-        android:layout_marginTop="8dp"
         android:paddingTop="@dimen/list_top_padding"
         android:paddingBottom="@dimen/list_bottom_padding_last"
         android:clipToPadding="false"
+        app:layout_constraintTop_toBottomOf="@id/bigDate"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/smartDateDisplay"
-        app:layout_constraintBottom_toBottomOf="parent"/>
-
-    <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="+3 Seconds"
-        android:onClick="testNotification"
-        android:layout_marginRight="8dp"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/smartList"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="8dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:layout_editor_absoluteX="0dp" />
 
 </android.support.constraint.ConstraintLayout>

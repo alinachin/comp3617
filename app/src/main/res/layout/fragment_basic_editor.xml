@@ -5,17 +5,14 @@
     android:layout_height="match_parent"
     tools:context="ca.alina.to_dolist.BasicEditor">
 
-    <!-- TODO dummy date picker -->
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="216dp"
-        android:layout_height="62dp"
-        android:layout_marginTop="8dp"
-        android:text="PLACEHOLDER: Date Picker"
-        app:layout_constraintLeft_toLeftOf="parent"
+    <ca.alina.to_dolist.BigDatePopupButton
+        android:id="@+id/datePopup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginStart="8dp" />
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintLeft_toLeftOf="parent" />
 
     <EditText
         android:id="@+id/taskName"
@@ -28,7 +25,7 @@
         android:inputType="text|textAutoCorrect"
         android:textSize="17sp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
+        app:layout_constraintTop_toBottomOf="@id/datePopup"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintHorizontal_bias="0.0">
         <requestFocus />

@@ -3,7 +3,6 @@ package ca.alina.to_dolist.database;
 import android.content.Context;
 import android.util.Log;
 
-import org.greenrobot.greendao.async.AsyncOperation;
 import org.greenrobot.greendao.async.AsyncOperationListener;
 import org.greenrobot.greendao.async.AsyncSession;
 import org.greenrobot.greendao.query.Query;
@@ -19,10 +18,6 @@ import ca.alina.to_dolist.database.schema.DaoSession;
 import ca.alina.to_dolist.database.schema.Task;
 import ca.alina.to_dolist.database.schema.TaskDao;
 
-
-/**
- * Created by Alina on 2017-06-20.
- */
 
 public class DatabaseHelper {
 
@@ -81,9 +76,9 @@ public class DatabaseHelper {
 
     public void updateTask(Task task) {
         try {
-            taskDao.update(task);  // TODO use asyncSession
+            taskDao.update(task);
         }
-        catch (Exception e) {
+        catch (Exception e) {  // TODO check
             e.printStackTrace();
         }
     }
@@ -104,16 +99,13 @@ public class DatabaseHelper {
 
     public TaskQuery getSmartList() {
         final Date startToday;
-        final Date endToday;
 
         startToday = DateHelper.getBeginningOfDay(new LocalDate());
-        endToday = DateHelper.getEndOfDay(new LocalDate());
 
         QueryBuilder<Task> qb = taskDao.queryBuilder();
-        WhereCondition notDone = TaskDao.Properties.IsDone.eq(false);
+//        WhereCondition notDone = TaskDao.Properties.IsDone.eq(false);
         WhereCondition notHidden = TaskDao.Properties.IsHidden.eq(false);
         WhereCondition expired = TaskDao.Properties.StartTime.lt(startToday);
-        WhereCondition isToday = TaskDao.Properties.StartTime.between(startToday, endToday);
         WhereCondition todayOrAfter = TaskDao.Properties.StartTime.ge(startToday);
 
         qb.whereOr(qb.and(notHidden, expired), todayOrAfter).limit(LIMIT_SMART_LIST);
