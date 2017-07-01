@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -81,7 +82,7 @@ class TaskAdapter extends ArrayAdapter<Task> {
             convertView = vi.inflate(R.layout.list_item_2line, null);
 
             viewHolder = new ViewHolder();
-            viewHolder.date = (TextView) convertView.findViewById(R.id.listItemDate);
+            viewHolder.date = (Button) convertView.findViewById(R.id.listItemDate);
             viewHolder.time = (TextView) convertView.findViewById(R.id.listItemTime);
             viewHolder.taskName = (TextView) convertView.findViewById(android.R.id.text1);
             viewHolder.done = (CheckBox) convertView.findViewById(R.id.listItemDoneCheckBox);
@@ -114,6 +115,7 @@ class TaskAdapter extends ArrayAdapter<Task> {
                 viewHolder.date.setVisibility(View.VISIBLE);
                 //viewHolder.date.setText(dateFormat.format(taskStartTime));
                 viewHolder.date.setText(DateHelper.formatOneLineDate(getContext(), taskStartTime));
+                // TODO set click handler
             }
 
             // set CHECKBOX for done/not done state
@@ -188,7 +190,7 @@ class TaskAdapter extends ArrayAdapter<Task> {
     }
 
     static class ViewHolder {
-        TextView date;
+        Button date;
         TextView time;
         TextView taskName;
         CheckBox done;

@@ -4,7 +4,7 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="datePrimary">#000000</color>
-    <color name="dateLight">#555555</color>
+    <color name="dateLight">#03a9f4</color>
     <color name="listBgSelected">#FF0000</color>
     <color name="listBgDone">#E0E0E0</color>
     <color name="listBgSelectedDone">#AA0000</color>

@@ -21,7 +21,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_chevron_right_black_24dp"
-        android:contentDescription="@string/task_edit_btn_caption" />
+        android:contentDescription="@string/task_edit_btn_caption"
+        tools:layout_editor_absoluteX="304dp" />
 
     <android.support.constraint.Guideline
         android:id="@+id/guidelineLeft"
@@ -33,17 +34,20 @@
         tools:layout_editor_absoluteX="16dp" />
 
     <!-- adapter hides this if unneeded -->
-    <TextView
+    <Button
         android:id="@+id/listItemDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="Tuesday May 14"
+        android:background="@android:color/transparent"
+        android:paddingBottom="8dp"
+        android:paddingEnd="16dp"
+        android:paddingStart="16dp"
+        android:paddingTop="8dp"
         android:textSize="@dimen/date_oneline_size"
+        android:textColor="@color/dateLight"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="0dp"
-        android:layout_marginBottom="4dp" />
+        tools:text="Tuesday, May 14" />
     <!-- TODO adjust margin, add underline? -->
 
     <TextView
@@ -70,11 +74,12 @@
         android:id="@android:id/text1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/task_name_left_margin"
         android:textSize="@dimen/task_name_size"
         app:layout_constraintBaseline_toBaselineOf="@+id/listItemDoneCheckBox"
         app:layout_constraintEnd_toStartOf="@+id/listItemEditBtn"
         app:layout_constraintStart_toStartOf="parent"
-        tools:text="make pasta" />
+        android:layout_marginStart="@dimen/task_name_left_margin"
+        tools:text="make pasta"
+        tools:layout_editor_absoluteX="72dp" />
 
 </android.support.constraint.ConstraintLayout>
