@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.greenrobot.greendao.async.AsyncOperation;
 import org.greenrobot.greendao.async.AsyncOperationListener;
@@ -115,7 +116,13 @@ class TaskAdapter extends ArrayAdapter<Task> {
                 viewHolder.date.setVisibility(View.VISIBLE);
                 //viewHolder.date.setText(dateFormat.format(taskStartTime));
                 viewHolder.date.setText(DateHelper.formatOneLineDate(getContext(), taskStartTime));
-                // TODO set click handler
+                // set click handler
+                viewHolder.date.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(getContext(), "Go to list of tasks for [date]", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
             // set CHECKBOX for done/not done state
