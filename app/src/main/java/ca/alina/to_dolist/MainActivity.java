@@ -18,6 +18,7 @@ import android.widget.CheckBox;
 import android.widget.ListView;
 
 import ca.alina.to_dolist.database.DatabaseHelper;
+import ca.alina.to_dolist.database.DateHelper;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -25,7 +26,6 @@ public class MainActivity extends AppCompatActivity {
     static final int CREATE_TASK_REQUEST = 1;
     static final int EDIT_TASK_REQUEST = 2;
 
-    private DatabaseHelper helper;
     private ListView listView;
     private TaskAdapter adapter;
 
@@ -38,7 +38,11 @@ public class MainActivity extends AppCompatActivity {
 
         PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
 
-        helper = DatabaseHelper.getInstance(this);
+        // TODO use savedInstanceState to save the type of list (smart or day)
+
+        // set BigDate
+        BigDatePopupButton bigDate = (BigDatePopupButton) findViewById(R.id.bigDate);
+        bigDate.setDate(DateHelper.now());
 
         adapter = new TaskAdapter(
                 MainActivity.this,

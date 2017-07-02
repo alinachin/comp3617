@@ -9,11 +9,20 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.joda.time.LocalDate;
+
+import java.util.Date;
+
+import ca.alina.to_dolist.database.DateHelper;
+
 /** Displays a Date. When clicked, displays a DatePicker dialog to edit the date.
  */
 
 class BigDatePopupButton extends FrameLayout {
     // DatePickerDialog
+
+    private LocalDate mDate;
+    private ViewHolder viewHolder;
 
     public BigDatePopupButton(Context context) {
         super(context);
@@ -33,13 +42,18 @@ class BigDatePopupButton extends FrameLayout {
         LayoutInflater mInflater = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mInflater.inflate(R.layout.big_date, this, true);
 
+        // fill in viewholder
+        viewHolder = new ViewHolder();
+        viewHolder.date = (TextView) findViewById(R.id.date);
+        viewHolder.dayOfWeek = (TextView) findViewById(R.id.dayOfWeek);
+        viewHolder.relativeDate = (TextView) findViewById(R.id.relativeDay);
+
         Typeface weekFont = Typeface.createFromAsset(
                 getContext().getAssets(),
                 "font/Roboto-Light.ttf");
-        TextView weekField = (TextView) findViewById(R.id.dayOfWeek);
-        weekField.setTypeface(weekFont);
+        viewHolder.dayOfWeek.setTypeface(weekFont);
 
-        // set focusable needed?
+        // set click handler
         this.setFocusable(true);
         this.setOnClickListener(new OnClickListener() {
             @Override
@@ -48,6 +62,34 @@ class BigDatePopupButton extends FrameLayout {
                 Toast.makeText(getContext(), "Date picker here", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    public void setDate(Date date) {
+        mDate = new LocalDate(date);
+
+        // set display fields
+        viewHolder.dayOfWeek.setText(mDate.dayOfWeek().getAsText());
+
+        viewHolder.date.setText(DateHelper.formatDayMonth(getContext(), date));
+
+        String relativeDate = DateHelper.formatDateRelativeToNow(mDate);
+        if (!relativeDate.isEmpty()) {
+            viewHolder.relativeDate.setText("(" + relativeDate + ")");
+        }
+        else {
+            viewHolder.relativeDate.setText(relativeDate);
+        }
+    }
+
+    public Date getDate() {
+        return mDate.toDate();
+    }
+
+
+    private static class ViewHolder {
+        TextView dayOfWeek;
+        TextView date;
+        TextView relativeDate;
     }
 
 }

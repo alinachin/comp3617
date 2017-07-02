@@ -11,6 +11,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
 
+import org.joda.time.LocalDate;
+
+import java.util.Calendar;
+
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -20,8 +26,7 @@ import android.widget.DatePicker;
 public class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
     private static final String ARG_DATE = "date";
 
-    private long mDate;
-
+    private Calendar mCalendar;
 
     public DatePickerFragment() {
         // Required empty public constructor
@@ -45,8 +50,11 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (getArguments() != null) {
-            mDate = getArguments().getLong(ARG_DATE);
+            long date = getArguments().getLong(ARG_DATE);
+            mCalendar = Calendar.getInstance();
+            mCalendar.setTimeInMillis(date);
         }
     }
 
@@ -60,9 +68,13 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        // TODO get arguments & convert into year-month-day integers
+        int year, month, day;
 
-        return new DatePickerDialog(getActivity(), this, 0, 0, 0);
+        year = mCalendar.get(Calendar.YEAR);
+        month = mCalendar.get(Calendar.MONTH);
+        day = mCalendar.get(Calendar.DAY_OF_MONTH);
+
+        return new DatePickerDialog(getActivity(), this, year, month, day);
     }
 
     @Override

@@ -78,14 +78,26 @@ public final class DateHelper {
         return resultDt.toDate();
     }
 
-    public static String formatDateRelativeToNow(final Date date) {
-        // e.g. "Today" or "" if nothing fits
-        return DateUtils.getRelativeTimeSpanString(
+    public static String formatDayMonth(Context context, Date date) {
+        return DateUtils.formatDateTime(
+                context,
                 date.getTime(),
+                DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_NO_YEAR
+        );
+    }
+
+    public static String formatDateRelativeToNow(LocalDate date) {
+        // e.g. "Today" or "" if nothing fits
+        String desc;
+
+        desc = DateUtils.getRelativeTimeSpanString(
+                date.toDate().getTime(),
                 now().getTime(),
                 DateUtils.DAY_IN_MILLIS,
                 0
         ).toString();
+
+        return desc;
     }
 
     public static String formatOneLineDate(Context context, final Date date) {
