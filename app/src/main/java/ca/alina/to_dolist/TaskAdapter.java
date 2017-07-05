@@ -158,6 +158,13 @@ class TaskAdapter extends ArrayAdapter<Task> {
         return convertView;
     }
 
+    CheckBox getCheckBoxAt(int position) {
+        // get item at position
+        // get tag
+        // get viewholder.done
+        return null;
+    }
+
     /** Refreshes the this adapter's contents */
     void refresh() {
         // rerun query

@@ -16,6 +16,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import ca.alina.to_dolist.database.DatabaseHelper;
 import ca.alina.to_dolist.database.DateHelper;
@@ -56,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 CheckBox checkBox =  ((TaskAdapter.ViewHolder) view.getTag()).done;
+                // todo use adapter instead, make viewholder private class
                 checkBox.toggle();
                 adapter.toggleDone(position, checkBox.isChecked());
             }
@@ -148,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == CREATE_TASK_REQUEST) {
             if (resultCode == RESULT_OK) {
                 // task was created
-                //Toast.makeText(this, "Refreshing task list", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Refreshing task list", Toast.LENGTH_SHORT).show();
                 //refreshView();
                 adapter.refresh();
             }
@@ -156,6 +158,7 @@ public class MainActivity extends AppCompatActivity {
         else if (requestCode == EDIT_TASK_REQUEST) {
             if (resultCode == RESULT_OK) {
                 // task may have been edited, deleted etc.
+                Toast.makeText(this, "Refreshing task list", Toast.LENGTH_SHORT).show();
                 //refreshView();
                 adapter.refresh();
             }

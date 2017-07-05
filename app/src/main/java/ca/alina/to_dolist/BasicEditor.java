@@ -16,8 +16,6 @@ import java.util.Date;
 import ca.alina.to_dolist.database.DateHelper;
 import ca.alina.to_dolist.database.schema.Task;
 
-import static ca.alina.to_dolist.R.id.bigDate;
-
 
 ///**
 // * A simple {@link Fragment} subclass.
@@ -34,10 +32,8 @@ public class BasicEditor extends Fragment {
 
     private Task task;
     private View rootView;
-    private EditText nameField;
-    private EditText startTimeField;
     private DateFormat timeFormat;
-    private BigDatePopupButton bigDate;
+    private ViewHolder fields;
 
     public BasicEditor() {
         // Required empty public constructor
@@ -56,9 +52,10 @@ public class BasicEditor extends Fragment {
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_basic_editor, container, false);
 
-        bigDate = (BigDatePopupButton) rootView.findViewById(R.id.bigDate);
-        nameField = (EditText) rootView.findViewById(R.id.taskName);
-        startTimeField = (EditText) rootView.findViewById(R.id.startTime);
+        fields = new ViewHolder();
+        fields.bigDate = (BigDatePopupButton) rootView.findViewById(R.id.bigDate);
+        fields.name = (EditText) rootView.findViewById(R.id.taskName);
+        fields.startTime = (EditText) rootView.findViewById(R.id.startTime);
 
         // set click handler for startTimeIconButton
         return rootView;
@@ -80,21 +77,21 @@ public class BasicEditor extends Fragment {
 
     private void getTaskName() {
         // todo validate
-        task.setName(nameField.getText().toString());
+        task.setName(fields.name.getText().toString());
     }
 
     private void getTaskStartTime() {
         try {
             Date date = task.getStartTime();
-            date = DateHelper.changeDate(date, bigDate.getDate());
+            date = DateHelper.changeDate(date, fields.bigDate.getDate());
             date = DateHelper.changeTime(date,
-                    timeFormat.parse(startTimeField.getText().toString()));
+                    timeFormat.parse(fields.startTime.getText().toString()));
 
             task.setStartTime(date);
         }
         catch (java.text.ParseException e) {
             // todo throw new error?
-            Log.e("BasicEditor", "invalid start time in startTimeField");
+            Log.e("BasicEditor", "invalid start time in startTime");
             task.setStartTime(DateHelper.autoStartTime());
         }
     }
@@ -110,10 +107,10 @@ public class BasicEditor extends Fragment {
         // mirror getTask() - populate fields
         if (rootView != null) {
 //            Log.e("BasicEditor", "begin populate()");
-            bigDate.setDate(task.getStartTime());
+            fields.bigDate.setDate(task.getStartTime());
 
-            nameField.setText(task.getName());
-            startTimeField.setText(timeFormat.format(task.getStartTime()));
+            fields.name.setText(task.getName());
+            fields.startTime.setText(timeFormat.format(task.getStartTime()));
         }
     }
 
@@ -157,6 +154,12 @@ public class BasicEditor extends Fragment {
     public void onDetach() {
         super.onDetach();
 //        mListener = null;
+    }
+
+    private static class ViewHolder {
+        EditText name;
+        EditText startTime;
+        BigDatePopupButton bigDate;
     }
 
 
