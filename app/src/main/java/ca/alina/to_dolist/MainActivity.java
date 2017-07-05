@@ -28,6 +28,8 @@ public class MainActivity extends AppCompatActivity implements BigDatePopupButto
     static final int CREATE_TASK_REQUEST = 1;
     static final int EDIT_TASK_REQUEST = 2;
 
+    static final String LIST_TYPE_KEY = "listType";
+
     private ListView listView;
     private TaskAdapter adapter;
 
@@ -40,16 +42,19 @@ public class MainActivity extends AppCompatActivity implements BigDatePopupButto
 
         PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
 
-        // TODO use savedInstanceState to save the type of list (smart or day)
+        // use savedInstanceState to save the type of list (smart or day)
+        String listType;
+        if (savedInstanceState != null) {
+            listType = savedInstanceState.getString(LIST_TYPE_KEY, TaskAdapter.SMART_LIST);
+        }
+        else {
+            listType = TaskAdapter.SMART_LIST;
+        }
+        adapter = new TaskAdapter(MainActivity.this, R.layout.list_item_2line, listType);
 
         // set BigDate
         BigDatePopupButton bigDate = (BigDatePopupButton) findViewById(R.id.bigDate);
         bigDate.setDate(DateHelper.now());
-
-        adapter = new TaskAdapter(
-                MainActivity.this,
-                R.layout.list_item_2line,
-                TaskAdapter.SMART_LIST);
 
         listView = (ListView) findViewById(R.id.smartList);
         listView.setAdapter(adapter);
@@ -133,6 +138,13 @@ public class MainActivity extends AppCompatActivity implements BigDatePopupButto
         });
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putString(LIST_TYPE_KEY, adapter.getListType());
+
+        super.onSaveInstanceState(outState);
+    }
+
     /** Opens the task editor.
      * No task is added unless the user explicitly clicks Save. When the task editor is closed,
      * IF a new task was successfully added, this screen should refresh the list of tasks.
@@ -195,5 +207,6 @@ public class MainActivity extends AppCompatActivity implements BigDatePopupButto
     public void onBigDateChanged(Date date) {
         Toast.makeText(this, "BigDate changed", Toast.LENGTH_SHORT).show();
 
+        // TODO change listType (swap out adapter)
     }
 }

@@ -167,6 +167,10 @@ class TaskAdapter extends ArrayAdapter<Task> {
         return null;
     }
 
+    String getListType() {
+        return listType;
+    }
+
     /** Refreshes the this adapter's contents */
     void refresh() {
         // rerun query
