@@ -46,6 +46,8 @@
     <string name="action_backup">Backup now</string>
     <string name="startTimeLabel">Starting</string>
     <string name="endTimeLabel">Ending</string>
+    <string name="default_day_of_week">Unknown</string>
+    <string name="default_date">Unknown date</string>
     <plurals name="alert_confirm_multi_delete">
         <item quantity="one">Delete %1$d task?</item>
         <item quantity="other">Delete %1$d tasks?</item>

@@ -150,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == CREATE_TASK_REQUEST) {
             if (resultCode == RESULT_OK) {
                 // task was created
-                Toast.makeText(this, "Refreshing task list", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this, "Refreshing task list", Toast.LENGTH_SHORT).show();
                 //refreshView();
                 adapter.refresh();
             }
@@ -158,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
         else if (requestCode == EDIT_TASK_REQUEST) {
             if (resultCode == RESULT_OK) {
                 // task may have been edited, deleted etc.
-                Toast.makeText(this, "Refreshing task list", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this, "Refreshing task list", Toast.LENGTH_SHORT).show();
                 //refreshView();
                 adapter.refresh();
             }
