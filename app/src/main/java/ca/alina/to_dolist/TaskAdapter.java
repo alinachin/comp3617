@@ -158,10 +158,12 @@ class TaskAdapter extends ArrayAdapter<Task> {
         return convertView;
     }
 
-    CheckBox getCheckBoxAt(int position) {
-        // get item at position
-        // get tag
-        // get viewholder.done
+    CheckBox getCheckBoxAt(View itemView) {
+        Object tag = itemView.getTag();
+        if (tag != null) {
+            return ((ViewHolder) tag).done;
+        }
+
         return null;
     }
 
@@ -203,7 +205,7 @@ class TaskAdapter extends ArrayAdapter<Task> {
         }
     }
 
-    static class ViewHolder {
+    private static class ViewHolder {
         Button date;
         TextView time;
         TextView taskName;

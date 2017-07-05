@@ -18,7 +18,6 @@ import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import ca.alina.to_dolist.database.DatabaseHelper;
 import ca.alina.to_dolist.database.DateHelper;
 
 public class MainActivity extends AppCompatActivity {
@@ -56,8 +55,7 @@ public class MainActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                CheckBox checkBox =  ((TaskAdapter.ViewHolder) view.getTag()).done;
-                // todo use adapter instead, make viewholder private class
+                CheckBox checkBox =  adapter.getCheckBoxAt(view);
                 checkBox.toggle();
                 adapter.toggleDone(position, checkBox.isChecked());
             }
