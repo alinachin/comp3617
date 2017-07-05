@@ -1,16 +1,22 @@
 package ca.alina.to_dolist;
 
+import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.app.DialogFragment;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.DatePicker;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.joda.time.LocalDate;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import ca.alina.to_dolist.database.DateHelper;
@@ -18,8 +24,7 @@ import ca.alina.to_dolist.database.DateHelper;
 /** Displays a Date. When clicked, displays a DatePicker dialog to edit the date.
  */
 
-class BigDatePopupButton extends FrameLayout {
-    // DatePickerDialog
+class BigDatePopupButton extends FrameLayout implements DatePickerDialog.OnDateSetListener {
 
     private LocalDate mDate;
     private ViewHolder viewHolder;
@@ -58,8 +63,19 @@ class BigDatePopupButton extends FrameLayout {
         this.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                // show DatePicker dialog (eventually as custom fragment)
-                Toast.makeText(getContext(), "Date picker here", Toast.LENGTH_SHORT).show();
+                // show DatePicker dialog
+                //Toast.makeText(getContext(), "Date picker here", Toast.LENGTH_SHORT).show();
+                try {
+                    Activity parentActivity = (Activity) getContext();
+                    FragmentManager fragmentManager = parentActivity.getFragmentManager();
+
+                    DatePickerFragment datePicker = DatePickerFragment.newInstance(
+                            mDate.toDate().getTime());
+                    datePicker.show(fragmentManager, "datePicker");
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
@@ -74,15 +90,20 @@ class BigDatePopupButton extends FrameLayout {
 
         String relativeDate = DateHelper.formatDateRelativeToNow(mDate);
         if (!relativeDate.isEmpty()) {
-            viewHolder.relativeDate.setText("(" + relativeDate + ")");
+            relativeDate = "(" + relativeDate + ")";
         }
-        else {
-            viewHolder.relativeDate.setText(relativeDate);
-        }
+        viewHolder.relativeDate.setText(relativeDate);
     }
 
     public Date getDate() {
         return mDate.toDate();
+    }
+
+    @Override
+    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(year, month, dayOfMonth);
+        setDate(calendar.getTime());
     }
 
 

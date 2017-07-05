@@ -9,8 +9,10 @@ import android.text.format.DateUtils;
 import android.util.Log;
 
 import org.joda.time.DateTime;
+import org.joda.time.Duration;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
+import org.joda.time.Period;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -89,6 +91,11 @@ public final class DateHelper {
     public static String formatDateRelativeToNow(LocalDate date) {
         // e.g. "Today" or "" if nothing fits
         String desc;
+
+        Duration duration = new Duration(date.toDateTimeAtCurrentTime(), DateTime.now());
+        if (Math.abs(duration.getStandardDays()) >= 7) {
+            return "";
+        }
 
         desc = DateUtils.getRelativeTimeSpanString(
                 date.toDate().getTime(),

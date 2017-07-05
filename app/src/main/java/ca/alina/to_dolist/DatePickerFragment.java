@@ -1,21 +1,13 @@
 package ca.alina.to_dolist;
 
-
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.DatePicker;
-
-import org.joda.time.LocalDate;
+import android.util.Log;
 
 import java.util.Calendar;
-
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
 
 
 /**
@@ -23,7 +15,7 @@ import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
  * Use the {@link DatePickerFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
+public class DatePickerFragment extends DialogFragment {
     private static final String ARG_DATE = "date";
 
     private Calendar mCalendar;
@@ -74,11 +66,17 @@ public class DatePickerFragment extends DialogFragment implements DatePickerDial
         month = mCalendar.get(Calendar.MONTH);
         day = mCalendar.get(Calendar.DAY_OF_MONTH);
 
-        return new DatePickerDialog(getActivity(), this, year, month, day);
+        try {
+            DatePickerDialog.OnDateSetListener listener;
+            listener = (DatePickerDialog.OnDateSetListener) getActivity().findViewById(R.id.bigDate);
+
+            return new DatePickerDialog(getActivity(), listener, year, month, day);
+        }
+        catch (Exception e) {
+            Log.e("DatePickerFragment", "couldnt attach listener (needs to be R.id.bigDate)");
+            e.printStackTrace();
+            return null;
+        }
     }
 
-    @Override
-    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-
-    }
 }
