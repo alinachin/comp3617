@@ -72,17 +72,31 @@ public final class DateHelper {
         // e.g. "Today" or "" if nothing fits
         String desc;
 
-        Duration duration = new Duration(date.toDateTimeAtStartOfDay(), DateTime.now());
-        if (Math.abs(duration.getStandardDays()) >= 7) {
-            return "";
-        }
+        Duration duration = new Duration(DateTime.now().withTimeAtStartOfDay(), date.toDateTimeAtStartOfDay());
 
-        desc = DateUtils.getRelativeTimeSpanString(
-                date.toDate().getTime(),
-                now().getTime(),
-                DateUtils.DAY_IN_MILLIS,
-                0
-        ).toString();
+        final int FIVE_WEEKS = 35;
+        final int ONE_WEEK = 7;
+
+
+        if (duration.getStandardDays() > FIVE_WEEKS) {
+            desc = "";
+        }
+        else if (duration.getStandardDays() > ONE_WEEK) {
+            desc = DateUtils.getRelativeTimeSpanString(
+                    date.toDate().getTime(),
+                    now().getTime(),
+                    DateUtils.WEEK_IN_MILLIS,
+                    0
+            ).toString().toLowerCase();
+        }
+        else {
+            desc = DateUtils.getRelativeTimeSpanString(
+                    date.toDate().getTime(),
+                    now().getTime(),
+                    DateUtils.DAY_IN_MILLIS,
+                    DateUtils.FORMAT_NUMERIC_DATE
+            ).toString().toLowerCase();
+        }
 
         return desc;
     }
