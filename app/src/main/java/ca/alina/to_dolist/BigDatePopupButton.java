@@ -2,7 +2,6 @@ package ca.alina.to_dolist;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
-import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.graphics.Typeface;
@@ -12,7 +11,6 @@ import android.view.View;
 import android.widget.DatePicker;
 import android.widget.FrameLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.joda.time.LocalDate;
 
@@ -28,10 +26,11 @@ class BigDatePopupButton extends FrameLayout implements DatePickerDialog.OnDateS
 
     private LocalDate mDate;
     private ViewHolder viewHolder;
+    private OnBigDateChangedListener listener;
 
     public BigDatePopupButton(Context context) {
         super(context);
-        inflateLayout();
+        init();
     }
 
     public BigDatePopupButton(Context context, AttributeSet attrs) {
@@ -40,10 +39,10 @@ class BigDatePopupButton extends FrameLayout implements DatePickerDialog.OnDateS
 
     public BigDatePopupButton(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        inflateLayout();
+        init();
     }
 
-    private void inflateLayout() {
+    private void init() {
         LayoutInflater mInflater = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mInflater.inflate(R.layout.big_date, this, true);
 
@@ -64,7 +63,7 @@ class BigDatePopupButton extends FrameLayout implements DatePickerDialog.OnDateS
             @Override
             public void onClick(View v) {
                 // show DatePicker dialog
-                //Toast.makeText(getContext(), "Date picker here", Toast.LENGTH_SHORT).show();
+
                 try {
                     Activity parentActivity = (Activity) getContext();
                     FragmentManager fragmentManager = parentActivity.getFragmentManager();
@@ -78,21 +77,34 @@ class BigDatePopupButton extends FrameLayout implements DatePickerDialog.OnDateS
                 }
             }
         });
+
+        // check for listener in parent
+        if (getContext() instanceof OnBigDateChangedListener) {
+            listener = (OnBigDateChangedListener) getContext();
+        }
     }
 
     public void setDate(Date date) {
-        mDate = new LocalDate(date);
+        LocalDate newDate = new LocalDate(date);
+        if (!newDate.equals(mDate)) {
+            mDate = newDate;
 
-        // set display fields
-        viewHolder.dayOfWeek.setText(mDate.dayOfWeek().getAsText());
+            // set display fields
+            viewHolder.dayOfWeek.setText(mDate.dayOfWeek().getAsText());
 
-        viewHolder.date.setText(DateHelper.formatDayMonth(getContext(), date));
+            viewHolder.date.setText(DateHelper.formatDayMonth(getContext(), date));
 
-        String relativeDate = DateHelper.formatDateRelativeToNow(mDate);
-        if (!relativeDate.isEmpty()) {
-            relativeDate = "(" + relativeDate + ")";
+            String relativeDate = DateHelper.formatDateRelativeToNow(mDate);
+            if (!relativeDate.isEmpty()) {
+                relativeDate = "(" + relativeDate + ")";
+            }
+            viewHolder.relativeDate.setText(relativeDate);
+
+            // notify listener
+            if (listener != null) {
+                listener.onBigDateChanged(date);
+            }
         }
-        viewHolder.relativeDate.setText(relativeDate);
     }
 
     public Date getDate() {
@@ -111,6 +123,10 @@ class BigDatePopupButton extends FrameLayout implements DatePickerDialog.OnDateS
         TextView dayOfWeek;
         TextView date;
         TextView relativeDate;
+    }
+
+    interface OnBigDateChangedListener {
+        void onBigDateChanged(Date date);
     }
 
 }

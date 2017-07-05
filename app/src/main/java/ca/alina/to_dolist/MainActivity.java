@@ -18,9 +18,11 @@ import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.util.Date;
+
 import ca.alina.to_dolist.database.DateHelper;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements BigDatePopupButton.OnBigDateChangedListener {
 
     // request codes for activities e.g. CreateTask
     static final int CREATE_TASK_REQUEST = 1;
@@ -187,5 +189,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBigDateChanged(Date date) {
+        Toast.makeText(this, "BigDate changed", Toast.LENGTH_SHORT).show();
+
     }
 }
