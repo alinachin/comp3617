@@ -143,13 +143,6 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(intent, CREATE_TASK_REQUEST);
     }
 
-    public void testNotification(final View view) {
-        NotificationHelper nHelper = new NotificationHelper(this);
-        NotificationHelper.Params params = new NotificationHelper.Params();
-        params.setName("Task name here");
-        nHelper.scheduleNotification(params, 3000);
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CREATE_TASK_REQUEST) {

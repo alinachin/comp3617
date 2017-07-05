@@ -11,9 +11,12 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import java.text.DateFormat;
+import java.util.Date;
 
 import ca.alina.to_dolist.database.DateHelper;
 import ca.alina.to_dolist.database.schema.Task;
+
+import static ca.alina.to_dolist.R.id.bigDate;
 
 
 ///**
@@ -34,6 +37,7 @@ public class BasicEditor extends Fragment {
     private EditText nameField;
     private EditText startTimeField;
     private DateFormat timeFormat;
+    private BigDatePopupButton bigDate;
 
     public BasicEditor() {
         // Required empty public constructor
@@ -51,6 +55,8 @@ public class BasicEditor extends Fragment {
 
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_basic_editor, container, false);
+
+        bigDate = (BigDatePopupButton) rootView.findViewById(R.id.bigDate);
         nameField = (EditText) rootView.findViewById(R.id.taskName);
         startTimeField = (EditText) rootView.findViewById(R.id.startTime);
 
@@ -64,21 +70,33 @@ public class BasicEditor extends Fragment {
      */
     public Task getTask() {
         if (rootView != null) {
-            task.setName(nameField.getText().toString());
-            try {
-                task.setStartTime(DateHelper.changeTime(
-                        task.getStartTime(),
-                        timeFormat.parse(startTimeField.getText().toString()))
-                );
-            }
-            catch (java.text.ParseException e) {
-                Log.e("BasicEditor", "invalid start time in startTimeField");
-                task.setStartTime(DateHelper.autoStartTime());
-            }
+            getTaskName();
+            getTaskStartTime();
             // if switch is on task.setEndTime() otherwise task.setEndTime(null)
         }
 
         return task;
+    }
+
+    private void getTaskName() {
+        // todo validate
+        task.setName(nameField.getText().toString());
+    }
+
+    private void getTaskStartTime() {
+        try {
+            Date date = task.getStartTime();
+            date = DateHelper.changeDate(date, bigDate.getDate());
+            date = DateHelper.changeTime(date,
+                    timeFormat.parse(startTimeField.getText().toString()));
+
+            task.setStartTime(date);
+        }
+        catch (java.text.ParseException e) {
+            // todo throw new error?
+            Log.e("BasicEditor", "invalid start time in startTimeField");
+            task.setStartTime(DateHelper.autoStartTime());
+        }
     }
 
     public void setTask(final Task task) {
@@ -92,6 +110,7 @@ public class BasicEditor extends Fragment {
         // mirror getTask() - populate fields
         if (rootView != null) {
 //            Log.e("BasicEditor", "begin populate()");
+            bigDate.setDate(task.getStartTime());
 
             nameField.setText(task.getName());
             startTimeField.setText(timeFormat.format(task.getStartTime()));
@@ -113,13 +132,6 @@ public class BasicEditor extends Fragment {
     public void updateEndTimeFromStartTime(final View view) {
         // when startTime loses focus/gets set from TimePicker,
         // update endTime to be [default time period] after startTime
-    }
-
-    private boolean validate() {
-        // nameField must not be empty
-
-
-        return true;
     }
 
 //    public void onButtonPressed(Uri uri) {

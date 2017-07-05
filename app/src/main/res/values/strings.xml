@@ -44,6 +44,8 @@
     <string name="alert_yes">Delete</string>
     <string name="alert_no">Cancel</string>
     <string name="action_backup">Backup now</string>
+    <string name="startTimeLabel">Starting</string>
+    <string name="endTimeLabel">Ending</string>
     <plurals name="alert_confirm_multi_delete">
         <item quantity="one">Delete %1$d task?</item>
         <item quantity="other">Delete %1$d tasks?</item>
