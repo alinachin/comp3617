@@ -52,6 +52,10 @@ public class TimeButtonEditText extends FrameLayout implements TimePickerDialog.
         LayoutInflater mInflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mInflater.inflate(R.layout.time_button_edittext, this, true);
 
+        setFocusable(true);
+        setFocusableInTouchMode(true);
+        setClickable(true);
+
         timeFormat = android.text.format.DateFormat.getTimeFormat(getContext().getApplicationContext());
 
         viewHolder = new ViewHolder();

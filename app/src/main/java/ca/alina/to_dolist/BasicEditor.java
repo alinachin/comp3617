@@ -10,7 +10,6 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.sql.Time;
 import java.util.Date;
 
 import ca.alina.to_dolist.database.DateHelper;
@@ -44,9 +43,9 @@ public class BasicEditor extends Fragment {
         fields.endTime = (TimeButtonEditText) rootView.findViewById(R.id.endTimeCompound);
 
         final TimeButtonEditText endTime = fields.endTime;
-        CompoundButton toggleEndTime = (CompoundButton) rootView.findViewById(R.id.endTimeSwitch);
+        fields.endTimeSwitch = (CompoundButton) rootView.findViewById(R.id.endTimeSwitch);
 
-        toggleEndTime.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        fields.endTimeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 endTime.setEnabled(isChecked);
@@ -65,7 +64,7 @@ public class BasicEditor extends Fragment {
         if (rootView != null) {
             getTaskName();
             getTaskStartTime();
-            // todo if switch is on task.setEndTime() otherwise task.setEndTime(null)
+
         }
 
         return task;
@@ -82,6 +81,13 @@ public class BasicEditor extends Fragment {
         date = DateHelper.changeTime(date, fields.startTime.getTime());
 
         task.setStartTime(date);
+    }
+
+    private void getTaskEndTime() {
+        // todo if switch is on task.setEndTime() otherwise task.setEndTime(null)
+
+        // if end time is before start time, it means the next day (confirmation dialog?)
+
     }
 
     public void setTask(final Task task) {
@@ -101,6 +107,15 @@ public class BasicEditor extends Fragment {
 
             // TODO handle endtime
             // todo set switch depending on task having an endTime
+            if (task.getEndTime() != null) {
+                fields.endTime.setTime(task.getEndTime());
+                fields.endTime.setEnabled(true);
+                fields.endTimeSwitch.setChecked(true);
+            }
+            else {
+                fields.endTime.setEnabled(false);
+                fields.endTimeSwitch.setChecked(false);
+            }
         }
     }
 
@@ -133,6 +148,7 @@ public class BasicEditor extends Fragment {
         TimeButtonEditText startTime;
         TimeButtonEditText endTime;
         BigDatePopupButton bigDate;
+        CompoundButton endTimeSwitch;
     }
 
 }
