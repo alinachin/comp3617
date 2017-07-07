@@ -1,38 +1,25 @@
 package ca.alina.to_dolist;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.text.DateFormat;
+import java.sql.Time;
 import java.util.Date;
 
 import ca.alina.to_dolist.database.DateHelper;
 import ca.alina.to_dolist.database.schema.Task;
 
-
-///**
-// * A simple {@link Fragment} subclass.
-// * Activities that contain this fragment must implement the
-// * {@link BasicEditor.OnFragmentInteractionListener} interface
-// * to handle interaction events.
-// */
 public class BasicEditor extends Fragment {
-
-//    static final String TASK_PID_KEY = "taskPid";
-//    static final String EXISTING_TASK_KEY = "editorType";
-
-//    private OnFragmentInteractionListener mListener;
 
     private Task task;
     private View rootView;
-    private DateFormat timeFormat;
     private ViewHolder fields;
 
     public BasicEditor() {
@@ -47,17 +34,26 @@ public class BasicEditor extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-//        Log.e("BasicEditor", "begin onCreateView()");
-
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_basic_editor, container, false);
 
         fields = new ViewHolder();
         fields.bigDate = (BigDatePopupButton) rootView.findViewById(R.id.bigDate);
         fields.name = (EditText) rootView.findViewById(R.id.taskName);
-        fields.startTime = (EditText) rootView.findViewById(R.id.startTime);
+        fields.startTime = (TimeButtonEditText) rootView.findViewById(R.id.startTimeCompound);
+        fields.endTime = (TimeButtonEditText) rootView.findViewById(R.id.endTimeCompound);
 
-        // set click handler for startTimeIconButton
+        final TimeButtonEditText endTime = fields.endTime;
+        CompoundButton toggleEndTime = (CompoundButton) rootView.findViewById(R.id.endTimeSwitch);
+
+        toggleEndTime.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                endTime.setEnabled(isChecked);
+            }
+        });
+
+        
         return rootView;
     }
 
@@ -69,7 +65,7 @@ public class BasicEditor extends Fragment {
         if (rootView != null) {
             getTaskName();
             getTaskStartTime();
-            // if switch is on task.setEndTime() otherwise task.setEndTime(null)
+            // todo if switch is on task.setEndTime() otherwise task.setEndTime(null)
         }
 
         return task;
@@ -81,19 +77,11 @@ public class BasicEditor extends Fragment {
     }
 
     private void getTaskStartTime() {
-        try {
-            Date date = task.getStartTime();
-            date = DateHelper.changeDate(date, fields.bigDate.getDate());
-            date = DateHelper.changeTime(date,
-                    timeFormat.parse(fields.startTime.getText().toString()));
+        Date date = task.getStartTime();
+        date = DateHelper.changeDate(date, fields.bigDate.getDate());
+        date = DateHelper.changeTime(date, fields.startTime.getTime());
 
-            task.setStartTime(date);
-        }
-        catch (java.text.ParseException e) {
-            // todo throw new error?
-            Log.e("BasicEditor", "invalid start time in startTime");
-            task.setStartTime(DateHelper.autoStartTime());
-        }
+        task.setStartTime(date);
     }
 
     public void setTask(final Task task) {
@@ -106,11 +94,13 @@ public class BasicEditor extends Fragment {
     protected void populate() {
         // mirror getTask() - populate fields
         if (rootView != null) {
-//            Log.e("BasicEditor", "begin populate()");
             fields.bigDate.setDate(task.getStartTime());
 
             fields.name.setText(task.getName());
-            fields.startTime.setText(timeFormat.format(task.getStartTime()));
+            fields.startTime.setTime(task.getStartTime());
+
+            // TODO handle endtime
+            // todo set switch depending on task having an endTime
         }
     }
 
@@ -131,24 +121,6 @@ public class BasicEditor extends Fragment {
         // update endTime to be [default time period] after startTime
     }
 
-//    public void onButtonPressed(Uri uri) {
-//        if (mListener != null) {
-//            mListener.onFragmentInteraction(uri);
-//        }
-//    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-        timeFormat = android.text.format.DateFormat.getTimeFormat(context.getApplicationContext());
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
-    }
 
     @Override
     public void onDetach() {
@@ -158,23 +130,9 @@ public class BasicEditor extends Fragment {
 
     private static class ViewHolder {
         EditText name;
-        EditText startTime;
+        TimeButtonEditText startTime;
+        TimeButtonEditText endTime;
         BigDatePopupButton bigDate;
     }
 
-
-//    /**
-//     * This interface must be implemented by activities that contain this
-//     * fragment to allow an interaction in this fragment to be communicated
-//     * to the activity and potentially other fragments contained in that
-//     * activity.
-//     * <p>
-//     * See the Android Training lesson <a href=
-//     * "http://developer.android.com/training/basics/fragments/communicating.html"
-//     * >Communicating with Other Fragments</a> for more information.
-//     */
-//    public interface OnFragmentInteractionListener {
-//        // TODO: Update argument type and name
-//        void onFragmentInteraction(Uri uri);
-//    }
 }

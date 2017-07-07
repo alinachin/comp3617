@@ -31,96 +31,61 @@
         <requestFocus />
     </EditText>
 
-    <EditText
-        android:id="@+id/startTime"
-        android:layout_width="96sp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:ems="10"
-        android:inputType="time"
-        app:layout_constraintTop_toBottomOf="@+id/taskName"
-        tools:text="9:00 AM"
-        android:layout_marginEnd="0dp"
-        app:layout_constraintEnd_toEndOf="@+id/endTime" />
-
-    <ImageButton
-        android:id="@+id/startTimeIconButton"
+    <Switch
+        android:id="@+id/endTimeSwitch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         android:layout_marginEnd="16dp"
-        android:background="@android:color/transparent"
-        app:layout_constraintBottom_toBottomOf="@id/startTime"
-        app:layout_constraintEnd_toStartOf="@id/startTime"
-        app:srcCompat="@drawable/ic_access_time_black_24dp"
-        android:contentDescription="Select starting time"/>
+        android:checked="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/endTimeCompound"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/endTimeCompound"
+        android:layout_marginBottom="8dp"
+        android:layout_marginRight="16dp"
+        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintRight_toRightOf="parent" />
 
     <TextView
         android:id="@+id/startTimeLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:layout_marginStart="32dp"
-        android:labelFor="@id/startTime"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="8dp"
         android:text="@string/startTimeLabel"
         android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="@id/startTime"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/startTimeIconButton"
-        android:layout_marginEnd="8dp" />
+        app:layout_constraintBottom_toBottomOf="@+id/startTimeCompound"
+        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/startTimeCompound" />
+
+    <ca.alina.to_dolist.TimeButtonEditText
+        android:id="@+id/startTimeCompound"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/taskName"
+        android:layout_marginRight="0dp"
+        app:layout_constraintRight_toRightOf="@+id/endTimeCompound" />
 
     <TextView
         android:id="@+id/endTimeLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:labelFor="@id/endTime"
+        android:layout_marginLeft="0dp"
         android:text="@string/endTimeLabel"
         android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="@+id/endTime"
-        android:layout_marginStart="0dp"
-        app:layout_constraintStart_toStartOf="@+id/startTimeLabel" />
+        app:layout_constraintBottom_toBottomOf="@+id/endTimeCompound"
+        app:layout_constraintLeft_toLeftOf="@+id/startTimeLabel" />
 
-
-
-    <Switch
-        android:id="@+id/endTimeSwitch"
+    <ca.alina.to_dolist.TimeButtonEditText
+        android:id="@+id/endTimeCompound"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="16dp"
-        android:checked="false"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/startTime"
-        tools:layout_editor_absoluteX="305dp" />
-
-    <EditText
-        android:id="@+id/endTime"
-        android:enabled="false"
-        android:layout_width="96sp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:ems="10"
-        android:inputType="time"
-        app:layout_constraintEnd_toStartOf="@+id/endTimeSwitch"
-        tools:text="9:30 AM"
-        tools:layout_editor_absoluteX="193dp"
-        app:layout_constraintTop_toTopOf="@+id/endTimeSwitch"
-        android:layout_marginTop="0dp"
-        app:layout_constraintBottom_toBottomOf="@+id/endTimeSwitch"
-        android:layout_marginBottom="0dp" />
-
-    <ImageButton
-        android:id="@+id/endTimeIconButton"
-        android:tint="@color/tintBtnDisabled"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="16dp"
-        android:background="@android:color/transparent"
-        app:layout_constraintBottom_toBottomOf="@+id/endTime"
-        app:layout_constraintEnd_toStartOf="@+id/endTime"
-        app:srcCompat="@drawable/ic_access_time_black_24dp"
-        android:contentDescription="Select ending time" />
-
+        app:layout_constraintRight_toLeftOf="@+id/endTimeSwitch"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/startTimeCompound" />
 </android.support.constraint.ConstraintLayout>
