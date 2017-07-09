@@ -1,5 +1,6 @@
 package ca.alina.to_dolist;
 
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +10,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 public class DropboxWebActivity extends AppCompatActivity {
 
@@ -18,24 +20,29 @@ public class DropboxWebActivity extends AppCompatActivity {
     private static final String paramRedirectUri = "http://localhost/myapp/dropbox";
     private static final String urlGoogleSignIn = "https://accounts.google.com/signin/oauth";
 
+    static final String PREF_FILE = "oauth";
+    static final String PREF_APP_KEY = "account";
+    static final String PREF_USER_KEY = "uid";
+
+    private WebView mWebView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dropbox_web);
 
-        WebView webView = (WebView) findViewById(R.id.webView);
+        mWebView = (WebView) findViewById(R.id.webView);
 
         // display loading progress
         final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
-        webView.setWebViewClient(new WebViewClient() {
+        mWebView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView webView1, String uri) {
                 if (uri != null) {
                     if (uri.startsWith(paramRedirectUri)) {
-                        // retrieve token
-                        retrieveToken(uri);
                         webView1.setVisibility(WebView.GONE);
+                        authSuccess(uri);
                         return true;
                     }
                     if (uri.startsWith(urlGoogleSignIn)) {
@@ -58,7 +65,9 @@ public class DropboxWebActivity extends AppCompatActivity {
                 // Stop spinner or progressbar
                 progressBar.setVisibility(ProgressBar.GONE);
 
-                // todo process error?
+                // process error?
+                Toast.makeText(view.getContext(), "Couldn't load Dropbox sign-in", Toast.LENGTH_LONG).show();
+                finish();
             }
 
             @Override
@@ -69,14 +78,14 @@ public class DropboxWebActivity extends AppCompatActivity {
             }
         });
 
-        webView.setWebChromeClient(new WebChromeClient() {
+        mWebView.setWebChromeClient(new WebChromeClient() {
             @Override
             public void onProgressChanged(WebView view, int progress) {
                 progressBar.setProgress(progress);
             }
         });
 
-        webView.getSettings().setJavaScriptEnabled(true);
+        mWebView.getSettings().setJavaScriptEnabled(true);
 
         // for CSRF protection
         //String paramState;
@@ -86,13 +95,57 @@ public class DropboxWebActivity extends AppCompatActivity {
         builder.appendQueryParameter("client_id", paramClientId);
         builder.appendQueryParameter("redirect_uri", paramRedirectUri);
         String newUri = builder.build().toString();
-        Log.i("DropboxWebActivity", newUri);
+        //Log.i("DropboxWebActivity", newUri);
 
 
-        webView.loadUrl(newUri);
+        mWebView.loadUrl(newUri);
+    }
+
+    private void authSuccess(String uri) {
+        // retrieve token
+        retrieveToken(uri);
+
+        // TODO start backup service
+
+        finish();
     }
 
     private void retrieveToken(String uri) {
-        Log.i("DropboxWebActivity", "redirect: " + uri);
+        //Log.i("DropboxWebActivity", "redirect: " + uri);
+
+        // TODO get account_id, access_token (decode?) & save both somewhere
+        // check for error param
+
+        SharedPreferences.Editor editor = getSharedPreferences(PREF_FILE, MODE_PRIVATE).edit();
+
+        Uri parsedUri = Uri.parse(uri);
+        String fragment = parsedUri.getFragment();
+        //Log.e("DropboxWebActivity", fragment);
+
+        String[] params = fragment.split("&");
+        for (String s : params) {
+            if (s.startsWith("account_id")) {
+                String uid = s.substring(s.indexOf('=') + 1);
+                //Log.e("DropboxWebActivity", uid);
+                editor.putString(PREF_USER_KEY, uid);
+            }
+            else if (s.startsWith("access_token")) {
+                String appId = s.substring(s.indexOf('=') + 1);
+                //Log.e("DropboxWebActivity", appId);
+                editor.putString(PREF_APP_KEY, appId);
+            }
+        }
+
+        editor.apply();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mWebView.isFocused() && mWebView.canGoBack()) {
+            mWebView.goBack();
+        } else {
+            super.onBackPressed();
+            finish();
+        }
     }
 }

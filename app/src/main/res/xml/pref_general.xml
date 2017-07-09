@@ -9,8 +9,7 @@
         android:positiveButtonText="@null"
         android:title="@string/pref_task_length_display" />
 
-    <!-- TODO extend DialogFragment -->
-    <!-- should open Google Sign-In activity -->
+    <!-- TODO change -->
     <EditTextPreference
         android:defaultValue="@string/pref_backup_default_value"
         android:key="backup"

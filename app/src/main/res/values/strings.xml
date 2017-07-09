@@ -13,7 +13,7 @@
     <string name="pref_title_vibrate">Vibrate</string>
 
     <string name="pref_task_length_display">Default task length</string>
-    <string name="pref_backup_display">Backup to Google Drive</string>
+    <string name="pref_backup_display">Backup to Dropbox</string>
     <string name="pref_backup_default_value">None</string>
     <string name="editor_save">Done</string>
 
