@@ -199,6 +199,11 @@ public class MainActivity extends AppCompatActivity implements BigDatePopupButto
             startActivity(intent);
             return true;
         }
+        if (id == R.id.action_backup) {
+            Intent intent = new Intent(this, DropboxWebActivity.class);
+            startActivity(intent);
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
     }

@@ -3,6 +3,7 @@
     package="ca.alina.to_dolist">
 
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="false"
@@ -49,10 +50,13 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="ca.alina.to_dolist.MainActivity" />
         </activity>
+
         <receiver
             android:name=".NotificationPublisher"
             android:enabled="true"
-            android:exported="false"></receiver>
+            android:exported="false" />
+
+        <activity android:name=".DropboxWebActivity"></activity>
     </application>
 
 </manifest>
