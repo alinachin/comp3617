@@ -13,6 +13,7 @@ import org.joda.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
+import ca.alina.to_dolist.MainActivity;
 import ca.alina.to_dolist.database.schema.DaoMaster;
 import ca.alina.to_dolist.database.schema.DaoSession;
 import ca.alina.to_dolist.database.schema.Task;
@@ -20,6 +21,7 @@ import ca.alina.to_dolist.database.schema.TaskDao;
 
 
 public class DatabaseHelper {
+    public static final String DB_NAME = "tasks.db";
 
     private static DatabaseHelper instance; // singleton
 
@@ -32,7 +34,7 @@ public class DatabaseHelper {
     private int taskLengthLastUsed;  // initialize to "default task length" from settings
 
     private DatabaseHelper(final Context context) {
-        DaoMaster.DevOpenHelper mHelper = new DaoMaster.DevOpenHelper(context, "tasks.db", null);
+        DaoMaster.DevOpenHelper mHelper = new DaoMaster.DevOpenHelper(context, DB_NAME, null);
         DaoMaster daoMaster = new DaoMaster(mHelper.getWritableDatabase());
 
         daoSession = daoMaster.newSession();

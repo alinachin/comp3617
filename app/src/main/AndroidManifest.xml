@@ -56,7 +56,8 @@
             android:enabled="true"
             android:exported="false" />
 
-        <activity android:name=".DropboxWebActivity"></activity>
+        <activity android:name=".DropboxWebActivity" />
+
     </application>
 
 </manifest>
