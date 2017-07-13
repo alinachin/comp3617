@@ -71,6 +71,9 @@ public class MainActivity extends AppCompatActivity implements BigDatePopupButto
         bigDate.setDate(DateHelper.now());
 
         listView = (ListView) findViewById(R.id.smartList);
+        // TODO add empty view to content_main.xml
+        // link to download from backup?
+        //listView.setEmptyView();
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
