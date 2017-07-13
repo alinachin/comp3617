@@ -196,7 +196,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             // updated to reflect the new value, per the Android Design
             // guidelines.
             bindPreferenceSummaryToValue(findPreference("task_length"));
-            bindPreferenceSummaryToValue(findPreference("backup"));
             bindPreferenceSummaryToValue(findPreference("notifications_ringtone"));
 
         }
@@ -220,7 +219,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             addPreferencesFromResource(R.xml.pref_general);
 
             bindPreferenceSummaryToValue(findPreference("task_length"));
-            bindPreferenceSummaryToValue(findPreference("backup"));
             bindPreferenceSummaryToValue(findPreference("notifications_ringtone"));
         }
     }

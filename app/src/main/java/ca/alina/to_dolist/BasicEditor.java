@@ -20,6 +20,7 @@ public class BasicEditor extends Fragment {
     private Task task;
     private View rootView;
     private ViewHolder fields;
+    private Date suggestedEndTime;  // todo also put in savedInstanceState?
 
     public BasicEditor() {
         // Required empty public constructor
@@ -64,7 +65,7 @@ public class BasicEditor extends Fragment {
         if (rootView != null) {
             getTaskName();
             getTaskStartTime();
-
+            getTaskEndTime();
         }
 
         return task;
@@ -72,7 +73,8 @@ public class BasicEditor extends Fragment {
 
     private void getTaskName() {
         // todo validate
-        task.setName(fields.name.getText().toString());
+        String name = fields.name.getText().toString();
+        task.setName(name);
     }
 
     private void getTaskStartTime() {
@@ -84,10 +86,23 @@ public class BasicEditor extends Fragment {
     }
 
     private void getTaskEndTime() {
-        // todo if switch is on task.setEndTime() otherwise task.setEndTime(null)
+        if (fields.endTimeSwitch.isChecked()) {
+            // use (mandatory) starting time as a reference
+            Date startTime = task.getStartTime();
+            Date endTime = DateHelper.changeTime(startTime, fields.endTime.getTime());
 
-        // if end time is before start time, it means the next day (confirmation dialog?)
+            // if end time is before start time, it means the next day (confirmation dialog?)
+            if (endTime.before(startTime)) {
+                endTime = DateHelper.addOneDay(endTime);
 
+                // todo check if plausible?
+            }
+
+            task.setEndTime(endTime);
+        }
+        else {
+            task.setEndTime(null);
+        }
     }
 
     public void setTask(final Task task) {
@@ -105,8 +120,6 @@ public class BasicEditor extends Fragment {
             fields.name.setText(task.getName());
             fields.startTime.setTime(task.getStartTime());
 
-            // TODO handle endtime
-            // todo set switch depending on task having an endTime
             if (task.getEndTime() != null) {
                 fields.endTime.setTime(task.getEndTime());
                 fields.endTime.setEnabled(true);
@@ -136,12 +149,6 @@ public class BasicEditor extends Fragment {
         // update endTime to be [default time period] after startTime
     }
 
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-//        mListener = null;
-    }
 
     private static class ViewHolder {
         EditText name;

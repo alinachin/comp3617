@@ -116,10 +116,10 @@ public class DatabaseHelper {
         return new TaskQuery(qb.build());
     }
 
-    public void deleteSelectedTasks(final List<Task> tasks) {
-        //Log.e("DatabaseHelper", "deleting selected tasks");
-        taskDao.deleteInTx(tasks);  // blocking version
-    }
+//    public void deleteSelectedTasks(final List<Task> tasks) {
+//        //Log.e("DatabaseHelper", "deleting selected tasks");
+//        taskDao.deleteInTx(tasks);  // blocking version
+//    }
 
     public void deleteTask(Task task) {
         taskDao.delete(task);
@@ -132,14 +132,13 @@ public class DatabaseHelper {
         session.deleteInTx(Task.class, tasks);
     }
 
-    // TODO remove
-    public List<Task> debugGetAllTasks() {
-        return taskDao.loadAll();
-    }
-
-    public void debugDeleteAll() {
-        taskDao.deleteAll();
-    }
+//    public List<Task> debugGetAllTasks() {
+//        return taskDao.loadAll();
+//    }
+//
+//    public void debugDeleteAll() {
+//        taskDao.deleteAll();
+//    }
 
     public Task getTask(long taskId) {
         return taskDao.load(taskId);

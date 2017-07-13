@@ -18,22 +18,22 @@
     <string name="editor_save">Done</string>
 
     <string-array name="pref_task_length_titles">
+        <item>None</item>
         <item>15 minutes</item>
         <item>30 minutes</item>
         <item>45 minutes</item>
         <item>1 hour</item>
         <item>1.5 hours</item>
         <item>2 hours</item>
-        <item>None</item>
     </string-array>
     <string-array name="pref_task_length_values">
+        <item>-1</item>
         <item>15</item>
         <item>30</item>
         <item>45</item>
         <item>60</item>
         <item>90</item>
         <item>120</item>
-        <item>-1</item>
     </string-array>
 
     <string name="title_activity_create_task"></string>
@@ -48,6 +48,7 @@
     <string name="endTimeLabel">Ending</string>
     <string name="default_day_of_week">Unknown</string>
     <string name="default_date">Unknown date</string>
+    <string name="context_delete_title">Delete</string>
     <plurals name="alert_confirm_multi_delete">
         <item quantity="one">Delete %1$d task?</item>
         <item quantity="other">Delete %1$d tasks?</item>

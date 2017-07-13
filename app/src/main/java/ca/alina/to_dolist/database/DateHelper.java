@@ -60,6 +60,13 @@ public final class DateHelper {
         return resultDt.toDate();
     }
 
+    public static Date addOneDay(final Date date) {
+        final DateTime dt = new DateTime(date);
+
+        final DateTime resultDt = dt.plusDays(1);
+        return resultDt.toDate();
+    }
+
     public static String formatDayMonth(Context context, Date date) {
         return DateUtils.formatDateTime(
                 context,

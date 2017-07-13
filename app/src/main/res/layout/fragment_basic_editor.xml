@@ -11,8 +11,8 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="8dp"
-        android:layout_marginLeft="0dp"
-        app:layout_constraintLeft_toLeftOf="parent" />
+        android:layout_marginStart="0dp"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <EditText
         android:id="@+id/taskName"
@@ -25,8 +25,8 @@
         android:inputType="text|textAutoCorrect"
         android:textSize="17sp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/bigDate"
         app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/bigDate"
         app:layout_constraintHorizontal_bias="0.0">
         <requestFocus />
     </EditText>
@@ -35,57 +35,57 @@
         android:id="@+id/endTimeSwitch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
         android:checked="false"
         app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="16dp"
         app:layout_constraintTop_toTopOf="@+id/endTimeCompound"
         android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="@+id/endTimeCompound"
-        android:layout_marginBottom="8dp"
-        android:layout_marginRight="16dp"
-        app:layout_constraintVertical_bias="0.0"
-        app:layout_constraintRight_toRightOf="parent" />
+        android:layout_marginBottom="8dp" />
 
     <TextView
         android:id="@+id/startTimeLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:layout_marginLeft="24dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginEnd="16dp"
         android:text="@string/startTimeLabel"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="@+id/startTimeCompound"
-        app:layout_constraintHorizontal_bias="0.494"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/startTimeCompound" />
+        app:layout_constraintEnd_toStartOf="@+id/startTimeCompound"
+        app:layout_constraintTop_toTopOf="@+id/startTimeCompound"
+        tools:layout_editor_absoluteX="72dp"
+        android:layout_marginTop="8dp" />
 
     <ca.alina.to_dolist.TimeButtonEditText
         android:id="@+id/startTimeCompound"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintTop_toBottomOf="@+id/taskName"
-        android:layout_marginRight="0dp"
-        app:layout_constraintRight_toRightOf="@+id/endTimeCompound" />
+        android:layout_marginEnd="0dp"
+        app:layout_constraintEnd_toEndOf="@+id/endTimeCompound" />
 
     <TextView
         android:id="@+id/endTimeLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:layout_marginLeft="0dp"
+        android:layout_marginStart="0dp"
         android:text="@string/endTimeLabel"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="@+id/endTimeCompound"
-        app:layout_constraintLeft_toLeftOf="@+id/startTimeLabel" />
+        app:layout_constraintStart_toStartOf="@+id/startTimeLabel"
+        app:layout_constraintTop_toTopOf="@+id/endTimeCompound"
+        tools:layout_editor_absoluteX="80dp"
+        android:layout_marginTop="8dp" />
 
     <ca.alina.to_dolist.TimeButtonEditText
         android:id="@+id/endTimeCompound"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintRight_toLeftOf="@+id/endTimeSwitch"
-        android:layout_marginRight="16dp"
+        app:layout_constraintEnd_toStartOf="@+id/endTimeSwitch"
+        android:layout_marginEnd="16dp"
         android:layout_marginTop="8dp"
         app:layout_constraintTop_toBottomOf="@+id/startTimeCompound" />
 </android.support.constraint.ConstraintLayout>

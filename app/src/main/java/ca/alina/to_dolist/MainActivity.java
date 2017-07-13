@@ -200,8 +200,6 @@ public class MainActivity extends AppCompatActivity implements BigDatePopupButto
             return true;
         }
         if (id == R.id.action_backup) {
-            // TODO check if user needs to be logged in again
-
             Intent intent = new Intent(this, DropboxWebActivity.class);
             startActivity(intent);
             return true;

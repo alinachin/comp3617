@@ -192,7 +192,7 @@ class TaskAdapter extends ArrayAdapter<Task> {
             List<Task> tasks = new LinkedList<Task>();
             for (int i=0; i<positions.size(); i++) {
                 if (positions.valueAt(i)) {
-                    Task item = (Task) getItem(positions.keyAt(i));
+                    Task item = getItem(positions.keyAt(i));
                     tasks.add(item);
                 }
             }
