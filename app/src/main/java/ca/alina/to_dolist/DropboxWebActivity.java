@@ -1,12 +1,16 @@
 package ca.alina.to_dolist;
 
+import android.annotation.TargetApi;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceError;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
@@ -60,6 +64,27 @@ public class DropboxWebActivity extends AppCompatActivity {
                 return false;
             }
 
+            @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    if (request != null) {
+                        Uri uri = request.getUrl();
+                        if (uri.toString().startsWith(paramRedirectUri)) {
+                            saveToken(uri.toString());
+
+                            setResult(RESULT_OK);
+                            finish();
+                            return true;
+                        }
+                        if (uri.toString().startsWith(urlGoogleSignIn)) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
@@ -76,6 +101,20 @@ public class DropboxWebActivity extends AppCompatActivity {
                 // process error?
                 Toast.makeText(view.getContext(), "Couldn't load Dropbox sign-in", Toast.LENGTH_LONG).show();
                 finish();
+            }
+
+            @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+            @Override
+            public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    // Show error
+                    // Stop spinner or progressbar
+                    progressBar.setVisibility(ProgressBar.GONE);
+
+                    // process error?
+                    Toast.makeText(view.getContext(), "Couldn't load Dropbox sign-in", Toast.LENGTH_LONG).show();
+                    finish();
+                }
             }
 
             @Override
