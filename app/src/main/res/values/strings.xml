@@ -36,8 +36,8 @@
         <item>120</item>
     </string-array>
 
-    <string name="title_activity_create_task"></string>
-    <string name="title_activity_edit_task"></string>
+    <string name="title_activity_create_task">Create task</string>
+    <string name="title_activity_edit_task">Edit task</string>
 
     <string name="editor_delete">Delete</string>
     <string name="alert_confirm_delete">Delete this task?</string>
