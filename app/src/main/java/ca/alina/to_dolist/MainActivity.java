@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.MenuInflater;
 import android.view.View;
@@ -18,15 +19,28 @@ import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Ion;
+import com.koushikdutta.ion.Response;
+
+import java.io.File;
+import java.net.UnknownHostException;
 import java.util.Date;
 
+import ca.alina.to_dolist.database.DatabaseHelper;
 import ca.alina.to_dolist.database.DateHelper;
+
+import static ca.alina.to_dolist.DropboxWebActivity.PREF_FILE;
+import static ca.alina.to_dolist.DropboxWebActivity.PREF_SESSION_KEY;
 
 public class MainActivity extends AppCompatActivity implements BigDatePopupButton.OnBigDateChangedListener {
 
     // request codes for activities e.g. CreateTask
     static final int CREATE_TASK_REQUEST = 1;
     static final int EDIT_TASK_REQUEST = 2;
+    static final int BACKUP_WEB_LOGIN_REQUEST = 3;
 
     static final String LIST_TYPE_KEY = "listType";
 
@@ -159,20 +173,16 @@ public class MainActivity extends AppCompatActivity implements BigDatePopupButto
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == CREATE_TASK_REQUEST) {
+        if (requestCode == CREATE_TASK_REQUEST || requestCode == EDIT_TASK_REQUEST) {
             if (resultCode == RESULT_OK) {
-                // task was created
-                //Toast.makeText(this, "Refreshing task list", Toast.LENGTH_SHORT).show();
-                //refreshView();
+                // task was created or edited/deleted
                 adapter.refresh();
             }
         }
-        else if (requestCode == EDIT_TASK_REQUEST) {
+        else if (requestCode == BACKUP_WEB_LOGIN_REQUEST) {
             if (resultCode == RESULT_OK) {
-                // task may have been edited, deleted etc.
-                //Toast.makeText(this, "Refreshing task list", Toast.LENGTH_SHORT).show();
-                //refreshView();
-                adapter.refresh();
+                // login succeeded
+                uploadBackup();
             }
         }
     }
@@ -200,8 +210,9 @@ public class MainActivity extends AppCompatActivity implements BigDatePopupButto
             return true;
         }
         if (id == R.id.action_backup) {
-            Intent intent = new Intent(this, DropboxWebActivity.class);
-            startActivity(intent);
+//            Intent intent = new Intent(this, DropboxWebActivity.class);
+//            startActivity(intent);
+            actionBackup();
             return true;
         }
 
@@ -213,5 +224,86 @@ public class MainActivity extends AppCompatActivity implements BigDatePopupButto
         Toast.makeText(this, "BigDate changed", Toast.LENGTH_SHORT).show();
 
         // TODO change listType (swap out adapter)
+    }
+
+    private void actionBackup() {
+        String token = getSharedPreferences(PREF_FILE, MODE_PRIVATE)
+                .getString(PREF_SESSION_KEY, "");
+        if (token.isEmpty()) {
+            //webLogin();
+            Intent intent = new Intent(this, DropboxWebActivity.class);
+            startActivityForResult(intent, BACKUP_WEB_LOGIN_REQUEST);
+        }
+        else {
+            uploadBackup();
+        }
+    }
+
+    private void uploadBackup() {
+        String filePath = "/" + DropboxWebActivity.DROPBOX_FILENAME;
+
+        File dbFileHandle = getDatabasePath(DatabaseHelper.DB_NAME);
+
+        String token = getSharedPreferences(PREF_FILE, MODE_PRIVATE)
+                .getString(PREF_SESSION_KEY, "");
+        //Log.e("MainActivity", "token " + token);
+
+        JsonObject obj = new JsonObject();
+        obj.addProperty("path", filePath);
+        obj.addProperty("mode", "overwrite");
+        obj.addProperty("mute", true);
+        String paramString = new Gson().toJson(obj);
+        //Log.e("MainActivity", paramString);
+
+        Ion.with(this)
+                .load(DropboxWebActivity.API_UPLOAD)
+                .addHeader("Authorization", "Bearer " + token)
+                .addHeader("Content-Type", "application/octet-stream")
+                .addHeader("Dropbox-API-Arg", paramString)
+                .setFileBody(dbFileHandle)
+                .asJsonObject()
+                .withResponse()
+                .setCallback(new FutureCallback<Response<JsonObject>>() {
+                    @Override
+                    public void onCompleted(Exception e, Response<JsonObject> result) {
+                        if (e != null) {
+                            Log.e("MainActivity", e.getMessage());
+                            e.printStackTrace();
+                            if (e instanceof UnknownHostException) {
+                                Toast.makeText(MainActivity.this, "Backup failed - no Internet connection", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                        else {
+                            if (result.getHeaders().code() != 200) {
+                                Log.e("MainActivity",
+                                        Integer.toString(result.getHeaders().code())
+                                                + " " + result.getHeaders().message());
+                                if (result.getResult() != null) {
+                                    Log.e("MainActivity", result.getResult().toString());
+                                }
+
+                                if (result.getHeaders().code() == 401) {
+                                    reauthBackup();
+                                }
+                            }
+                            else if (result.getResult() != null) {
+                                Log.d("MainActivity", result.getResult().toString());
+
+                                // do something w/ success result?
+                                if (result.getResult().get("error") == null) {
+                                    Toast.makeText(MainActivity.this, "Backup successful", Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        }
+                    }
+                });
+
+    }
+
+    private void reauthBackup() {
+        // show dialog asking to re-login now?
+
+        Intent intent = new Intent(this, DropboxWebActivity.class);
+        startActivityForResult(intent, BACKUP_WEB_LOGIN_REQUEST);
     }
 }
