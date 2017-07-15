@@ -369,13 +369,13 @@ public class MainActivity extends AppCompatActivity implements BigDatePopupButto
                                 Log.e("MainActivity",
                                         Integer.toString(result.getHeaders().code())
                                                 + " " + result.getHeaders().message());
-                                if (result.getResult() != null) {
-                                    Log.e("MainActivity", result.getResult().toString());
-                                }
 
                                 if (result.getHeaders().code() == 401) {
                                     Intent intent = new Intent(MainActivity.this, DropboxWebActivity.class);
                                     startActivityForResult(intent, RESTORE_WEB_LOGIN_REQUEST);
+                                }
+                                else if (result.getHeaders().code() == 409) {
+                                    Toast.makeText(MainActivity.this, "Backup not found", Toast.LENGTH_LONG).show();
                                 }
                                 else {
                                     Toast.makeText(MainActivity.this, "Sync failed - Dropbox issue", Toast.LENGTH_LONG).show();
@@ -395,6 +395,10 @@ public class MainActivity extends AppCompatActivity implements BigDatePopupButto
                                         Toast.makeText(MainActivity.this, "Sync failed", Toast.LENGTH_LONG).show();
                                     }
                                 }
+//                                else {
+//                                    String err = resultJson.get("error").getAsString();
+//                                    Toast.makeText(MainActivity.this, "Sync failed - " + err, Toast.LENGTH_LONG).show();
+//                                }
                             }
                         }
                     }
