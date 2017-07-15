@@ -144,6 +144,10 @@ public class DatabaseHelper {
         return taskDao.load(taskId);
     }
 
+    public boolean isDatabaseEmpty() {
+        return (taskDao.count() == 0);
+    }
+
     /**
      * Holds a prebuilt GreenDAO query
      */

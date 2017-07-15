@@ -21,17 +21,23 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.Response;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.UnknownHostException;
+import java.nio.channels.FileChannel;
 import java.util.Date;
 
 import ca.alina.to_dolist.database.DatabaseHelper;
 import ca.alina.to_dolist.database.DateHelper;
 
+import static android.R.attr.src;
 import static ca.alina.to_dolist.DropboxWebActivity.PREF_FILE;
 import static ca.alina.to_dolist.DropboxWebActivity.PREF_SESSION_KEY;
 
@@ -41,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements BigDatePopupButto
     static final int CREATE_TASK_REQUEST = 1;
     static final int EDIT_TASK_REQUEST = 2;
     static final int BACKUP_WEB_LOGIN_REQUEST = 3;
+    static final int RESTORE_WEB_LOGIN_REQUEST = 4;
 
     static final String LIST_TYPE_KEY = "listType";
 
@@ -188,6 +195,11 @@ public class MainActivity extends AppCompatActivity implements BigDatePopupButto
                 uploadBackup();
             }
         }
+        else if (requestCode == RESTORE_WEB_LOGIN_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                downloadBackup();
+            }
+        }
     }
 
     @Override
@@ -218,6 +230,10 @@ public class MainActivity extends AppCompatActivity implements BigDatePopupButto
             actionBackup();
             return true;
         }
+        if (id == R.id.action_temp_dl) {
+            actionDownloadDb();
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -233,13 +249,18 @@ public class MainActivity extends AppCompatActivity implements BigDatePopupButto
         String token = getSharedPreferences(PREF_FILE, MODE_PRIVATE)
                 .getString(PREF_SESSION_KEY, "");
         if (token.isEmpty()) {
-            //webLogin();
             Intent intent = new Intent(this, DropboxWebActivity.class);
             startActivityForResult(intent, BACKUP_WEB_LOGIN_REQUEST);
         }
         else {
             uploadBackup();
         }
+    }
+
+    private void actionDownloadDb() {
+        // assume this is on reinstall, we don't have a token
+        Intent intent = new Intent(this, DropboxWebActivity.class);
+        startActivityForResult(intent, RESTORE_WEB_LOGIN_REQUEST);
     }
 
     private void uploadBackup() {
@@ -275,6 +296,9 @@ public class MainActivity extends AppCompatActivity implements BigDatePopupButto
                             if (e instanceof UnknownHostException) {
                                 Toast.makeText(MainActivity.this, "Backup failed - no Internet connection", Toast.LENGTH_LONG).show();
                             }
+                            else {
+                                Toast.makeText(MainActivity.this, "Backup failed", Toast.LENGTH_LONG).show();
+                            }
                         }
                         else {
                             if (result.getHeaders().code() != 200) {
@@ -286,7 +310,11 @@ public class MainActivity extends AppCompatActivity implements BigDatePopupButto
                                 }
 
                                 if (result.getHeaders().code() == 401) {
-                                    reauthBackup();
+                                    Intent intent = new Intent(MainActivity.this, DropboxWebActivity.class);
+                                    startActivityForResult(intent, BACKUP_WEB_LOGIN_REQUEST);
+                                }
+                                else {
+                                    Toast.makeText(MainActivity.this, "Backup failed - Dropbox issue", Toast.LENGTH_LONG).show();
                                 }
                             }
                             else if (result.getResult() != null) {
@@ -303,10 +331,130 @@ public class MainActivity extends AppCompatActivity implements BigDatePopupButto
 
     }
 
-    private void reauthBackup() {
-        // show dialog asking to re-login now?
+    private void downloadBackup() {
+        String filePath = "/" + DropboxWebActivity.DROPBOX_FILENAME;
 
-        Intent intent = new Intent(this, DropboxWebActivity.class);
-        startActivityForResult(intent, BACKUP_WEB_LOGIN_REQUEST);
+        final File dbFileHandle = getDatabasePath(DatabaseHelper.DB_NAME);
+        final File cacheHandle = new File(getCacheDir(), DatabaseHelper.DB_NAME);
+
+        String token = getSharedPreferences(PREF_FILE, MODE_PRIVATE)
+                .getString(PREF_SESSION_KEY, "");
+
+        JsonObject obj = new JsonObject();
+        obj.addProperty("path", filePath);
+        String paramString = new Gson().toJson(obj);
+//        Log.e("MainActivity", paramString);
+
+        Ion.with(this)
+                .load(DropboxWebActivity.API_DOWNLOAD)
+                .addHeader("Authorization", "Bearer " + token)
+                .addHeader("Dropbox-API-Arg", paramString)
+                .write(cacheHandle)
+                .withResponse()
+                .setCallback(new FutureCallback<Response<File>>() {
+                    @Override
+                    public void onCompleted(Exception e, Response<File> result) {
+                        if (e != null) {
+                            Log.e("MainActivity", e.getMessage());
+                            e.printStackTrace();
+                            if (e instanceof UnknownHostException) {
+                                Toast.makeText(MainActivity.this, "Sync failed - no Internet connection", Toast.LENGTH_LONG).show();
+                            }
+                            else {
+                                Toast.makeText(MainActivity.this, "Sync failed", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                        else {
+                            if (result.getHeaders().code() != 200) {
+                                Log.e("MainActivity",
+                                        Integer.toString(result.getHeaders().code())
+                                                + " " + result.getHeaders().message());
+                                if (result.getResult() != null) {
+                                    Log.e("MainActivity", result.getResult().toString());
+                                }
+
+                                if (result.getHeaders().code() == 401) {
+                                    Intent intent = new Intent(MainActivity.this, DropboxWebActivity.class);
+                                    startActivityForResult(intent, RESTORE_WEB_LOGIN_REQUEST);
+                                }
+                                else {
+                                    Toast.makeText(MainActivity.this, "Sync failed - Dropbox issue", Toast.LENGTH_LONG).show();
+                                }
+                            }
+                            else if (result.getResult() != null) {
+                                String resultHeaders = result.getHeaders().getHeaders().get("Dropbox-API-Result");
+                                JsonObject resultJson = new JsonParser().parse(resultHeaders).getAsJsonObject();
+
+                                if (resultJson.get("error") == null) {
+                                    Log.d("MainActivity", "download successful");
+                                    try {
+                                        overwriteDb(cacheHandle, dbFileHandle);
+                                    }
+                                    catch (IOException exc) {
+                                        Log.e("MainActivity", "failed to copy downloaded backup to db folder");
+                                        Toast.makeText(MainActivity.this, "Sync failed", Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+
+    }
+
+    // copy cached file to actual db
+    private void overwriteDb(File source, File target) throws IOException {
+        // check that target (actual DB) is empty!
+        if (!DatabaseHelper.getInstance(this).isDatabaseEmpty()) {
+            Log.w("MainActivity", "trying to overwrite db from backup while there's something in it. Cancelling");
+            // delete cached file (source)
+            boolean cacheDeleted = source.delete();
+            if (!cacheDeleted) {
+                Log.d("MainActivity", "failed to delete cached downloaded db, let Android clean it");
+            }
+
+            return;
+        }
+
+        FileInputStream inStream = new FileInputStream(source);
+        try {
+            FileOutputStream outStream = new FileOutputStream(target);
+            try {
+                FileChannel inChannel = inStream.getChannel();
+                FileChannel outChannel = outStream.getChannel();
+                inChannel.transferTo(0, inChannel.size(), outChannel);
+            }
+            catch (IOException e) {
+                throw new IOException("Copy failed");
+            }
+            finally {
+                outStream.close();
+            }
+        }
+        catch (IOException e) {
+            throw new IOException("Copy failed");
+        }
+        finally {
+            try {
+                inStream.close();
+            }
+            catch (Exception e) {
+                // we don't care
+            }
+        }
+
+        // confirm copy succeeded
+        if (target.length() != source.length()) {
+            throw new IOException("Copy failed");
+        }
+
+        // delete cached file (source)
+        boolean cacheDeleted = source.delete();
+        if (!cacheDeleted) {
+            Log.d("MainActivity", "failed to delete cached downloaded db, let Android clean it");
+        }
+
+        adapter.refresh();
+        Toast.makeText(this, "Sync successful", Toast.LENGTH_LONG).show();
     }
 }

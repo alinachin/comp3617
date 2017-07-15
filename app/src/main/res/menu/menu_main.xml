@@ -4,10 +4,14 @@
     tools:context="ca.alina.to_dolist.MainActivity" >
     <item android:id="@+id/action_backup"
         android:title="@string/action_backup"
-        android:orderInCategory="50"
+        app:showAsAction="never" />
+    <item android:id="@+id/action_temp_dl"
+        android:title="Restore backup"
+        app:showAsAction="never" />
+    <item android:id="@+id/action_temp_logout"
+        android:title="Logout from Dropbox"
         app:showAsAction="never" />
     <item android:id="@+id/action_settings"
         android:title="@string/action_settings"
-        android:orderInCategory="100"
         app:showAsAction="never" />
 </menu>

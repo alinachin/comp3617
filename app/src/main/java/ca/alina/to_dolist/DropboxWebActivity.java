@@ -25,6 +25,7 @@ public class DropboxWebActivity extends AppCompatActivity {
     private static final String urlGoogleSignIn = "https://accounts.google.com/signin/oauth";
 
     static final String API_UPLOAD = "https://content.dropboxapi.com/2/files/upload";
+    static final String API_DOWNLOAD = "https://content.dropboxapi.com/2/files/download";
     static final String DROPBOX_FILENAME = "backup.db";
     static final String PREF_FILE = "oauth";
     static final String PREF_SESSION_KEY = "token";
