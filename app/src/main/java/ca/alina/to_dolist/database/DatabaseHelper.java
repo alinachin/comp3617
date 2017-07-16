@@ -16,6 +16,8 @@ import java.util.List;
 import ca.alina.to_dolist.MainActivity;
 import ca.alina.to_dolist.database.schema.DaoMaster;
 import ca.alina.to_dolist.database.schema.DaoSession;
+import ca.alina.to_dolist.database.schema.Notif;
+import ca.alina.to_dolist.database.schema.NotifDao;
 import ca.alina.to_dolist.database.schema.Task;
 import ca.alina.to_dolist.database.schema.TaskDao;
 
@@ -27,11 +29,11 @@ public class DatabaseHelper {
 
     private DaoSession daoSession;
     private TaskDao taskDao;
+    private NotifDao notifDao;
 
     private static final int LIMIT_SMART_LIST = 20;
 
-    // TODO move to builder class
-    private int taskLengthLastUsed;  // initialize to "default task length" from settings
+    //private int taskLengthLastUsed;  // initialize to "default task length" from settings
 
     private DatabaseHelper(final Context context) {
         DaoMaster.DevOpenHelper mHelper = new DaoMaster.DevOpenHelper(context, DB_NAME, null);
@@ -40,9 +42,10 @@ public class DatabaseHelper {
         daoSession = daoMaster.newSession();
 
         taskDao = daoSession.getTaskDao();
+        notifDao = daoSession.getNotifDao();
 
         // debug
-        QueryBuilder.LOG_SQL = true;
+        //QueryBuilder.LOG_SQL = true;
     }
 
     public synchronized static DatabaseHelper getInstance(final Context context) {
@@ -122,11 +125,15 @@ public class DatabaseHelper {
 //    }
 
     public void deleteTask(Task task) {
+        // TODO signal to cancel notifs, then delete Notif objects
+
         taskDao.delete(task);
     }
 
     public void deleteSelectedTasks(final List<Task> tasks, AsyncOperationListener callback) {
-        Log.e("DatabaseHelper", "async deleting selected tasks");
+        Log.d("DatabaseHelper", "async deleting selected tasks");
+        // TODO cancel notifs
+
         AsyncSession session = daoSession.startAsyncSession();
         session.setListenerMainThread(callback);
         session.deleteInTx(Task.class, tasks);
@@ -146,6 +153,79 @@ public class DatabaseHelper {
 
     public boolean isDatabaseEmpty() {
         return (taskDao.count() == 0);
+    }
+
+    public List<Task> getExpiredTasks() {
+        final Date now = new Date();
+
+        Query<Task> query = taskDao.queryBuilder()
+                .where(TaskDao.Properties.StartTime.le(now), TaskDao.Properties.IsDone.eq(false))
+                .build();
+        return query.list();
+    }
+
+
+
+    public int makeStartNotif(Task task) {
+        Log.wtf("DatabaseHelper", "makeStartNotif started");
+        Notif startNotif;
+        long taskId = task.getId();
+        long notifId;
+
+        // see if already exists
+        List<Notif> notifList = task.getNotifs();
+        if (!notifList.isEmpty()) {
+            // reuse
+            startNotif = notifList.get(0);
+            notifId = startNotif.getId();
+            return (int) notifId;
+        }
+        else {
+            startNotif = new Notif();
+            startNotif.setTaskId(taskId);
+
+            try {
+                notifId = notifDao.insert(startNotif);
+                notifList.add(startNotif);
+
+                return (int) notifId;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return -1;
+            }
+        }
+    }
+
+    public int makeEndNotif(Task task) {
+        Log.wtf("DatabaseHelper", "makeEndNotif started");
+        Notif endNotif;
+        long taskId = task.getId();
+        long notifId;
+
+        if (task.getEndTime() == null) {
+            return -1;
+        }
+        // see if already exists
+        List<Notif> notifList = task.getNotifs();
+        if (notifList.size() >= 2) {
+            endNotif = notifList.get(1);
+            notifId = endNotif.getId();
+            return (int) notifId;
+        }
+        else {
+            endNotif = new Notif();
+            endNotif.setTaskId(taskId);
+
+            try {
+                notifId = notifDao.insert(endNotif);
+                notifList.add(endNotif);
+
+                return (int) notifId;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return -1;
+            }
+        }
     }
 
     /**

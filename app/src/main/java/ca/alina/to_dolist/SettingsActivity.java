@@ -36,6 +36,7 @@ import java.util.List;
 public class SettingsActivity extends AppCompatPreferenceActivity {
     static final String KEY_PREF_RINGTONE = "notifications_ringtone";
     static final String KEY_PREF_VIBRATE = "notifications_vibrate";
+    static final String KEY_PREF_NOTIFS_ENABLED = "notifications";
 
     /**
      * A preference value change listener that updates the preference's summary

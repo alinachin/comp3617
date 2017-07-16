@@ -36,6 +36,8 @@ public class TaskDao extends AbstractDao<Task, Long> {
         public final static Property RecurrenceRule = new Property(11, String.class, "recurrenceRule", false, "RECURRENCE_RULE");
     }
 
+    private DaoSession daoSession;
+
 
     public TaskDao(DaoConfig config) {
         super(config);
@@ -43,6 +45,7 @@ public class TaskDao extends AbstractDao<Task, Long> {
     
     public TaskDao(DaoConfig config, DaoSession daoSession) {
         super(config, daoSession);
+        this.daoSession = daoSession;
     }
 
     /** Creates the underlying database table. */
@@ -141,6 +144,12 @@ public class TaskDao extends AbstractDao<Task, Long> {
         if (recurrenceRule != null) {
             stmt.bindString(12, recurrenceRule);
         }
+    }
+
+    @Override
+    protected final void attachEntity(Task entity) {
+        super.attachEntity(entity);
+        entity.__setDaoSession(daoSession);
     }
 
     @Override

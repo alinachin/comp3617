@@ -34,10 +34,11 @@ public class CreateTaskActivity extends AppCompatActivity {
     }
 
     private void addEditor() {
-        // TODO generate suggested values - use builder class?
         Task task = new Task();
         task.setName(""); /* can edit */
         task.setStartTime(DateHelper.autoStartTime()); /* can edit */
+        // TODO
+        //task.setEndTime(DateHelper.autoEndTime(task.getStartTime()));
         task.setNotes("");
         task.setIsAlarm(false);
         task.setIsDone(false);
@@ -63,18 +64,11 @@ public class CreateTaskActivity extends AppCompatActivity {
 
         // use helper class
         NotificationHelper nHelper = new NotificationHelper(this);
-        NotificationHelper.Params params = new NotificationHelper.Params();
-        params.setName(task.getName());
-        nHelper.scheduleNotification(params, 3000);
+        nHelper.scheduleNotification(task);
 
         setResult(RESULT_OK);
         finish();
     }
-
-//    @Override
-//    public void onFragmentInteraction(Uri uri) {
-//        // TODO
-//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

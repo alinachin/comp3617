@@ -13,6 +13,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import java.util.Date;
+
 import ca.alina.to_dolist.database.DatabaseHelper;
 import ca.alina.to_dolist.database.schema.Task;
 
@@ -65,11 +67,20 @@ public class EditTaskActivity extends AppCompatActivity {
     // onStart - refresh values from database?
 
     private void save() {
+        Date startTime, endTime;
+        startTime = task.getStartTime();
+        endTime = task.getEndTime();
+
         // grab values from editor fragment
         task = editor.getTask();
 
-        // TODO use builder/factory class
         helper.updateTask(task);
+
+        // check if start date & end date changed
+        if (startTime != task.getStartTime() || endTime != task.getEndTime()) {
+            NotificationHelper nHelper = new NotificationHelper(this);
+            nHelper.scheduleNotification(task);
+        }
 
         setResult(RESULT_OK);
         finish();
