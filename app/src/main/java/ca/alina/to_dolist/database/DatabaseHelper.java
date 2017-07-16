@@ -160,6 +160,7 @@ public class DatabaseHelper {
 
         Query<Task> query = taskDao.queryBuilder()
                 .where(TaskDao.Properties.StartTime.le(now), TaskDao.Properties.IsDone.eq(false))
+                .orderAsc(TaskDao.Properties.StartTime)
                 .build();
         return query.list();
     }

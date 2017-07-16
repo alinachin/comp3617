@@ -31,14 +31,7 @@ class NotificationHelper {
 
         DatabaseHelper helper = DatabaseHelper.getInstance(mContext);
 
-//        Params params = new Params();
-//        params.setName(task.getName());
-//        params.setId(task.getId());
-//        params.setStartTime(startTime);
-//        params.setEndTime(endTime);
-
         Intent notificationIntent = new Intent(mContext, NotificationPublisher.class);
-//        notificationIntent.putExtra(NotificationPublisher.PARCEL_TASK_PARAMS, params);
         notificationIntent.putExtra(NotificationPublisher.LONG_TASK_ID, taskId);
         notificationIntent.putExtra(NotificationPublisher.BOOL_IS_END_TIME, false);
 
@@ -57,7 +50,6 @@ class NotificationHelper {
 
         if (taskHasEndTime) {
             Intent intent = new Intent(mContext, NotificationPublisher.class);
-            //intent.putExtra(NotificationPublisher.PARCEL_TASK_PARAMS, params);
             intent.putExtra(NotificationPublisher.LONG_TASK_ID, taskId);
             intent.putExtra(NotificationPublisher.BOOL_IS_END_TIME, true);
 
@@ -76,62 +68,4 @@ class NotificationHelper {
         }
     }
 
-//    static class Params implements Parcelable {
-//        private String name;
-//        private long id;
-//        private long startTime;
-//        private long endTime;
-//
-//        private Params(Parcel in) {
-//            name = in.readString();
-//            id = in.readLong();
-//            startTime = in.readLong();
-//            endTime = in.readLong();
-//        }
-//
-//        Params() {
-//
-//        }
-//
-//        public void setName(final String name) {
-//            this.name = name;
-//        }
-//
-//        public void setId(long id) {
-//            this.id = id;
-//        }
-//
-//        public void setStartTime(long startTime) {
-//            this.startTime = startTime;
-//        }
-//
-//        public void setEndTime(long endTime) {
-//            this.endTime = endTime;
-//        }
-//
-//        public static final Creator<Params> CREATOR = new Creator<Params>() {
-//            @Override
-//            public Params createFromParcel(Parcel in) {
-//                return new Params(in);
-//            }
-//
-//            @Override
-//            public Params[] newArray(int size) {
-//                return new Params[size];
-//            }
-//        };
-//
-//        @Override
-//        public int describeContents() {
-//            return 0;
-//        }
-//
-//        @Override
-//        public void writeToParcel(Parcel dest, int flags) {
-//            dest.writeString(name);
-//            dest.writeLong(id);
-//            dest.writeLong(startTime);
-//            dest.writeLong(endTime);
-//        }
-//    }
 }

@@ -58,6 +58,10 @@
 
         <activity android:name=".DropboxWebActivity" />
 
+        <receiver
+            android:name=".MarkDoneReceiver"
+            android:enabled="true"
+            android:exported="false"></receiver>
     </application>
 
 </manifest>

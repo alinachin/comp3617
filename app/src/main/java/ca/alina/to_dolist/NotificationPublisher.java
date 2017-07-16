@@ -19,7 +19,6 @@ import ca.alina.to_dolist.database.DatabaseHelper;
 import ca.alina.to_dolist.database.schema.Task;
 
 public class NotificationPublisher extends BroadcastReceiver {
-    public static final String PARCEL_TASK_PARAMS = "task params";
     public static final String LONG_TASK_ID = "associated task id";
     public static final String BOOL_IS_END_TIME = "task has end time (# of notifs)";
 
@@ -27,6 +26,7 @@ public class NotificationPublisher extends BroadcastReceiver {
     private static final long[] vibratePattern = {0, 500};
 
     private static final int OPEN_APP_ID = 11001;
+    private static final int MARK_DONE_ID = 11002;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -57,6 +57,8 @@ public class NotificationPublisher extends BroadcastReceiver {
         boolean notifOn = sharedPref.getBoolean(SettingsActivity.KEY_PREF_NOTIFS_ENABLED, true);
         String ringtoneString = sharedPref.getString(SettingsActivity.KEY_PREF_RINGTONE, "");
         boolean vibrate = sharedPref.getBoolean(SettingsActivity.KEY_PREF_VIBRATE, false);
+
+        String doneActionText = context.getResources().getString(R.string.notif_action_mark_done);
 
         if (!notifOn) {
             Log.d("NotificationPublisher", "notifications off");
@@ -97,6 +99,15 @@ public class NotificationPublisher extends BroadcastReceiver {
         PendingIntent pendingIntent = PendingIntent.getActivity(
                 context, OPEN_APP_ID, openAppIntent, PendingIntent.FLAG_CANCEL_CURRENT);
         builder.setContentIntent(pendingIntent);
+        builder.setAutoCancel(true);
+
+        Intent markDoneIntent = new Intent(context, MarkDoneReceiver.class);
+        markDoneIntent.setAction(MarkDoneReceiver.ACTION_MARK);
+        markDoneIntent.putExtra(MarkDoneReceiver.EXTRA_TASK_ID, taskId);
+        markDoneIntent.putExtra(MarkDoneReceiver.EXTRA_NOTIF_ID, 0); // todo
+        PendingIntent pendingIntent1 = PendingIntent.getBroadcast(
+                context, MARK_DONE_ID, markDoneIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+        builder.addAction(R.drawable.ic_check_black_32dp, doneActionText, pendingIntent1);
         return builder.build();
     }
 
