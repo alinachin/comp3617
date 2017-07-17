@@ -7,9 +7,12 @@ import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.app.FragmentManager;
+import android.text.InputType;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Checkable;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -28,10 +31,12 @@ import ca.alina.to_dolist.database.DateHelper;
  * Composite View for inputting a time, either by typing into an EditText or using a TimePickerDialog.
  */
 
-public class TimeButtonEditText extends FrameLayout implements TimePickerDialog.OnTimeSetListener {
+public class TimeButtonEditText extends FrameLayout implements TimePickerDialog.OnTimeSetListener, View.OnClickListener {
     private ViewHolder viewHolder;
     private LocalTime mTime;
     private DateFormat timeFormat;
+    private boolean myEnabled;
+    private Checkable checkable = null;
 
     public TimeButtonEditText(@NonNull Context context) {
         super(context);
@@ -55,6 +60,7 @@ public class TimeButtonEditText extends FrameLayout implements TimePickerDialog.
         setFocusable(true);
         setFocusableInTouchMode(true);
         setClickable(true);
+        myEnabled = true;
 
         timeFormat = android.text.format.DateFormat.getTimeFormat(getContext().getApplicationContext());
 
@@ -62,37 +68,10 @@ public class TimeButtonEditText extends FrameLayout implements TimePickerDialog.
         viewHolder.button = (ImageButton) findViewById(R.id.timeIconButton);
         viewHolder.editText = (EditText) findViewById(R.id.timeEditText);
 
-        viewHolder.button.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // parse editText (do not throw error)
-                // if it has a valid time, set
-                long time;
-
-                try {
-                    Date date = timeFormat.parse(viewHolder.editText.getText().toString());
-                    time = date.getTime();
-                }
-                catch (ParseException e) {
-                    time = DateHelper.now().getTime();
-                }
-
-                // show TimePicker dialog
-                try {
-                    Activity parentActivity = (Activity) getContext();
-                    FragmentManager manager = parentActivity.getFragmentManager();
-
-                    TimePickerFragment dialog = TimePickerFragment.newInstance(
-                            getId(),
-                            time
-                    );
-                    dialog.show(manager, "timePicker");
-                }
-                catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+//        viewHolder.editText.setClickable(true);
+//        viewHolder.editText.setOnClickListener(this);
+        viewHolder.button.setOnClickListener(this);
+        this.setOnClickListener(this);
     }
 
     public Date getTime() {
@@ -108,12 +87,17 @@ public class TimeButtonEditText extends FrameLayout implements TimePickerDialog.
         viewHolder.editText.setText(timeString);
     }
 
-
+    @Override
     public void setEnabled(boolean enabled) {
-        viewHolder.button.setEnabled(enabled);
+        myEnabled = enabled;
+        //viewHolder.button.setEnabled(enabled);
+        viewHolder.button.setImageAlpha(enabled ? 255 : 66);  // fake enabling/disabling the button
         viewHolder.editText.setEnabled(enabled);
     }
 
+    public void setAssocCheckable(Checkable view) {
+        checkable = view;
+    }
 
     @Override
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
@@ -122,6 +106,52 @@ public class TimeButtonEditText extends FrameLayout implements TimePickerDialog.
         calendar.set(Calendar.MINUTE, minute);
 
         setTime(calendar.getTime());
+    }
+
+    /**
+     * Modify child views' onclick events
+     * @param v The view that received the click event
+     */
+    @Override
+    public void onClick(View v) {
+        Log.e("TimeButtonEditText", "I'm clicked");
+
+        // do custom onclick stuff
+        if (!myEnabled) {
+            setEnabled(true);
+            if (checkable != null)
+                checkable.setChecked(true);
+        }
+
+        // pass click to child views
+        if (v == this || v == viewHolder.button) {
+            // parse editText (do not throw error)
+            // if it has a valid time, set
+            long time;
+
+            try {
+                Date date = timeFormat.parse(viewHolder.editText.getText().toString());
+                time = date.getTime();
+            }
+            catch (ParseException e) {
+                time = DateHelper.now().getTime();
+            }
+
+            // show TimePicker dialog
+            try {
+                Activity parentActivity = (Activity) getContext();
+                FragmentManager manager = parentActivity.getFragmentManager();
+
+                TimePickerFragment dialog = TimePickerFragment.newInstance(
+                        getId(),
+                        time
+                );
+                dialog.show(manager, "timePicker");
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private static class ViewHolder {

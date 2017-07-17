@@ -2,7 +2,6 @@ package ca.alina.to_dolist;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,6 +51,7 @@ public class BasicEditor extends Fragment {
                 endTime.setEnabled(isChecked);
             }
         });
+        endTime.setAssocCheckable(fields.endTimeSwitch);
 
         
         return rootView;
