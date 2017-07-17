@@ -73,6 +73,9 @@ public class NotificationPublisher extends BroadcastReceiver {
 
         // get task
         task = databaseHelper.getTask(taskId);
+        if (task == null) {
+            return null;
+        }
 
         // check whether there are expired tasks waiting
         expiredTasks = databaseHelper.getExpiredTasks();
@@ -139,7 +142,7 @@ public class NotificationPublisher extends BroadcastReceiver {
         Log.d("NotificationPublisher", "titleTask: " + titleTask.getName() + "\notherTasks: " + otherTasks.toString());
 
         style = new Notification.InboxStyle();
-        style.setBigContentTitle(name + " +" + Integer.toString(nCollapsed) + " more");
+        style.setBigContentTitle(name);
 
         int i;
         for (i = 0; i < 4 && i < otherTasks.size(); i++) {

@@ -125,14 +125,17 @@ public class DatabaseHelper {
 //    }
 
     public void deleteTask(Task task) {
-        // TODO signal to cancel notifs, then delete Notif objects
-
+        // delete notif rows
+        notifDao.deleteInTx(task.getNotifs());
         taskDao.delete(task);
     }
 
     public void deleteSelectedTasks(final List<Task> tasks, AsyncOperationListener callback) {
         Log.d("DatabaseHelper", "async deleting selected tasks");
-        // TODO cancel notifs
+        // cancel notifs
+        for (Task t : tasks) {
+            notifDao.deleteInTx(t.getNotifs());
+        }
 
         AsyncSession session = daoSession.startAsyncSession();
         session.setListenerMainThread(callback);
@@ -168,7 +171,7 @@ public class DatabaseHelper {
 
 
     public int makeStartNotif(Task task) {
-        Log.wtf("DatabaseHelper", "makeStartNotif started");
+        //Log.wtf("DatabaseHelper", "makeStartNotif started");
         Notif startNotif;
         long taskId = task.getId();
         long notifId;
@@ -198,7 +201,7 @@ public class DatabaseHelper {
     }
 
     public int makeEndNotif(Task task) {
-        Log.wtf("DatabaseHelper", "makeEndNotif started");
+        //Log.wtf("DatabaseHelper", "makeEndNotif started");
         Notif endNotif;
         long taskId = task.getId();
         long notifId;
