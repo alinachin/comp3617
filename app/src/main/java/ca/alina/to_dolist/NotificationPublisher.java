@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -17,6 +18,8 @@ import java.util.List;
 
 import ca.alina.to_dolist.database.DatabaseHelper;
 import ca.alina.to_dolist.database.schema.Task;
+
+import static ca.alina.to_dolist.R.menu.context;
 
 public class NotificationPublisher extends BroadcastReceiver {
     public static final String LONG_TASK_ID = "associated task id";
@@ -30,8 +33,7 @@ public class NotificationPublisher extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        NotificationManager notificationManager =
-                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
 
         long taskId = intent.getLongExtra(LONG_TASK_ID, -1);
         boolean isForEndTime = intent.getBooleanExtra(BOOL_IS_END_TIME, false);
@@ -39,13 +41,19 @@ public class NotificationPublisher extends BroadcastReceiver {
         // todo if endtime - generate random id
         // else reuse id
 
-        Notification notification = makeNotif(context, taskId, isForEndTime);
-        if (notification != null) {
-            notificationManager.notify(notificationId, notification); // todo id
-        }
+        // start making the notification object
+        Params params = new Params();
+        params.context = context;
+        params.taskId = taskId;
+        params.isForEndTime = isForEndTime;
+        params.notifId = notificationId;
+
+        //Notification notification = makeNotif(context, taskId, isForEndTime);
+        new MakeNotificationTask().execute(params);
+
     }
 
-    private Notification makeNotif(Context context, long taskId, boolean isEndTime) {
+    private static Notification makeNotif(Context context, long taskId, boolean isEndTime, int notifId) {
         Log.wtf("NotificationPublisher", "makeNotif started");
         // todo separate method for end notif style?
         DatabaseHelper databaseHelper;
@@ -107,14 +115,14 @@ public class NotificationPublisher extends BroadcastReceiver {
         Intent markDoneIntent = new Intent(context, MarkDoneReceiver.class);
         markDoneIntent.setAction(MarkDoneReceiver.ACTION_MARK);
         markDoneIntent.putExtra(MarkDoneReceiver.EXTRA_TASK_ID, taskId);
-        markDoneIntent.putExtra(MarkDoneReceiver.EXTRA_NOTIF_ID, 0); // todo
+        markDoneIntent.putExtra(MarkDoneReceiver.EXTRA_NOTIF_ID, notifId);
         PendingIntent pendingIntent1 = PendingIntent.getBroadcast(
                 context, MARK_DONE_ID, markDoneIntent, PendingIntent.FLAG_CANCEL_CURRENT);
         builder.addAction(R.drawable.ic_check_black_32dp, doneActionText, pendingIntent1);
         return builder.build();
     }
 
-    private Notification.Builder buildSingle(Context context, Task task) {
+    private static Notification.Builder buildSingle(Context context, Task task) {
         String name;
         String timeInterval;
 
@@ -127,7 +135,7 @@ public class NotificationPublisher extends BroadcastReceiver {
                 .setContentText(timeInterval);
     }
 
-    private Notification.Builder buildSummary(Context context, Task titleTask, List<Task> otherTasks) {
+    private static Notification.Builder buildSummary(Context context, Task titleTask, List<Task> otherTasks) {
         Log.d("NotificationPublisher", "starting buildSummary()");
         String name;
         String timeInterval;
@@ -164,7 +172,7 @@ public class NotificationPublisher extends BroadcastReceiver {
                 .setStyle(style);
     }
 
-    private String formatTimeRange(Context context, Task task) {
+    private static String formatTimeRange(Context context, Task task) {
         int flags = DateUtils.FORMAT_SHOW_TIME;
         Date startTime = task.getStartTime();
         Date endTime = task.getEndTime();
@@ -173,6 +181,45 @@ public class NotificationPublisher extends BroadcastReceiver {
         }
         else {
             return DateUtils.formatDateRange(context, startTime.getTime(), startTime.getTime(), flags);
+        }
+    }
+
+    private static class Params {
+        Context context;
+        long taskId;
+        boolean isForEndTime;
+        int notifId;
+    }
+
+    private static class MakeNotificationTask extends AsyncTask<Params, Void, Notification> {
+        Context mContext;
+        int notificationId;
+
+        @Override
+        protected Notification doInBackground(Params... params) {
+            if (params.length < 1) {
+                Log.e("MakeNotificationTask", "missing params passed to async make-notification task");
+                return null;
+            }
+
+            Params mParams = params[0];
+            mContext = mParams.context;
+            notificationId = mParams.notifId;
+
+            return NotificationPublisher.makeNotif(
+                    mParams.context,
+                    mParams.taskId,
+                    mParams.isForEndTime,
+                    mParams.notifId);
+        }
+
+        @Override
+        protected void onPostExecute(Notification notification) {
+            if (notification != null) {
+                NotificationManager notificationManager =
+                        (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+                notificationManager.notify(notificationId, notification);
+            }
         }
     }
 }
