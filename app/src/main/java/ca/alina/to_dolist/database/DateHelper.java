@@ -25,6 +25,14 @@ public final class DateHelper {
         return resultDt.toDate();
     }
 
+    public static Date autoEndTime(Date startTime, int plusMinutes) {
+        if (plusMinutes <= 0) {
+            return null;
+        }
+        DateTime resultDt = new DateTime(startTime).plusMinutes(plusMinutes);
+        return resultDt.toDate();
+    }
+
     public static Date getBeginningOfDay(LocalDate day) {
         DateTime resultDt = day.toDateTimeAtStartOfDay();
         return resultDt.toDate();

@@ -3,6 +3,8 @@ package ca.alina.to_dolist;
 import android.app.Activity;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -31,12 +33,17 @@ import ca.alina.to_dolist.database.DateHelper;
  * Composite View for inputting a time, either by typing into an EditText or using a TimePickerDialog.
  */
 
-public class TimeButtonEditText extends FrameLayout implements TimePickerDialog.OnTimeSetListener, View.OnClickListener {
+public class TimeButtonEditText
+        extends FrameLayout
+        implements TimePickerDialog.OnTimeSetListener,
+        View.OnClickListener {
     private ViewHolder viewHolder;
     private LocalTime mTime;
     private DateFormat timeFormat;
     private boolean myEnabled;
     private Checkable checkable = null;
+    private TimeButtonEditText linkedTimeListener = null;
+    private int defaultTaskLength;
 
     public TimeButtonEditText(@NonNull Context context) {
         super(context);
@@ -68,23 +75,37 @@ public class TimeButtonEditText extends FrameLayout implements TimePickerDialog.
         viewHolder.button = (ImageButton) findViewById(R.id.timeIconButton);
         viewHolder.editText = (EditText) findViewById(R.id.timeEditText);
 
-//        viewHolder.editText.setClickable(true);
-//        viewHolder.editText.setOnClickListener(this);
+        viewHolder.editText.setClickable(true);
+        viewHolder.editText.setOnClickListener(this);
+        viewHolder.editText.setInputType(InputType.TYPE_NULL);
+
         viewHolder.button.setOnClickListener(this);
+
         this.setOnClickListener(this);
+
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        defaultTaskLength = Integer.parseInt(sharedPrefs.getString(SettingsActivity.KEY_PREF_TASK_LENGTH, "-1"));
     }
 
     public Date getTime() {
-        // TODO validation
-
+        // TODO parse editText
         return mTime.toDateTimeToday().toDate();
     }
 
     public void setTime(Date date) {
+        if (date == null) {
+            Log.w("TimeButtonEditText", "setTime(null)");
+            return;
+        }
+
         mTime = new LocalTime(date);
 
         String timeString = timeFormat.format(date);
         viewHolder.editText.setText(timeString);
+
+        if (linkedTimeListener != null) {
+            linkedTimeListener.onLinkedTimeSet(date);
+        }
     }
 
     @Override
@@ -124,38 +145,47 @@ public class TimeButtonEditText extends FrameLayout implements TimePickerDialog.
         }
 
         // pass click to child views
-        if (v == this || v == viewHolder.button) {
-            // parse editText (do not throw error)
-            // if it has a valid time, set
-            long time;
 
-            try {
-                Date date = timeFormat.parse(viewHolder.editText.getText().toString());
-                time = date.getTime();
-            }
-            catch (ParseException e) {
-                time = DateHelper.now().getTime();
-            }
+        // parse editText (do not throw error)
+        // if it has a valid time, set
+        long time;
 
-            // show TimePicker dialog
-            try {
-                Activity parentActivity = (Activity) getContext();
-                FragmentManager manager = parentActivity.getFragmentManager();
-
-                TimePickerFragment dialog = TimePickerFragment.newInstance(
-                        getId(),
-                        time
-                );
-                dialog.show(manager, "timePicker");
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
+        try {
+            Date date = timeFormat.parse(viewHolder.editText.getText().toString());
+            time = date.getTime();
         }
+        catch (ParseException e) {
+            time = DateHelper.now().getTime();
+        }
+
+        // show TimePicker dialog
+        try {
+            Activity parentActivity = (Activity) getContext();
+            FragmentManager manager = parentActivity.getFragmentManager();
+
+            TimePickerFragment dialog = TimePickerFragment.newInstance(
+                    getId(),
+                    time
+            );
+            dialog.show(manager, "timePicker");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void setLinkedTimeListener(TimeButtonEditText listener) {
+        linkedTimeListener = listener;
+    }
+
+    public void onLinkedTimeSet(Date time) {
+        setTime(DateHelper.autoEndTime(time, defaultTaskLength));
     }
 
     private static class ViewHolder {
         EditText editText;
         ImageButton button;
     }
+
 }

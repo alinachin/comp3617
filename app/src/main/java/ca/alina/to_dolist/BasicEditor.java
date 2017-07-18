@@ -1,6 +1,8 @@
 package ca.alina.to_dolist;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -53,6 +55,7 @@ public class BasicEditor extends Fragment {
         });
         endTime.setAssocCheckable(fields.endTimeSwitch);
 
+        fields.startTime.setLinkedTimeListener(fields.endTime);
         
         return rootView;
     }
@@ -63,29 +66,28 @@ public class BasicEditor extends Fragment {
      */
     public Task getTask() {
         if (rootView != null) {
-            getTaskName();
-            getTaskStartTime();
-            getTaskEndTime();
+            task.setName(getTaskName());
+            task.setStartTime(getTaskStartTime());
+            task.setEndTime(getTaskEndTime());
         }
 
         return task;
     }
 
-    private void getTaskName() {
+    private String getTaskName() {
         // todo validate
-        String name = fields.name.getText().toString();
-        task.setName(name);
+        return fields.name.getText().toString();
     }
 
-    private void getTaskStartTime() {
+    private Date getTaskStartTime() {
         Date date = task.getStartTime();
         date = DateHelper.changeDate(date, fields.bigDate.getDate());
         date = DateHelper.changeTime(date, fields.startTime.getTime());
 
-        task.setStartTime(date);
+        return date;
     }
 
-    private void getTaskEndTime() {
+    private Date getTaskEndTime() {
         if (fields.endTimeSwitch.isChecked()) {
             // use (mandatory) starting time as a reference
             Date startTime = task.getStartTime();
@@ -98,10 +100,10 @@ public class BasicEditor extends Fragment {
                 // todo check if plausible?
             }
 
-            task.setEndTime(endTime);
+            return endTime;
         }
         else {
-            task.setEndTime(null);
+            return null;
         }
     }
 
