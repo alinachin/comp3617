@@ -158,6 +158,7 @@ public class DatabaseHelper {
         return (taskDao.count() == 0);
     }
 
+    // NotificationPublisher uses AsyncTask to run in bg
     public List<Task> getExpiredTasks() {
         final Date now = new Date();
 
@@ -236,15 +237,15 @@ public class DatabaseHelper {
      * Holds a prebuilt GreenDAO query
      */
     public static class TaskQuery {
-        final Query<Task> query;
+        private final Query<Task> query;
 
         TaskQuery(Query<Task> query) {
             this.query = query;
         }
 
-        public List<Task> run() {
-            return query.list();
-        }
+//        public List<Task> run() {
+//            return query.list();
+//        }
 
         public void runAsync(AsyncOperationListener callback) {
             AsyncSession session = getInstance(null).daoSession.startAsyncSession();

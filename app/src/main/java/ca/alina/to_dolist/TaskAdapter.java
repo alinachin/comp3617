@@ -34,20 +34,12 @@ import ca.alina.to_dolist.database.schema.Task;
  * Created by Alina on 2017-06-22.
  */
 
-class TaskAdapter extends ArrayAdapter<Task> {
+class TaskAdapter extends ArrayAdapter<Task> implements AsyncOperationListener {
     static final String SMART_LIST = "smart";
     private DatabaseHelper helper;
     private DateFormat timeFormat;
     private String listType;  // either SMART_LIST or a date
     private DatabaseHelper.TaskQuery query;
-
-//    TaskAdapter(Context context, int resource, List<Task> tasks) {
-//        super(context, resource, tasks);
-//
-//        helper = DatabaseHelper.getInstance(context);
-//        timeFormat = android.text.format.DateFormat.getTimeFormat(context.getApplicationContext());
-//        dateFormat = android.text.format.DateFormat.getMediumDateFormat(context.getApplicationContext());
-//    }
 
     TaskAdapter(Context context, int resource, String listType) {
         super(context, resource, new ArrayList<Task>());
@@ -174,9 +166,7 @@ class TaskAdapter extends ArrayAdapter<Task> {
     /** Refreshes the this adapter's contents */
     void refresh() {
         // rerun query
-        List<Task> tasks = query.run();
-        this.clear();
-        this.addAll(tasks);
+        query.runAsync(this);
     }
 
     void toggleDone(int position, boolean checked) {
@@ -202,12 +192,29 @@ class TaskAdapter extends ArrayAdapter<Task> {
             helper.deleteSelectedTasks(tasks, new AsyncOperationListener() {
                 @Override
                 public void onAsyncOperationCompleted(AsyncOperation operation) {
-                    // TODO check if operation failed
+                    if (operation.isFailed()) {
+                        Log.e("TaskAdapter", "GreenDao: deleting selected tasks failed");
+                        return;
+                    }
                     refresh();
                 }
             });
         }
     }
+
+    @Override
+    public void onAsyncOperationCompleted(AsyncOperation operation) {
+        // get the results of a TaskQuery
+        if (operation.isFailed()) {
+            Log.e("TaskAdapter", "GreenDao tried to run query - failed");
+            // todo show user error message?
+            return;
+        }
+        List<Task> tasks = (List<Task>) operation.getResult();
+        this.clear();
+        this.addAll(tasks);
+    }
+
 
     private static class ViewHolder {
         Button date;
