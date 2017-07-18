@@ -18,8 +18,10 @@ import android.widget.Checkable;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.TimePicker;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
 
 import java.text.DateFormat;
@@ -28,6 +30,8 @@ import java.util.Calendar;
 import java.util.Date;
 
 import ca.alina.to_dolist.database.DateHelper;
+
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
 
 /**
  * Composite View for inputting a time, either by typing into an EditText or using a TimePickerDialog.
@@ -73,11 +77,10 @@ public class TimeButtonEditText
 
         viewHolder = new ViewHolder();
         viewHolder.button = (ImageButton) findViewById(R.id.timeIconButton);
-        viewHolder.editText = (EditText) findViewById(R.id.timeEditText);
+        viewHolder.editText = (TextView) findViewById(R.id.timeEditText);
 
         viewHolder.editText.setClickable(true);
         viewHolder.editText.setOnClickListener(this);
-        viewHolder.editText.setInputType(InputType.TYPE_NULL);
 
         viewHolder.button.setOnClickListener(this);
 
@@ -150,11 +153,17 @@ public class TimeButtonEditText
         // if it has a valid time, set
         long time;
 
+//        try {
+//            Date date = timeFormat.parse(viewHolder.editText.getText().toString());
+//            time = date.getTime();
+//        }
+//        catch (ParseException e) {
+//            time = DateHelper.now().getTime();
+//        }
         try {
-            Date date = timeFormat.parse(viewHolder.editText.getText().toString());
-            time = date.getTime();
+            time = new DateTime().withTime(mTime).getMillis();
         }
-        catch (ParseException e) {
+        catch (Exception e) {
             time = DateHelper.now().getTime();
         }
 
@@ -184,7 +193,7 @@ public class TimeButtonEditText
     }
 
     private static class ViewHolder {
-        EditText editText;
+        TextView editText;
         ImageButton button;
     }
 

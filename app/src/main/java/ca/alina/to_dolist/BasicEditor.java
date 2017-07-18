@@ -21,7 +21,6 @@ public class BasicEditor extends Fragment {
     private Task task;
     private View rootView;
     private ViewHolder fields;
-    private Date suggestedEndTime;  // todo also put in savedInstanceState?
 
     public BasicEditor() {
         // Required empty public constructor
@@ -145,12 +144,6 @@ public class BasicEditor extends Fragment {
 
         populate();
     }
-
-    public void updateEndTimeFromStartTime(final View view) {
-        // when startTime loses focus/gets set from TimePicker,
-        // update endTime to be [default time period] after startTime
-    }
-
 
     private static class ViewHolder {
         EditText name;
