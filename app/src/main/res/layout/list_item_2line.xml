@@ -55,6 +55,7 @@
         android:layout_height="wrap_content"
         tools:text="6:00pm"
         android:textSize="@dimen/task_time_size"
+        android:textColor="@color/timePrimary"
         app:layout_constraintStart_toStartOf="@id/guidelineLeft"
         app:layout_constraintTop_toBottomOf="@+id/listItemDate"
         tools:layout_editor_absoluteX="16dp" />
