@@ -3,6 +3,7 @@ package ca.alina.to_dolist;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -20,14 +21,13 @@ import org.greenrobot.greendao.async.AsyncOperationListener;
 import org.joda.time.LocalDate;
 
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedList;
+import java.util.Formatter;
 import java.util.List;
+import java.util.Locale;
 
 import ca.alina.to_dolist.database.DatabaseHelper;
-import ca.alina.to_dolist.database.DateHelper;
 import ca.alina.to_dolist.database.schema.Task;
 
 /**
@@ -37,16 +37,15 @@ import ca.alina.to_dolist.database.schema.Task;
 class TaskAdapter extends ArrayAdapter<Task> implements AsyncOperationListener {
     static final String SMART_LIST = "smart";
     private DatabaseHelper helper;
-    private DateFormat timeFormat;
     private String listType;  // either SMART_LIST or a date
     private DatabaseHelper.TaskQuery query;
+    private Formatter timeFormatter;
+    private StringBuilder timeFormatterSB;
 
     TaskAdapter(Context context, int resource, String listType) {
         super(context, resource, new ArrayList<Task>());
 
         helper = DatabaseHelper.getInstance(context);
-        timeFormat = android.text.format.DateFormat.getTimeFormat(context.getApplicationContext());
-        //dateFormat = DateHelper.getOneLineFormat(context);
 
         this.listType = listType;
         if (listType.equals(SMART_LIST)) {
@@ -62,6 +61,9 @@ class TaskAdapter extends ArrayAdapter<Task> implements AsyncOperationListener {
                 query = helper.getSmartList();
             }
         }
+
+        timeFormatterSB = new StringBuilder(50);
+        timeFormatter = new Formatter(timeFormatterSB, Locale.getDefault());
 
         refresh();
     }
@@ -95,18 +97,29 @@ class TaskAdapter extends ArrayAdapter<Task> implements AsyncOperationListener {
             viewHolder.taskName.setText(task.getName());
 
             Date taskStartTime = task.getStartTime();
-            viewHolder.time.setText(timeFormat.format(taskStartTime));
+            Date taskEndTime = task.getEndTime() != null ? task.getEndTime() : taskStartTime;
+
+            String taskTimeRange = DateUtils.formatDateRange(
+                    getContext(),
+                    timeFormatter,
+                    taskStartTime.getTime(),
+                    taskEndTime.getTime(),
+                    DateUtils.FORMAT_SHOW_TIME).toString();
+            timeFormatterSB.setLength(0);  // clear formatter output
+            viewHolder.time.setText(taskTimeRange);
 
             // hide date depending on 1) list type 2) previous item = same day
-            if (!listType.equals(SMART_LIST) || (position > 0 && DateHelper.sameDay(
+            if (!listType.equals(SMART_LIST)) {
+                viewHolder.date.setVisibility(View.GONE);
+            }
+            else if (position > 0 && DateHelper.sameDay(
                     taskStartTime,
                     getItem(position-1).getStartTime()
-            ))) {
+            )) {
                 viewHolder.date.setVisibility(View.GONE);
             }
             else {
                 viewHolder.date.setVisibility(View.VISIBLE);
-                //viewHolder.date.setText(dateFormat.format(taskStartTime));
                 viewHolder.date.setText(DateHelper.formatOneLineDate(getContext(), taskStartTime));
                 // set click handler
                 viewHolder.date.setOnClickListener(new View.OnClickListener() {
@@ -179,7 +192,7 @@ class TaskAdapter extends ArrayAdapter<Task> implements AsyncOperationListener {
 
     void deleteSelectedItems(SparseBooleanArray positions) {
         if (positions != null) {
-            List<Task> tasks = new LinkedList<Task>();
+            List<Task> tasks = new ArrayList<Task>(positions.size());
             for (int i=0; i<positions.size(); i++) {
                 if (positions.valueAt(i)) {
                     Task item = getItem(positions.keyAt(i));

@@ -9,13 +9,11 @@ import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.app.FragmentManager;
-import android.text.InputType;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Checkable;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -25,13 +23,8 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalTime;
 
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
-
-import ca.alina.to_dolist.database.DateHelper;
-
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
 
 /**
  * Composite View for inputting a time, either by typing into an EditText or using a TimePickerDialog.

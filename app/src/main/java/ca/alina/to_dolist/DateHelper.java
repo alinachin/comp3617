@@ -1,4 +1,4 @@
-package ca.alina.to_dolist.database;
+package ca.alina.to_dolist;
 
 /**
  * Created by Alina on 2017-06-21.

@@ -35,9 +35,7 @@ import java.nio.channels.FileChannel;
 import java.util.Date;
 
 import ca.alina.to_dolist.database.DatabaseHelper;
-import ca.alina.to_dolist.database.DateHelper;
 
-import static android.R.attr.src;
 import static ca.alina.to_dolist.DropboxWebActivity.PREF_FILE;
 import static ca.alina.to_dolist.DropboxWebActivity.PREF_SESSION_KEY;
 

@@ -19,8 +19,6 @@ import java.util.List;
 import ca.alina.to_dolist.database.DatabaseHelper;
 import ca.alina.to_dolist.database.schema.Task;
 
-import static ca.alina.to_dolist.R.menu.context;
-
 public class NotificationPublisher extends BroadcastReceiver {
     public static final String LONG_TASK_ID = "associated task id";
     public static final String BOOL_IS_END_TIME = "task has end time (# of notifs)";

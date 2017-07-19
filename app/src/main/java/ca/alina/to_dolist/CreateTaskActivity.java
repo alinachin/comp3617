@@ -9,7 +9,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import ca.alina.to_dolist.database.DatabaseHelper;
-import ca.alina.to_dolist.database.DateHelper;
 import ca.alina.to_dolist.database.schema.Task;
 
 public class CreateTaskActivity extends AppCompatActivity {

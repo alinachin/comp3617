@@ -17,8 +17,6 @@ import org.joda.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
 
-import ca.alina.to_dolist.database.DateHelper;
-
 /** Displays a Date. When clicked, displays a DatePicker dialog to edit the date.
  */
 

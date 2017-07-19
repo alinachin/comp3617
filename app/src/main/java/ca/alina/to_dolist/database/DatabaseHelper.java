@@ -13,7 +13,7 @@ import org.joda.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
-import ca.alina.to_dolist.MainActivity;
+import ca.alina.to_dolist.DateHelper;
 import ca.alina.to_dolist.database.schema.DaoMaster;
 import ca.alina.to_dolist.database.schema.DaoSession;
 import ca.alina.to_dolist.database.schema.Notif;
