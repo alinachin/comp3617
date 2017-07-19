@@ -19,10 +19,11 @@
         android:background="@android:color/transparent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_chevron_right_black_24dp"
         android:contentDescription="@string/task_edit_btn_caption"
-        tools:layout_editor_absoluteX="304dp" />
+        tools:layout_editor_absoluteX="355dp"
+        app:layout_constraintTop_toTopOf="@+id/listItemTime"
+        android:layout_marginTop="0dp" />
 
     <android.support.constraint.Guideline
         android:id="@+id/guidelineLeft"
@@ -39,15 +40,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
-        android:minHeight="40dp"
-        android:paddingEnd="16dp"
+        android:minHeight="36dp"
+        android:paddingEnd="48dp"
         android:paddingStart="16dp"
         android:textSize="@dimen/date_oneline_size"
         android:textColor="@color/dateLight"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Tuesday, May 14" />
-    <!-- TODO adjust margin, add underline? -->
 
     <TextView
         android:id="@+id/listItemTime"
@@ -58,7 +58,8 @@
         android:textColor="@color/timePrimary"
         app:layout_constraintStart_toStartOf="@id/guidelineLeft"
         app:layout_constraintTop_toBottomOf="@+id/listItemDate"
-        tools:layout_editor_absoluteX="16dp" />
+        tools:layout_editor_absoluteX="16dp"
+        android:layout_marginTop="0dp" />
 
     <CheckBox
         android:id="@+id/listItemDoneCheckBox"
@@ -71,7 +72,7 @@
         tools:layout_editor_absoluteX="16dp" />
 
     <TextView
-        android:id="@android:id/text1"
+        android:id="@+id/textView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textSize="@dimen/task_name_size"

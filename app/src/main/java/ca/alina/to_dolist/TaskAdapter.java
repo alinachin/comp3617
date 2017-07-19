@@ -79,7 +79,7 @@ class TaskAdapter extends ArrayAdapter<Task> implements AsyncOperationListener {
             viewHolder = new ViewHolder();
             viewHolder.date = (Button) convertView.findViewById(R.id.listItemDate);
             viewHolder.time = (TextView) convertView.findViewById(R.id.listItemTime);
-            viewHolder.taskName = (TextView) convertView.findViewById(android.R.id.text1);
+            viewHolder.taskName = (TextView) convertView.findViewById(R.id.textView);
             viewHolder.done = (CheckBox) convertView.findViewById(R.id.listItemDoneCheckBox);
             viewHolder.editBtn = (ImageButton) convertView.findViewById(R.id.listItemEditBtn);
             convertView.setTag(viewHolder);
