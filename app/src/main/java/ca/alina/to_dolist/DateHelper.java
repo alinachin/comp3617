@@ -89,14 +89,14 @@ public final class DateHelper {
 
         Duration duration = new Duration(DateTime.now().withTimeAtStartOfDay(), date.toDateTimeAtStartOfDay());
 
-        final int FIVE_WEEKS = 35;
-        final int ONE_WEEK = 7;
+        final int WEEKS_CUTOFF = 28;
+        final int DAYS_CUTOFF = 7;
 
 
-        if (duration.getStandardDays() > FIVE_WEEKS) {
+        if (Math.abs(duration.getStandardDays()) > WEEKS_CUTOFF) {
             desc = "";
         }
-        else if (duration.getStandardDays() > ONE_WEEK) {
+        else if (Math.abs(duration.getStandardDays()) > DAYS_CUTOFF) {
             desc = DateUtils.getRelativeTimeSpanString(
                     date.toDate().getTime(),
                     now().getTime(),

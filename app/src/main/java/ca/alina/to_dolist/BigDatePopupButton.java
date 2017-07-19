@@ -97,11 +97,6 @@ class BigDatePopupButton extends FrameLayout implements DatePickerDialog.OnDateS
                 relativeDate = "(" + relativeDate + ")";
             }
             viewHolder.relativeDate.setText(relativeDate);
-
-            // notify listener
-            if (listener != null) {
-                listener.onBigDateChanged(date);
-            }
         }
     }
 
@@ -113,7 +108,14 @@ class BigDatePopupButton extends FrameLayout implements DatePickerDialog.OnDateS
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
         Calendar calendar = Calendar.getInstance();
         calendar.set(year, month, dayOfMonth);
-        setDate(calendar.getTime());
+
+        Date date = calendar.getTime();
+        setDate(date);
+
+        // notify listener
+        if (listener != null) {
+            listener.onBigDateChanged(date);
+        }
     }
 
 

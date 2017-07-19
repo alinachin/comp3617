@@ -172,14 +172,15 @@ public class NotificationPublisher extends BroadcastReceiver {
 
     private static String formatTimeRange(Context context, Task task) {
         int flags = DateUtils.FORMAT_SHOW_TIME;
+
         Date startTime = task.getStartTime();
-        Date endTime = task.getEndTime();
-        if (endTime != null) {
-            return DateUtils.formatDateRange(context, startTime.getTime(), endTime.getTime(), flags);
+        Date endTime = task.getEndTime() != null ? task.getEndTime() : task.getStartTime();
+        // if task doesn't occur today, display the date
+        if (!DateHelper.sameDay(DateHelper.now(), startTime)) {
+            flags = flags | DateUtils.FORMAT_SHOW_DATE;
         }
-        else {
-            return DateUtils.formatDateRange(context, startTime.getTime(), startTime.getTime(), flags);
-        }
+
+        return DateUtils.formatDateRange(context, startTime.getTime(), endTime.getTime(), flags);
     }
 
     private static class Params {

@@ -88,9 +88,18 @@ public class DatabaseHelper {
         }
     }
 
-    public TaskQuery getOneDayList(final LocalDate day) {
+    public TaskQuery getOneDayList(String string) {
+        final LocalDate day;
         final Date startDate;  // inclusive
         final Date endDate;  // inclusive
+
+        try {
+            day = LocalDate.parse(string);
+        }
+        catch (Exception e) {
+            Log.e("DatabaseHelper", "invalid listType argument: \"" + string + "\"");
+            return getSmartList();
+        }
 
         startDate = DateHelper.getBeginningOfDay(day);
         endDate = DateHelper.getEndOfDay(day);

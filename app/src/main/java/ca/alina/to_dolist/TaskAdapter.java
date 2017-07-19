@@ -20,7 +20,6 @@ import org.greenrobot.greendao.async.AsyncOperation;
 import org.greenrobot.greendao.async.AsyncOperationListener;
 import org.joda.time.LocalDate;
 
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Formatter;
@@ -41,31 +40,19 @@ class TaskAdapter extends ArrayAdapter<Task> implements AsyncOperationListener {
     private DatabaseHelper.TaskQuery query;
     private Formatter timeFormatter;
     private StringBuilder timeFormatterSB;
+    private GoToDateListener goToDateListener;
 
-    TaskAdapter(Context context, int resource, String listType) {
+    TaskAdapter(Context context, int resource, String listType, GoToDateListener listener) {
         super(context, resource, new ArrayList<Task>());
-
-        helper = DatabaseHelper.getInstance(context);
-
-        this.listType = listType;
-        if (listType.equals(SMART_LIST)) {
-            query = helper.getSmartList();
-        }
-        else {
-            // parse listType into LocalDate
-            try {
-                query = helper.getOneDayList(LocalDate.parse(listType));
-            }
-            catch (IllegalArgumentException e) {
-                Log.e("TaskAdapter", "Invalid listType (must be date yyyy-MM-DD)");
-                query = helper.getSmartList();
-            }
-        }
 
         timeFormatterSB = new StringBuilder(50);
         timeFormatter = new Formatter(timeFormatterSB, Locale.getDefault());
 
-        refresh();
+        helper = DatabaseHelper.getInstance(context);
+
+        setListType(listType);
+
+        goToDateListener = listener;
     }
 
     @Override
@@ -121,11 +108,13 @@ class TaskAdapter extends ArrayAdapter<Task> implements AsyncOperationListener {
             else {
                 viewHolder.date.setVisibility(View.VISIBLE);
                 viewHolder.date.setText(DateHelper.formatOneLineDate(getContext(), taskStartTime));
+                viewHolder.date.setTag(taskStartTime);
                 // set click handler
                 viewHolder.date.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast.makeText(getContext(), "Go to list of tasks for [date]", Toast.LENGTH_SHORT).show();
+                        Log.e("TaskAdapter", "switching list types");
+                        goToDateListener.onGoToDate((Date) v.getTag());
                     }
                 });
             }
@@ -174,6 +163,25 @@ class TaskAdapter extends ArrayAdapter<Task> implements AsyncOperationListener {
 
     String getListType() {
         return listType;
+    }
+
+    void setListType(String listType) {
+        Log.e("TaskAdapter", "new list type: " + listType);
+        this.listType = listType;
+        if (listType.equals(SMART_LIST)) {
+            query = helper.getSmartList();
+        }
+        else {
+            // parse listType into a date
+            query = helper.getOneDayList(listType);
+        }
+
+        refresh();
+    }
+
+    static String formatListType(Date date) {
+        LocalDate day = new LocalDate(date);
+        return day.toString();
     }
 
     /** Refreshes the this adapter's contents */
@@ -235,5 +243,9 @@ class TaskAdapter extends ArrayAdapter<Task> implements AsyncOperationListener {
         TextView taskName;
         CheckBox done;
         ImageButton editBtn;
+    }
+
+    public interface GoToDateListener {
+        void onGoToDate(Date date);
     }
 }

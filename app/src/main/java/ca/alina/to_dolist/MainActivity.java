@@ -39,7 +39,10 @@ import ca.alina.to_dolist.database.DatabaseHelper;
 import static ca.alina.to_dolist.DropboxWebActivity.PREF_FILE;
 import static ca.alina.to_dolist.DropboxWebActivity.PREF_SESSION_KEY;
 
-public class MainActivity extends AppCompatActivity implements BigDatePopupButton.OnBigDateChangedListener {
+public class MainActivity
+        extends AppCompatActivity
+        implements BigDatePopupButton.OnBigDateChangedListener,
+        TaskAdapter.GoToDateListener {
 
     // request codes for activities e.g. CreateTask
     static final int CREATE_TASK_REQUEST = 1;
@@ -51,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements BigDatePopupButto
 
     private ListView listView;
     private TaskAdapter adapter;
+    private BigDatePopupButton bigDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,10 +73,10 @@ public class MainActivity extends AppCompatActivity implements BigDatePopupButto
         else {
             listType = TaskAdapter.SMART_LIST;
         }
-        adapter = new TaskAdapter(MainActivity.this, R.layout.list_item_2line, listType);
+        adapter = new TaskAdapter(this, R.layout.list_item_2line, listType, this);
 
         // set BigDate
-        BigDatePopupButton bigDate = (BigDatePopupButton) findViewById(R.id.bigDate);
+        bigDate = (BigDatePopupButton) findViewById(R.id.bigDate);
         bigDate.setDate(DateHelper.now());
 
         listView = (ListView) findViewById(R.id.smartList);
@@ -232,15 +236,29 @@ public class MainActivity extends AppCompatActivity implements BigDatePopupButto
             actionDownloadDb();
             return true;
         }
+        if (id == R.id.action_smart_list) {
+            if (!adapter.getListType().equals(TaskAdapter.SMART_LIST)) {
+                bigDate.setDate(DateHelper.now());
+                adapter.setListType(TaskAdapter.SMART_LIST);
+            }
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
     }
 
     @Override
     public void onBigDateChanged(Date date) {
-        Toast.makeText(this, "BigDate changed", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, "BigDate changed", Toast.LENGTH_SHORT).show();
+        Log.e("MainActivity", "changing lists from BigDate");
+        adapter.setListType(TaskAdapter.formatListType(date));
+    }
 
-        // TODO change listType (swap out adapter)
+    @Override
+    public void onGoToDate(Date date) {
+        Log.e("MainActivity", "changing lists from date-heading in smart list");
+        bigDate.setDate(date);
+        adapter.setListType(TaskAdapter.formatListType(date));
     }
 
     private void actionBackup() {
