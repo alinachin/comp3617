@@ -7,7 +7,7 @@
     android:paddingTop="?android:attr/actionBarSize"
     tools:context="ca.alina.to_dolist.EditTaskActivity"
     tools:showIn="@layout/activity_edit_task"
-    android:id="@+id/edit_task_container">
+    android:id="@+id/container">
 
 </LinearLayout>
 

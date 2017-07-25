@@ -1,64 +1,38 @@
 package ca.alina.to_dolist;
 
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import ca.alina.to_dolist.database.DatabaseHelper;
 import ca.alina.to_dolist.database.schema.Task;
 
-public class CreateTaskActivity extends AppCompatActivity {
-
-    private DatabaseHelper helper;
-    private BasicEditor editor;
+public class CreateTaskActivity extends AbstractEditorActivity {
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void setMyContentView() {
         setContentView(R.layout.activity_create_task);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setDisplayShowTitleEnabled(false);
-
-        helper = DatabaseHelper.getInstance(this);
-
-        addEditor();
     }
 
-    private void addEditor() {
-        Task task = new Task();
+    @Override
+    protected void setTask() {
+        task = new Task();
+
         task.setName(""); /* can edit */
         task.setStartTime(DateHelper.autoStartTime()); /* can edit */
-        // TODO
-        //task.setEndTime(DateHelper.autoEndTime(task.getStartTime()));
+        // no need to set end time - editor UI fills it in
+
         task.setNotes("");
         task.setIsAlarm(false);
         task.setIsDone(false);
         task.setIsRecurring(false);
         task.setIsHidden(false);
-
-        // set editor
-        editor = new BasicEditor();
-        editor.setTask(task);
-
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.add(R.id.create_task_container, editor, "createTask");
-        transaction.commit();
     }
 
-    private void save() {
+    @Override
+    protected void save() {
         final Task task;
         // grab values from editor fragment
         task = editor.getTask();
 
-        // TODO validate
         helper.insertTask(task);
 
         // use helper class

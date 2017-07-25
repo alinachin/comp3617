@@ -2,43 +2,23 @@ package ca.alina.to_dolist;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import java.util.Date;
 
-import ca.alina.to_dolist.database.DatabaseHelper;
-import ca.alina.to_dolist.database.schema.Task;
-
-public class EditTaskActivity extends AppCompatActivity {
-
-    private DatabaseHelper helper;
-    private BasicEditor editor;
-    private Task task;
-
+public class EditTaskActivity extends AbstractEditorActivity {
     static final String TAG_INTENT = "taskId";
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void setMyContentView() {
         setContentView(R.layout.activity_edit_task);
+    }
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setDisplayShowTitleEnabled(false);
-
-        helper = DatabaseHelper.getInstance(this);
-
+    @Override
+    protected void setTask() {
         // get task to edit from intent
         Intent callingIntent = getIntent();
         long taskId = callingIntent.getLongExtra(TAG_INTENT, -1L);
@@ -48,25 +28,13 @@ public class EditTaskActivity extends AppCompatActivity {
             setResult(RESULT_CANCELED);
             finish();
         }
-//        Log.e("EditTaskActivity", "Editing task: " + task.getName());
-
-        addEditor();
-    }
-
-    private void addEditor() {
-        // set editor
-        editor = new BasicEditor();
-        // pass task to editor fragment
-        editor.setTask(task);
-
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.add(R.id.edit_task_container, editor, "editTask");
-        transaction.commit();
+//      Log.e("EditTaskActivity", "Editing task: " + task.getName());
     }
 
     // onStart - refresh values from database?
 
-    private void save() {
+    protected void save() {
+        // save old start & end times
         Date startTime, endTime;
         startTime = task.getStartTime();
         endTime = task.getEndTime();
@@ -86,7 +54,7 @@ public class EditTaskActivity extends AppCompatActivity {
         finish();
     }
 
-    private void delete() {
+    protected void delete() {
         // should have the task already
         helper.deleteTask(task);
 
