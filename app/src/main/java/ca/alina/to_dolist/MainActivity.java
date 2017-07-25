@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -62,6 +63,8 @@ public class MainActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayShowTitleEnabled(false);
 
         PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
 
@@ -77,7 +80,6 @@ public class MainActivity
 
         // set BigDate
         bigDate = (BigDatePopupButton) findViewById(R.id.bigDate);
-        bigDate.setDate(DateHelper.now());
 
         listView = (ListView) findViewById(R.id.smartList);
         // TODO add empty view to content_main.xml
@@ -408,6 +410,7 @@ public class MainActivity
                                     }
                                     catch (IOException exc) {
                                         Log.e("MainActivity", "failed to copy downloaded backup to db folder");
+                                        exc.printStackTrace();
                                         Toast.makeText(MainActivity.this, "Sync failed", Toast.LENGTH_LONG).show();
                                     }
                                 }
@@ -445,14 +448,14 @@ public class MainActivity
                 inChannel.transferTo(0, inChannel.size(), outChannel);
             }
             catch (IOException e) {
-                throw new IOException("Copy failed");
+                throw new IOException("Copy failed", e);
             }
             finally {
                 outStream.close();
             }
         }
         catch (IOException e) {
-            throw new IOException("Copy failed");
+            throw new IOException("Copy failed", e);
         }
         finally {
             try {

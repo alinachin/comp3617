@@ -35,7 +35,7 @@ public class EditTaskActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setTitle("");
+        actionBar.setDisplayShowTitleEnabled(false);
 
         helper = DatabaseHelper.getInstance(this);
 
