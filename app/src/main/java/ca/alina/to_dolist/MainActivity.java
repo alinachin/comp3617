@@ -80,13 +80,13 @@ public class MainActivity
         // use savedInstanceState to save the type of list (smart or day)
         String listType;
         if (savedInstanceState != null) {
-            Log.e("MainActivity", "onCreate(): restoring from saved state");
+            //Log.e("MainActivity", "onCreate(): restoring from saved state");
             listType = savedInstanceState.getString(LIST_TYPE_KEY, TaskAdapter.SMART_LIST);
         }
         else {
             listType = TaskAdapter.SMART_LIST;
         }
-        Log.e("MainActivity", "onCreate(): listType: " + listType);
+        //Log.e("MainActivity", "onCreate(): listType: " + listType);
         adapter = new TaskAdapter(this, R.layout.list_item_2line, listType, this);
 
         // set BigDate
@@ -206,7 +206,7 @@ public class MainActivity
     @Override
     public void onSaveInstanceState(Bundle outState) {
         String listType = adapter.getListType();
-        Log.e("MainActivity", "onSaveInstanceState(): listType: " + listType);
+        //Log.e("MainActivity", "onSaveInstanceState(): listType: " + listType);
         outState.putString(LIST_TYPE_KEY, listType);
 
         super.onSaveInstanceState(outState);
@@ -291,13 +291,13 @@ public class MainActivity
     @Override
     public void onBigDateChanged(Date date) {
         //Toast.makeText(this, "BigDate changed", Toast.LENGTH_SHORT).show();
-        Log.e("MainActivity", "changing lists from BigDate");
+        //Log.e("MainActivity", "changing lists from BigDate");
         adapter.setListType(TaskAdapter.formatListType(date));
     }
 
     @Override
     public void onGoToDate(Date date) {
-        Log.e("MainActivity", "changing lists from date-heading in smart list");
+        //Log.e("MainActivity", "changing lists from date-heading in smart list");
         bigDate.setDate(date);
         adapter.setListType(TaskAdapter.formatListType(date));
     }

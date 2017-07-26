@@ -131,7 +131,7 @@ public class TimeButtonEditText
      */
     @Override
     public void onClick(View v) {
-        Log.e("TimeButtonEditText", "I'm clicked");
+        //Log.e("TimeButtonEditText", "I'm clicked");
 
         // do custom onclick stuff
         if (!myEnabled) {

@@ -4,6 +4,7 @@ import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import org.greenrobot.greendao.async.AsyncOperationListener;
@@ -275,7 +276,7 @@ public class DatabaseHelper {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.e("MarkDoneReceiver", "starting mark task as done");
+            //Log.e("MarkDoneReceiver", "starting mark task as done");
             DatabaseHelper helper = getInstance(context);
             long taskId = intent.getLongExtra(EXTRA_TASK_ID, -1);
             int notifId = intent.getIntExtra(EXTRA_NOTIF_ID, 0);
@@ -293,9 +294,9 @@ public class DatabaseHelper {
             }
             helper.toggleDone(task, true);
 
-            // todo notify any running MainActivity to refresh its visible listView items
+            // notify MainActivity to refresh its visible listView items when it runs
             Intent refreshIntent = new Intent(MainActivity.REFRESH_ACTION);
-            context.sendBroadcast(refreshIntent);
+            LocalBroadcastManager.getInstance(context).sendBroadcast(refreshIntent);
         }
     }
 }

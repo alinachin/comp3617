@@ -113,7 +113,7 @@ class TaskAdapter extends ArrayAdapter<Task> implements AsyncOperationListener {
                     @Override
                     public void onClick(View v) {
                         if (goToDateListener != null) {
-                            Log.e("TaskAdapter", "switching list types");
+                            //Log.e("TaskAdapter", "switching list types");
                             goToDateListener.onGoToDate((Date) v.getTag());
                         }
                     }
