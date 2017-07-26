@@ -191,7 +191,7 @@ public class MainActivity
         refresher = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                Log.e("MainActivity", "onReceive() - refresh visible items");
+                //Log.e("MainActivity", "onReceive() - refresh visible items");
                 adapter.refresh();
             }
         };
@@ -230,6 +230,9 @@ public class MainActivity
         final Intent intent;
 
         intent = new Intent(this, CreateTaskActivity.class);
+        // put the current list type (date) to use as suggested starting date
+        Date startDate = adapter.getListType().getDate();
+        intent.putExtra(CreateTaskActivity.START_DATE_LONG_EXTRA, startDate.getTime());
         startActivityForResult(intent, CREATE_TASK_REQUEST);
     }
 

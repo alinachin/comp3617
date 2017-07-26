@@ -25,6 +25,10 @@ public final class DateHelper {
         return resultDt.toDate();
     }
 
+    public static Date autoStartTime(Date startDate) {
+        return changeDate(autoStartTime(), startDate);
+    }
+
     public static Date autoEndTime(Date startTime, int plusMinutes) {
         if (plusMinutes <= 0) {
             return null;

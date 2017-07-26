@@ -53,4 +53,5 @@ public abstract class AbstractEditorActivity extends AppCompatActivity {
     }
 
     protected abstract void save();
+    // todo add validation method
 }

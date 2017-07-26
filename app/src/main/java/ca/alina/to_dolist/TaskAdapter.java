@@ -166,7 +166,7 @@ class TaskAdapter extends ArrayAdapter<Task> implements AsyncOperationListener {
     }
 
     void setListType(ListType listType) {
-        Log.e("TaskAdapter", "new list type: " + listType);
+        //Log.e("TaskAdapter", "new list type: " + listType);
         this.listType = listType;
 
         // change query & rerun it
