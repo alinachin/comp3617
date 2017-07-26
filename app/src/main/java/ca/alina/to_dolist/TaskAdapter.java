@@ -45,14 +45,14 @@ class TaskAdapter extends ArrayAdapter<Task> implements AsyncOperationListener {
     TaskAdapter(Context context, int resource, String listType, GoToDateListener listener) {
         super(context, resource, new ArrayList<Task>());
 
+        goToDateListener = listener;
+
         timeFormatterSB = new StringBuilder(50);
         timeFormatter = new Formatter(timeFormatterSB, Locale.getDefault());
 
         helper = DatabaseHelper.getInstance(context);
 
         setListType(listType);
-
-        goToDateListener = listener;
     }
 
     @Override
@@ -69,6 +69,7 @@ class TaskAdapter extends ArrayAdapter<Task> implements AsyncOperationListener {
             viewHolder.taskName = (TextView) convertView.findViewById(R.id.textView);
             viewHolder.done = (CheckBox) convertView.findViewById(R.id.listItemDoneCheckBox);
             viewHolder.editBtn = (ImageButton) convertView.findViewById(R.id.listItemEditBtn);
+            viewHolder.bg = convertView.findViewById(R.id.listItemBg);
             convertView.setTag(viewHolder);
         }
         else {
@@ -78,8 +79,6 @@ class TaskAdapter extends ArrayAdapter<Task> implements AsyncOperationListener {
         final Task task = getItem(position);
 
         if (task != null) {
-            View bgView = convertView.findViewById(R.id.listItemBg);
-
             // set TextViews etc.
             viewHolder.taskName.setText(task.getName());
 
@@ -113,8 +112,10 @@ class TaskAdapter extends ArrayAdapter<Task> implements AsyncOperationListener {
                 viewHolder.date.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Log.e("TaskAdapter", "switching list types");
-                        goToDateListener.onGoToDate((Date) v.getTag());
+                        if (goToDateListener != null) {
+                            Log.e("TaskAdapter", "switching list types");
+                            goToDateListener.onGoToDate((Date) v.getTag());
+                        }
                     }
                 });
             }
@@ -130,11 +131,12 @@ class TaskAdapter extends ArrayAdapter<Task> implements AsyncOperationListener {
             });
 
             // set other appearance properties for done/not done state
+            // todo pull out?
             if (viewHolder.done.isChecked()) {
-                bgView.setBackgroundResource(R.drawable.list_item_bg_done);
+                viewHolder.bg.setBackgroundResource(R.drawable.list_item_bg_done);
             }
             else {
-                bgView.setBackgroundResource(R.drawable.list_item_bg);
+                viewHolder.bg.setBackgroundResource(R.drawable.list_item_bg);
             }
 
             viewHolder.editBtn.setOnClickListener(new View.OnClickListener() {
@@ -231,9 +233,15 @@ class TaskAdapter extends ArrayAdapter<Task> implements AsyncOperationListener {
             // todo show user error message?
             return;
         }
-        List<Task> tasks = (List<Task>) operation.getResult();
-        this.clear();
-        this.addAll(tasks);
+
+        try {
+            List<Task> tasks = (List<Task>) operation.getResult();
+            this.clear();
+            this.addAll(tasks);
+        }
+        catch (ClassCastException e) {
+            Log.e("TaskAdapter", "GreenDao AsyncOperation returned wrong result type");
+        }
     }
 
 
@@ -243,6 +251,7 @@ class TaskAdapter extends ArrayAdapter<Task> implements AsyncOperationListener {
         TextView taskName;
         CheckBox done;
         ImageButton editBtn;
+        View bg;
     }
 
     public interface GoToDateListener {

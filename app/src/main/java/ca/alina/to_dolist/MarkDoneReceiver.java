@@ -34,5 +34,7 @@ public class MarkDoneReceiver extends BroadcastReceiver {
             return;
         }
         helper.toggleDone(task, true);
+
+        // todo notify any running MainActivity to refresh its visible listView items
     }
 }

@@ -96,7 +96,6 @@ public class MainActivity
             }
         });
 
-
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
             private int itemCount() { return listView.getCheckedItemCount(); }
@@ -261,6 +260,15 @@ public class MainActivity
         Log.e("MainActivity", "changing lists from date-heading in smart list");
         bigDate.setDate(date);
         adapter.setListType(TaskAdapter.formatListType(date));
+    }
+
+    private void updateListItemAt(int index) {
+        int firstVisiblePosition = listView.getFirstVisiblePosition();
+        View view = listView.getChildAt(index - firstVisiblePosition);
+
+        if (view != null) {
+            // todo tell adapter to update checked state?
+        }
     }
 
     private void actionBackup() {
