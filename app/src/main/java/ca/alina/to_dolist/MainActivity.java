@@ -78,22 +78,31 @@ public class MainActivity
         PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
 
         // use savedInstanceState to save the type of list (smart or day)
-        String listType;
+        TaskAdapter.ListType listType;
         if (savedInstanceState != null) {
             //Log.e("MainActivity", "onCreate(): restoring from saved state");
-            listType = savedInstanceState.getString(LIST_TYPE_KEY, TaskAdapter.SMART_LIST);
+            String string = savedInstanceState.getString(LIST_TYPE_KEY, "");
+            try {
+                listType = TaskAdapter.ListType.fromString(string);
+            }
+            catch (Exception e) {
+                if (BuildConfig.DEBUG) {
+                    Log.e("MainActivity", "couldn't retrieve saved list config from activity state");
+                }
+                listType = TaskAdapter.ListType.SMART;
+            }
         }
         else {
-            listType = TaskAdapter.SMART_LIST;
+            listType = TaskAdapter.ListType.SMART;
         }
-        //Log.e("MainActivity", "onCreate(): listType: " + listType);
+        //Log.e("MainActivity", "onCreate(): listType: " + listType.toString());
+
         adapter = new TaskAdapter(this, R.layout.list_item_2line, listType, this);
 
         // set BigDate
         bigDate = (BigDatePopupButton) findViewById(R.id.bigDate);
-        // TODO temp - will be handled by TaskAdapter.setListType()/constructor
-        if (listType.equals(TaskAdapter.SMART_LIST)) {
-            bigDate.setDate(DateHelper.now());
+        if (listType == TaskAdapter.ListType.SMART) {
+            bigDate.setDate(listType.getDate());
         }
 
         listView = (ListView) findViewById(R.id.smartList);
@@ -205,7 +214,7 @@ public class MainActivity
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        String listType = adapter.getListType();
+        String listType = adapter.getListType().getString();
         //Log.e("MainActivity", "onSaveInstanceState(): listType: " + listType);
         outState.putString(LIST_TYPE_KEY, listType);
 
@@ -278,9 +287,9 @@ public class MainActivity
             return true;
         }
         if (id == R.id.action_smart_list) {
-            if (!adapter.getListType().equals(TaskAdapter.SMART_LIST)) {
+            if (adapter.getListType() != TaskAdapter.ListType.SMART) {
                 bigDate.setDate(DateHelper.now());
-                adapter.setListType(TaskAdapter.SMART_LIST);
+                adapter.setListType(TaskAdapter.ListType.SMART);
             }
             return true;
         }
@@ -290,16 +299,15 @@ public class MainActivity
 
     @Override
     public void onBigDateChanged(Date date) {
-        //Toast.makeText(this, "BigDate changed", Toast.LENGTH_SHORT).show();
         //Log.e("MainActivity", "changing lists from BigDate");
-        adapter.setListType(TaskAdapter.formatListType(date));
+        adapter.setListType(TaskAdapter.ListType.fromDate(date));
     }
 
     @Override
-    public void onGoToDate(Date date) {
+    public void onJumpToDate(Date date) {
         //Log.e("MainActivity", "changing lists from date-heading in smart list");
         bigDate.setDate(date);
-        adapter.setListType(TaskAdapter.formatListType(date));
+        adapter.setListType(TaskAdapter.ListType.fromDate(date));
     }
 
     private void actionBackup() {

@@ -14,7 +14,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.greenrobot.greendao.async.AsyncOperation;
 import org.greenrobot.greendao.async.AsyncOperationListener;
@@ -34,15 +33,14 @@ import ca.alina.to_dolist.database.schema.Task;
  */
 
 class TaskAdapter extends ArrayAdapter<Task> implements AsyncOperationListener {
-    static final String SMART_LIST = "smart";
     private DatabaseHelper helper;
-    private String listType;  // either SMART_LIST or a date
+    private ListType listType;  // either SMART_LIST or a date
     private DatabaseHelper.TaskQuery query;
     private Formatter timeFormatter;
     private StringBuilder timeFormatterSB;
     private GoToDateListener goToDateListener;
 
-    TaskAdapter(Context context, int resource, String listType, GoToDateListener listener) {
+    TaskAdapter(Context context, int resource, ListType listType, GoToDateListener listener) {
         super(context, resource, new ArrayList<Task>());
 
         goToDateListener = listener;
@@ -95,7 +93,7 @@ class TaskAdapter extends ArrayAdapter<Task> implements AsyncOperationListener {
             viewHolder.time.setText(taskTimeRange);
 
             // hide date depending on 1) list type 2) previous item = same day
-            if (!listType.equals(SMART_LIST)) {
+            if (listType != ListType.SMART) {
                 viewHolder.date.setVisibility(View.GONE);
             }
             else if (position > 0 && DateHelper.sameDay(
@@ -114,7 +112,7 @@ class TaskAdapter extends ArrayAdapter<Task> implements AsyncOperationListener {
                     public void onClick(View v) {
                         if (goToDateListener != null) {
                             //Log.e("TaskAdapter", "switching list types");
-                            goToDateListener.onGoToDate((Date) v.getTag());
+                            goToDateListener.onJumpToDate((Date) v.getTag());
                         }
                     }
                 });
@@ -163,33 +161,24 @@ class TaskAdapter extends ArrayAdapter<Task> implements AsyncOperationListener {
         return null;
     }
 
-    String getListType() {
+    ListType getListType() {
         return listType;
     }
 
-    void setListType(String listType) {
+    void setListType(ListType listType) {
         Log.e("TaskAdapter", "new list type: " + listType);
         this.listType = listType;
 
-        if (goToDateListener != null) {
-            // TODO date <-> listType
-            //goToDateListener.onGoToDate();
-        }
-
-        if (listType.equals(SMART_LIST)) {
+        // change query & rerun it
+        if (listType == ListType.SMART) {
             query = helper.getSmartList();
         }
         else {
             // parse listType into a date
-            query = helper.getOneDayList(listType);
+            query = helper.getOneDayList(listType.getDate());
         }
 
         refresh();
-    }
-
-    static String formatListType(Date date) {
-        LocalDate day = new LocalDate(date);
-        return day.toString();
     }
 
     /** Refreshes the this adapter's contents */
@@ -261,6 +250,58 @@ class TaskAdapter extends ArrayAdapter<Task> implements AsyncOperationListener {
     }
 
     public interface GoToDateListener {
-        void onGoToDate(Date date);
+        void onJumpToDate(Date date);
+    }
+
+    public static class ListType {
+        private Date mDate;
+        private String mString;
+
+        private static final String SMART_NAME = "smart";
+        public static final ListType SMART = new ListType(null, SMART_NAME) {
+            public Date getDate() {
+                // always return current date
+                return new Date();
+            }
+        };
+
+        protected ListType(Date date, String string) {
+            mDate = date;
+            mString = string;
+        }
+
+        public static ListType fromDate(Date date) {
+            LocalDate day = new LocalDate(date);
+            String string = day.toString();
+            return new ListType(date, string);
+        }
+
+        public static ListType fromString(String string) throws IllegalArgumentException {
+            if (string.equals(SMART_NAME)) {
+                // default behaviour: smartlist
+                return SMART;
+            }
+
+            try {
+                LocalDate day = LocalDate.parse(string);
+                Date date = day.toDate();
+                return new ListType(date, string);
+            }
+            catch (Exception e) {
+                throw new IllegalArgumentException(e);
+            }
+        }
+
+        public Date getDate() {
+            return mDate;
+        }
+
+        public String getString() {
+            return mString;
+        }
+
+        public String toString() {
+            return mString;
+        }
     }
 }
