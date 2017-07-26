@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.greenrobot.greendao.async.AsyncOperation;
 import org.greenrobot.greendao.async.AsyncOperationListener;
@@ -225,7 +226,7 @@ class TaskAdapter extends ArrayAdapter<Task> implements AsyncOperationListener {
         // get the results of a TaskQuery
         if (operation.isFailed()) {
             Log.e("TaskAdapter", "GreenDao tried to run query - failed");
-            // todo show user error message?
+            Toast.makeText(getContext(), "Couldn't load tasks from database", Toast.LENGTH_LONG).show();
             return;
         }
 

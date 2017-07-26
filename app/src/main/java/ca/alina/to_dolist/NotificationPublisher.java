@@ -125,7 +125,7 @@ public class NotificationPublisher extends BroadcastReceiver {
         String timeInterval;
 
         // get task
-        name = task.getName();  // todo truncate
+        name = task.getName();
         timeInterval = formatTimeRange(context, task);
 
         return new Notification.Builder(context)
@@ -141,7 +141,7 @@ public class NotificationPublisher extends BroadcastReceiver {
         int nExpanded;
         Notification.InboxStyle style;
 
-        name = titleTask.getName();  // todo truncate
+        name = titleTask.getName();
         timeInterval = formatTimeRange(context, titleTask);
         nCollapsed = otherTasks.size() - 1;  // assume otherTasks already includes titleTask
 
