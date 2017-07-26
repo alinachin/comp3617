@@ -1,9 +1,13 @@
 package ca.alina.to_dolist;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -53,9 +57,14 @@ public class MainActivity
 
     static final String LIST_TYPE_KEY = "listType";
 
+    // action for IntentFilter
+    public static final String REFRESH_ACTION = "refresh";
+
     private ListView listView;
     private TaskAdapter adapter;
     private BigDatePopupButton bigDate;
+
+    private BroadcastReceiver refresher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,15 +80,21 @@ public class MainActivity
         // use savedInstanceState to save the type of list (smart or day)
         String listType;
         if (savedInstanceState != null) {
+            Log.e("MainActivity", "onCreate(): restoring from saved state");
             listType = savedInstanceState.getString(LIST_TYPE_KEY, TaskAdapter.SMART_LIST);
         }
         else {
             listType = TaskAdapter.SMART_LIST;
         }
+        Log.e("MainActivity", "onCreate(): listType: " + listType);
         adapter = new TaskAdapter(this, R.layout.list_item_2line, listType, this);
 
         // set BigDate
         bigDate = (BigDatePopupButton) findViewById(R.id.bigDate);
+        // TODO temp - will be handled by TaskAdapter.setListType()/constructor
+        if (listType.equals(TaskAdapter.SMART_LIST)) {
+            bigDate.setDate(DateHelper.now());
+        }
 
         listView = (ListView) findViewById(R.id.smartList);
         // TODO add empty view to content_main.xml
@@ -163,11 +178,36 @@ public class MainActivity
                 return false;
             }
         });
+
+        refresher = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Log.e("MainActivity", "onReceive() - refresh visible items");
+                adapter.refresh();
+            }
+        };
+    }
+
+    @Override
+    protected void onPause() {
+        // unregister local broadcastreceiver
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(refresher);
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        // register local broadcastreceiver
+        LocalBroadcastManager.getInstance(this).registerReceiver(refresher,
+                new IntentFilter(REFRESH_ACTION));
+        super.onResume();
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putString(LIST_TYPE_KEY, adapter.getListType());
+        String listType = adapter.getListType();
+        Log.e("MainActivity", "onSaveInstanceState(): listType: " + listType);
+        outState.putString(LIST_TYPE_KEY, listType);
 
         super.onSaveInstanceState(outState);
     }
@@ -260,15 +300,6 @@ public class MainActivity
         Log.e("MainActivity", "changing lists from date-heading in smart list");
         bigDate.setDate(date);
         adapter.setListType(TaskAdapter.formatListType(date));
-    }
-
-    private void updateListItemAt(int index) {
-        int firstVisiblePosition = listView.getFirstVisiblePosition();
-        View view = listView.getChildAt(index - firstVisiblePosition);
-
-        if (view != null) {
-            // todo tell adapter to update checked state?
-        }
     }
 
     private void actionBackup() {

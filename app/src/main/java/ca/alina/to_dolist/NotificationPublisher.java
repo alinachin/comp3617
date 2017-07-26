@@ -110,10 +110,10 @@ public class NotificationPublisher extends BroadcastReceiver {
         builder.setContentIntent(pendingIntent);
         builder.setAutoCancel(true);
 
-        Intent markDoneIntent = new Intent(context, MarkDoneReceiver.class);
-        markDoneIntent.setAction(MarkDoneReceiver.ACTION_MARK);
-        markDoneIntent.putExtra(MarkDoneReceiver.EXTRA_TASK_ID, taskId);
-        markDoneIntent.putExtra(MarkDoneReceiver.EXTRA_NOTIF_ID, notifId);
+        Intent markDoneIntent = new Intent(context, DatabaseHelper.MarkDoneReceiver.class);
+        markDoneIntent.setAction(DatabaseHelper.MarkDoneReceiver.ACTION_MARK);
+        markDoneIntent.putExtra(DatabaseHelper.MarkDoneReceiver.EXTRA_TASK_ID, taskId);
+        markDoneIntent.putExtra(DatabaseHelper.MarkDoneReceiver.EXTRA_NOTIF_ID, notifId);
         PendingIntent pendingIntent1 = PendingIntent.getBroadcast(
                 context, MARK_DONE_ID, markDoneIntent, PendingIntent.FLAG_CANCEL_CURRENT);
         builder.addAction(R.drawable.ic_check_black_32dp, doneActionText, pendingIntent1);

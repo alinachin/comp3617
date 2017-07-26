@@ -170,6 +170,12 @@ class TaskAdapter extends ArrayAdapter<Task> implements AsyncOperationListener {
     void setListType(String listType) {
         Log.e("TaskAdapter", "new list type: " + listType);
         this.listType = listType;
+
+        if (goToDateListener != null) {
+            // TODO date <-> listType
+            //goToDateListener.onGoToDate();
+        }
+
         if (listType.equals(SMART_LIST)) {
             query = helper.getSmartList();
         }
