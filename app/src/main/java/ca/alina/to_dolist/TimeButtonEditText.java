@@ -79,8 +79,10 @@ public class TimeButtonEditText
 
         this.setOnClickListener(this);
 
-        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-        defaultTaskLength = Integer.parseInt(sharedPrefs.getString(SettingsActivity.KEY_PREF_TASK_LENGTH, "-1"));
+        if (!isInEditMode()) {
+            SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+            defaultTaskLength = Integer.parseInt(sharedPrefs.getString(SettingsActivity.KEY_PREF_TASK_LENGTH, "-1"));
+        }
     }
 
     public Date getTime() {
