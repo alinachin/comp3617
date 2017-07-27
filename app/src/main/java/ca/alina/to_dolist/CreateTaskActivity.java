@@ -36,7 +36,7 @@ public class CreateTaskActivity extends AbstractEditorActivity {
     }
 
     @Override
-    protected void setTask() {
+    protected void initTask() {
         task = new Task();
 
         task.setName(""); /* can edit */

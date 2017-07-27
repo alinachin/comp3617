@@ -18,6 +18,8 @@ public abstract class AbstractEditorActivity extends AppCompatActivity {
     protected BasicEditor editor;
     protected Task task;
 
+    private static final String FRAGMENT_TAG = "Editor";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,15 +34,32 @@ public abstract class AbstractEditorActivity extends AppCompatActivity {
 
         helper = DatabaseHelper.getInstance(this);
 
-        // make/get task
-        setTask();
+        // initial onCreate
+        if (savedInstanceState == null) {
+            // initialize task (e.g. from Intent)
+            initTask();
 
-        addEditor();
+            // initialize editor
+            addEditor();
+        }
+        // not first onCreate, e.g. screen was rotated
+        else {
+            editor = (BasicEditor) getSupportFragmentManager().getFragment(savedInstanceState, FRAGMENT_TAG);
+        }
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        // save fragment instance
+        getSupportFragmentManager().putFragment(outState, FRAGMENT_TAG, editor);
     }
 
     protected abstract void setMyContentView();
 
-    protected abstract void setTask();
+    protected abstract void initTask();
 
     protected void addEditor() {
         // set editor

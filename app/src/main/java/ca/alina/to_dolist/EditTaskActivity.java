@@ -3,11 +3,14 @@ package ca.alina.to_dolist;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import java.util.Date;
+
+import ca.alina.to_dolist.database.schema.Task;
 
 public class EditTaskActivity extends AbstractEditorActivity {
     static final String TAG_INTENT = "taskId";
@@ -18,7 +21,7 @@ public class EditTaskActivity extends AbstractEditorActivity {
     }
 
     @Override
-    protected void setTask() {
+    protected void initTask() {
         // get task to edit from intent
         Intent callingIntent = getIntent();
         long taskId = callingIntent.getLongExtra(TAG_INTENT, -1L);
@@ -34,20 +37,27 @@ public class EditTaskActivity extends AbstractEditorActivity {
     // onStart - refresh values from database?
 
     protected void save() {
+        Date oldStartTime, oldEndTime;
+        long taskId;
+        Task newTask;
+
         // save old start & end times
-        Date startTime, endTime;
-        startTime = task.getStartTime();
-        endTime = task.getEndTime();
+        oldStartTime = task.getStartTime();
+        oldEndTime = task.getEndTime();
 
         // grab values from editor fragment
-        task = editor.getTask();
+        // make sure the ID is the same!
+        taskId = task.getId();
 
-        helper.updateTask(task);
+        newTask = editor.getTask();
+        newTask.setId(taskId);
+
+        helper.updateTask(newTask);
 
         // check if start date & end date changed
-        if (startTime != task.getStartTime() || endTime != task.getEndTime()) {
+        if (oldStartTime != newTask.getStartTime() || oldEndTime != newTask.getEndTime()) {
             NotificationHelper nHelper = new NotificationHelper(this);
-            nHelper.scheduleNotification(task);
+            nHelper.scheduleNotification(newTask);
         }
 
         setResult(RESULT_OK);
@@ -56,6 +66,9 @@ public class EditTaskActivity extends AbstractEditorActivity {
 
     protected void delete() {
         // should have the task already
+        if (task == null) {
+            Log.e("EditTaskActivity", "on delete - task is null");
+        }
         helper.deleteTask(task);
 
         setResult(RESULT_OK);

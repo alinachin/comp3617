@@ -23,11 +23,13 @@ public class BasicEditor extends Fragment {
         // Required empty public constructor
     }
 
+    // do non-graphic initializations here
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
+    // do graphical initializations here
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -54,6 +56,23 @@ public class BasicEditor extends Fragment {
         fields.startTime.setLinkedTimeListener(fields.endTime);
         
         return rootView;
+    }
+
+    // do final initializations here (e.g. modifying Views)
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        // if created for the first time, populate fields from task
+        // otherwise fields should have been restored by Android
+        if (savedInstanceState == null) {
+            if (task == null) {
+                Toast.makeText(getActivity(), "Could not open task", Toast.LENGTH_SHORT).show();
+                getActivity().finish();
+            }
+
+            populate();
+        }
     }
 
     /** Retrieve values from editor fields and put in Task
@@ -106,7 +125,7 @@ public class BasicEditor extends Fragment {
     public void setTask(final Task task) {
 //        Log.e("BasicEditor", "begin setTask()");
         this.task = task;
-        populate();
+        //populate();
     }
 
     /** Populate editor fields with Task fields */
@@ -128,18 +147,6 @@ public class BasicEditor extends Fragment {
                 fields.endTimeSwitch.setChecked(false);
             }
         }
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        if (task == null) {
-            Toast.makeText(getActivity(), "Could not open task", Toast.LENGTH_SHORT).show();
-            getActivity().finish();
-        }
-
-        populate();
     }
 
     private static class ViewHolder {
