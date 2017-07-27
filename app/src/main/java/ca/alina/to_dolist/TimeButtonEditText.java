@@ -5,12 +5,15 @@ import android.app.FragmentManager;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Checkable;
@@ -34,6 +37,10 @@ public class TimeButtonEditText
         extends FrameLayout
         implements TimePickerDialog.OnTimeSetListener,
         View.OnClickListener {
+    private static final String STATE_SUPER_KEY = "super";
+    private static final String STATE_TIME_LONG_KEY = "mTime";
+    private static final String STATE_MY_ENABLED_KEY = "mEnabled";
+
     private ViewHolder viewHolder;
     private LocalTime mTime;
     private DateFormat timeFormat;
@@ -83,6 +90,44 @@ public class TimeButtonEditText
             SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
             defaultTaskLength = Integer.parseInt(sharedPrefs.getString(SettingsActivity.KEY_PREF_TASK_LENGTH, "-1"));
         }
+    }
+
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(STATE_SUPER_KEY, super.onSaveInstanceState());
+        bundle.putLong(STATE_TIME_LONG_KEY, mTime.toDateTimeToday().getMillis());
+        bundle.putBoolean(STATE_MY_ENABLED_KEY, myEnabled);
+
+        return bundle;
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        if (state instanceof Bundle) {
+            Bundle bundle = (Bundle) state;
+
+            super.onRestoreInstanceState(bundle.getParcelable(STATE_SUPER_KEY));
+
+            long time = bundle.getLong(STATE_TIME_LONG_KEY);
+            setTime(new Date(time));
+
+            boolean enabled = bundle.getBoolean(STATE_MY_ENABLED_KEY, true);
+            setEnabled(enabled);
+        }
+        else {
+            super.onRestoreInstanceState(state);
+        }
+    }
+
+    @Override
+    protected void dispatchSaveInstanceState(SparseArray<Parcelable> container) {
+        dispatchFreezeSelfOnly(container);
+    }
+
+    @Override
+    protected void dispatchRestoreInstanceState(SparseArray<Parcelable> container) {
+        dispatchThawSelfOnly(container);
     }
 
     public Date getTime() {

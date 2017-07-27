@@ -5,7 +5,10 @@ import android.app.DatePickerDialog;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.graphics.Typeface;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.AttributeSet;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.DatePicker;
@@ -21,6 +24,8 @@ import java.util.Date;
  */
 
 public class BigDatePopupButton extends FrameLayout implements DatePickerDialog.OnDateSetListener {
+    private static final String STATE_SUPER_KEY = "super";
+    private static final String STATE_DATE_LONG_KEY = "mDate";
 
     private LocalDate mDate;
     private ViewHolder viewHolder;
@@ -80,6 +85,40 @@ public class BigDatePopupButton extends FrameLayout implements DatePickerDialog.
         if (getContext() instanceof OnBigDateChangedListener) {
             listener = (OnBigDateChangedListener) getContext();
         }
+    }
+
+    // handle saving state manually
+
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(STATE_SUPER_KEY, super.onSaveInstanceState());
+        bundle.putLong(STATE_DATE_LONG_KEY, mDate.toDateTimeAtStartOfDay().getMillis());
+
+        return bundle;
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        if (state instanceof Bundle) {
+            Bundle bundle = (Bundle) state;
+            super.onRestoreInstanceState(bundle.getParcelable(STATE_SUPER_KEY));
+            long date = bundle.getLong(STATE_DATE_LONG_KEY);
+            setDate(new Date(date));
+        }
+        else {
+            super.onRestoreInstanceState(state);
+        }
+    }
+
+    @Override
+    protected void dispatchSaveInstanceState(SparseArray<Parcelable> container) {
+        dispatchFreezeSelfOnly(container);
+    }
+
+    @Override
+    protected void dispatchRestoreInstanceState(SparseArray<Parcelable> container) {
+        dispatchThawSelfOnly(container);
     }
 
     public void setDate(Date date) {
