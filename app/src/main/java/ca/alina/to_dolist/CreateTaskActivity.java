@@ -36,8 +36,8 @@ public class CreateTaskActivity extends AbstractEditorActivity {
     }
 
     @Override
-    protected void initTask() {
-        task = new Task();
+    protected Task initTask() {
+        Task task = new Task();
 
         task.setName(""); /* can edit */
         task.setStartTime(suggestedStartTime); /* can edit */
@@ -48,6 +48,8 @@ public class CreateTaskActivity extends AbstractEditorActivity {
         task.setIsDone(false);
         task.setIsRecurring(false);
         task.setIsHidden(false);
+
+        return task;
     }
 
     @Override

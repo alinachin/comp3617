@@ -16,12 +16,12 @@ import ca.alina.to_dolist.database.schema.Task;
 public abstract class AbstractEditorActivity extends AppCompatActivity {
     protected DatabaseHelper helper;
     protected BasicEditor editor;
-    protected Task task;
+    //protected Task task;  // have Editor save task state instead
 
     private static final String FRAGMENT_TAG = "Editor";
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setMyContentView();
@@ -36,11 +36,11 @@ public abstract class AbstractEditorActivity extends AppCompatActivity {
 
         // initial onCreate
         if (savedInstanceState == null) {
-            // initialize task (e.g. from Intent)
-            initTask();
+            // initialize task values
+            Task task = initTask();
 
             // initialize editor
-            addEditor();
+            addEditor(task);
         }
         // not first onCreate, e.g. screen was rotated
         else {
@@ -59,9 +59,9 @@ public abstract class AbstractEditorActivity extends AppCompatActivity {
 
     protected abstract void setMyContentView();
 
-    protected abstract void initTask();
+    protected abstract Task initTask();
 
-    protected void addEditor() {
+    protected void addEditor(Task task) {
         // set editor
         editor = new BasicEditor();
         editor.setTask(task);

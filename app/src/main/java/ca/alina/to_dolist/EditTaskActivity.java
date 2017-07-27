@@ -2,13 +2,11 @@ package ca.alina.to_dolist;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
-
-import java.util.Date;
 
 import ca.alina.to_dolist.database.schema.Task;
 
@@ -16,59 +14,58 @@ public class EditTaskActivity extends AbstractEditorActivity {
     static final String TAG_INTENT = "taskId";
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+    }
+
+    @Override
     protected void setMyContentView() {
         setContentView(R.layout.activity_edit_task);
     }
 
     @Override
-    protected void initTask() {
+    protected Task initTask() {
+        Task task;
+
         // get task to edit from intent
         Intent callingIntent = getIntent();
-        long taskId = callingIntent.getLongExtra(TAG_INTENT, -1L);
-        task = helper.getTask(taskId);
+        long id = callingIntent.getLongExtra(TAG_INTENT, -1L);
+
+        task = helper.getTask(id);
+
         if (task == null) {
             Toast.makeText(this, "Could not open task", Toast.LENGTH_LONG).show();
             setResult(RESULT_CANCELED);
             finish();
         }
-//      Log.e("EditTaskActivity", "Editing task: " + task.getName());
+
+        return task;
     }
 
     // onStart - refresh values from database?
 
     protected void save() {
-        Date oldStartTime, oldEndTime;
-        long taskId;
         Task newTask;
-
-        // save old start & end times
-        oldStartTime = task.getStartTime();
-        oldEndTime = task.getEndTime();
 
         // grab values from editor fragment
         // make sure the ID is the same!
-        taskId = task.getId();
-
         newTask = editor.getTask();
-        newTask.setId(taskId);
 
         helper.updateTask(newTask);
 
         // check if start date & end date changed
-        if (oldStartTime != newTask.getStartTime() || oldEndTime != newTask.getEndTime()) {
+        //if (oldStartTime != newTask.getStartTime() || oldEndTime != newTask.getEndTime()) {
             NotificationHelper nHelper = new NotificationHelper(this);
             nHelper.scheduleNotification(newTask);
-        }
+        //}
 
         setResult(RESULT_OK);
         finish();
     }
 
     protected void delete() {
-        // should have the task already
-        if (task == null) {
-            Log.e("EditTaskActivity", "on delete - task is null");
-        }
+        Task task = editor.getTask();
         helper.deleteTask(task);
 
         setResult(RESULT_OK);

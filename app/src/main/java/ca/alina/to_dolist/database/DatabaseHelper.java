@@ -134,6 +134,10 @@ public class DatabaseHelper {
 //    }
 
     public void deleteTask(Task task) {
+        if (task == null) {
+            Log.e("DatabaseHelper", "deleteTask - null task given");
+            return;
+        }
         // delete notif rows
         notifDao.deleteInTx(task.getNotifs());
         taskDao.delete(task);

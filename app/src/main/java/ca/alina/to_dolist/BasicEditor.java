@@ -27,6 +27,8 @@ public class BasicEditor extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        setRetainInstance(true);  // required to save Task object
     }
 
     // do graphical initializations here
