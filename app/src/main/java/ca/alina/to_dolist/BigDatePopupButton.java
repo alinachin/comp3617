@@ -20,7 +20,7 @@ import java.util.Date;
 /** Displays a Date. When clicked, displays a DatePicker dialog to edit the date.
  */
 
-class BigDatePopupButton extends FrameLayout implements DatePickerDialog.OnDateSetListener {
+public class BigDatePopupButton extends FrameLayout implements DatePickerDialog.OnDateSetListener {
 
     private LocalDate mDate;
     private ViewHolder viewHolder;
