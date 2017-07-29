@@ -77,10 +77,10 @@ public class TimeButton
 
         viewHolder = new ViewHolder();
         viewHolder.button = (ImageButton) findViewById(R.id.timeIconButton);
-        viewHolder.editText = (TextView) findViewById(R.id.timeEditText);
+        viewHolder.display = (TextView) findViewById(R.id.timeEditText);
 
-        viewHolder.editText.setClickable(true);
-        viewHolder.editText.setOnClickListener(this);
+        viewHolder.display.setClickable(true);
+        viewHolder.display.setOnClickListener(this);
 
         viewHolder.button.setOnClickListener(this);
 
@@ -143,7 +143,7 @@ public class TimeButton
         mTime = new LocalTime(date);
 
         String timeString = timeFormat.format(date);
-        viewHolder.editText.setText(timeString);
+        viewHolder.display.setText(timeString);
 
         if (linkedTimeListener != null) {
             linkedTimeListener.onLinkedTimeSet(date);
@@ -155,7 +155,7 @@ public class TimeButton
         myEnabled = enabled;
         //viewHolder.button.setEnabled(enabled);
         viewHolder.button.setImageAlpha(enabled ? 255 : 66);  // fake enabling/disabling the button
-        viewHolder.editText.setEnabled(enabled);
+        viewHolder.display.setAlpha(enabled ? 1.0f : 66f/255);  // fake enabling/disabling the label
     }
 
     public void setAssocCheckable(Checkable view) {
@@ -232,7 +232,7 @@ public class TimeButton
     }
 
     private static class ViewHolder {
-        TextView editText;
+        TextView display;
         ImageButton button;
     }
 
