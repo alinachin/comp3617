@@ -14,10 +14,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.ActionMode;
-import android.view.MenuInflater;
-import android.view.View;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
@@ -68,17 +68,11 @@ public class MainActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayShowTitleEnabled(false);
-
-        PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
-
-        // use savedInstanceState to save the type of list (smart or day)
         TaskAdapter.ListType listType;
+
+        super.onCreate(savedInstanceState);
+
+        // use savedInstanceState to get/save the type of list (smart or day)
         if (savedInstanceState != null) {
             //Log.e("MainActivity", "onCreate(): restoring from saved state");
             String string = savedInstanceState.getString(LIST_TYPE_KEY, "");
@@ -97,6 +91,56 @@ public class MainActivity
         }
         //Log.e("MainActivity", "onCreate(): listType: " + listType.toString());
 
+
+        // initialize preferences to default values if needed
+        PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
+
+
+        // display-drawing stuff
+        setContentView(R.layout.activity_main);
+        setupToolbar();
+
+        initContents(listType);
+    }
+
+    @Override
+    protected void onPause() {
+        // unregister local broadcastreceiver
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(refresher);
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        // register local broadcastreceiver
+        LocalBroadcastManager.getInstance(this).registerReceiver(refresher,
+                new IntentFilter(REFRESH_ACTION));
+        super.onResume();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        String listType = adapter.getListType().getString();
+        //Log.e("MainActivity", "onSaveInstanceState(): listType: " + listType);
+        outState.putString(LIST_TYPE_KEY, listType);
+
+        super.onSaveInstanceState(outState);
+    }
+
+    /** Initialize the Support Action Bar
+     */
+    private void setupToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayShowTitleEnabled(false);
+    }
+
+    /** Initialize displayed contents: the task list and date display.
+     *
+     * @param listType The type of list to display
+     */
+    private void initContents(TaskAdapter.ListType listType) {
         adapter = new TaskAdapter(this, R.layout.list_item_2line, listType, this);
 
         // set BigDate
@@ -195,30 +239,6 @@ public class MainActivity
                 adapter.refresh();
             }
         };
-    }
-
-    @Override
-    protected void onPause() {
-        // unregister local broadcastreceiver
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(refresher);
-        super.onPause();
-    }
-
-    @Override
-    protected void onResume() {
-        // register local broadcastreceiver
-        LocalBroadcastManager.getInstance(this).registerReceiver(refresher,
-                new IntentFilter(REFRESH_ACTION));
-        super.onResume();
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        String listType = adapter.getListType().getString();
-        //Log.e("MainActivity", "onSaveInstanceState(): listType: " + listType);
-        outState.putString(LIST_TYPE_KEY, listType);
-
-        super.onSaveInstanceState(outState);
     }
 
     /** Opens the task editor.
