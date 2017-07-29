@@ -41,10 +41,10 @@ public class BasicEditor extends Fragment {
         fields = new ViewHolder();
         fields.bigDate = (BigDatePopupButton) rootView.findViewById(R.id.bigDate);
         fields.name = (EditText) rootView.findViewById(R.id.taskName);
-        fields.startTime = (TimeButtonEditText) rootView.findViewById(R.id.startTimeCompound);
-        fields.endTime = (TimeButtonEditText) rootView.findViewById(R.id.endTimeCompound);
+        fields.startTime = (TimeButton) rootView.findViewById(R.id.startTimeCompound);
+        fields.endTime = (TimeButton) rootView.findViewById(R.id.endTimeCompound);
 
-        final TimeButtonEditText endTime = fields.endTime;
+        final TimeButton endTime = fields.endTime;
         fields.endTimeSwitch = (CompoundButton) rootView.findViewById(R.id.endTimeSwitch);
 
         fields.endTimeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -153,8 +153,8 @@ public class BasicEditor extends Fragment {
 
     private static class ViewHolder {
         EditText name;
-        TimeButtonEditText startTime;
-        TimeButtonEditText endTime;
+        TimeButton startTime;
+        TimeButton endTime;
         BigDatePopupButton bigDate;
         CompoundButton endTimeSwitch;
     }

@@ -33,7 +33,7 @@ import java.util.Date;
  * Composite View for inputting a time, either by typing into an EditText or using a TimePickerDialog.
  */
 
-public class TimeButtonEditText
+public class TimeButton
         extends FrameLayout
         implements TimePickerDialog.OnTimeSetListener,
         View.OnClickListener {
@@ -46,20 +46,20 @@ public class TimeButtonEditText
     private DateFormat timeFormat;
     private boolean myEnabled;
     private Checkable checkable = null;
-    private TimeButtonEditText linkedTimeListener = null;
+    private TimeButton linkedTimeListener = null;
     private int defaultTaskLength;
 
-    public TimeButtonEditText(@NonNull Context context) {
+    public TimeButton(@NonNull Context context) {
         super(context);
         init();
     }
 
-    public TimeButtonEditText(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public TimeButton(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public TimeButtonEditText(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
+    public TimeButton(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
@@ -136,7 +136,7 @@ public class TimeButtonEditText
 
     public void setTime(Date date) {
         if (date == null) {
-            Log.w("TimeButtonEditText", "setTime(null)");
+            Log.w("TimeButton", "setTime(null)");
             return;
         }
 
@@ -177,7 +177,7 @@ public class TimeButtonEditText
      */
     @Override
     public void onClick(View v) {
-        //Log.e("TimeButtonEditText", "I'm clicked");
+        //Log.e("TimeButton", "I'm clicked");
 
         // do custom onclick stuff
         if (!myEnabled) {
@@ -223,7 +223,7 @@ public class TimeButtonEditText
 
     }
 
-    public void setLinkedTimeListener(TimeButtonEditText listener) {
+    public void setLinkedTimeListener(TimeButton listener) {
         linkedTimeListener = listener;
     }
 
