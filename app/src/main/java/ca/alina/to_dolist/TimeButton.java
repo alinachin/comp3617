@@ -87,8 +87,9 @@ public class TimeButton
         this.setOnClickListener(this);
 
         if (!isInEditMode()) {
-            SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-            defaultTaskLength = Integer.parseInt(sharedPrefs.getString(SettingsActivity.KEY_PREF_TASK_LENGTH, "-1"));
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+            final String TASK_LENGTH_KEY = getContext().getString(R.string.pref_task_length_key);
+            defaultTaskLength = Integer.parseInt(prefs.getString(TASK_LENGTH_KEY, "-1"));
         }
     }
 

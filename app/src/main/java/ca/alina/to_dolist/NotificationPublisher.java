@@ -59,10 +59,14 @@ public class NotificationPublisher extends BroadcastReceiver {
         final List<Task> expiredTasks;
         Notification.Builder builder;
 
+        final String NOTIFS_ON_KEY = context.getString(R.string.pref_notif_on_key);
+        final String RINGTONE_KEY = context.getString(R.string.pref_notif_ringtone_key);
+        final String VIBRATE_KEY = context.getString(R.string.pref_notif_vibrate_key);
+
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean notifOn = sharedPref.getBoolean(SettingsActivity.KEY_PREF_NOTIFS_ENABLED, true);
-        String ringtoneString = sharedPref.getString(SettingsActivity.KEY_PREF_RINGTONE, "");
-        boolean vibrate = sharedPref.getBoolean(SettingsActivity.KEY_PREF_VIBRATE, false);
+        boolean notifOn = sharedPref.getBoolean(NOTIFS_ON_KEY, true);
+        String ringtoneString = sharedPref.getString(RINGTONE_KEY, "");
+        boolean vibrate = sharedPref.getBoolean(VIBRATE_KEY, false);
 
         String doneActionText = context.getResources().getString(R.string.notif_action_mark_done);
 

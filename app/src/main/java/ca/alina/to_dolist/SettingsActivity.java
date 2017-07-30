@@ -13,14 +13,11 @@ import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
-import android.support.v7.app.ActionBar;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
 import android.text.TextUtils;
 import android.view.MenuItem;
-
-import java.util.List;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -34,10 +31,6 @@ import java.util.List;
  * API Guide</a> for more information on developing a Settings UI.
  */
 public class SettingsActivity extends AppCompatPreferenceActivity {
-    static final String KEY_PREF_RINGTONE = "notifications_ringtone";
-    static final String KEY_PREF_VIBRATE = "notifications_vibrate";
-    static final String KEY_PREF_NOTIFS_ENABLED = "notifications";
-    static final String KEY_PREF_TASK_LENGTH = "task_length";
 
     /**
      * A preference value change listener that updates the preference's summary
@@ -197,8 +190,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
             // guidelines.
-            bindPreferenceSummaryToValue(findPreference("task_length"));
-            bindPreferenceSummaryToValue(findPreference("notifications_ringtone"));
+            final String TASK_LENGTH_KEY = getString(R.string.pref_task_length_key);
+            final String NOTIF_RINGTONE_KEY = getString(R.string.pref_notif_ringtone_key);
+            bindPreferenceSummaryToValue(findPreference(TASK_LENGTH_KEY));
+            bindPreferenceSummaryToValue(findPreference(NOTIF_RINGTONE_KEY));
 
         }
 
@@ -220,8 +215,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_general);
 
-            bindPreferenceSummaryToValue(findPreference("task_length"));
-            bindPreferenceSummaryToValue(findPreference("notifications_ringtone"));
+            final String TASK_LENGTH_KEY = getString(R.string.pref_task_length_key);
+            final String NOTIF_RINGTONE_KEY = getString(R.string.pref_notif_ringtone_key);
+            bindPreferenceSummaryToValue(findPreference(TASK_LENGTH_KEY));
+            bindPreferenceSummaryToValue(findPreference(NOTIF_RINGTONE_KEY));
         }
     }
 
