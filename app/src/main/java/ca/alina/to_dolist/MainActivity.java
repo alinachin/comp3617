@@ -310,8 +310,13 @@ public class MainActivity
             return true;
         }
         if (id == R.id.action_smart_list) {
-            if (adapter.getListType() != TaskAdapter.ListType.SMART) {
-                bigDate.setDate(DateHelper.now());
+            bigDate.setDate(DateHelper.now());
+            if (adapter.getListType() == TaskAdapter.ListType.SMART) {
+                // jump to today
+                adapter.setListType(TaskAdapter.ListType.fromDate(DateHelper.now()));
+            }
+            else {
+                // jump to smart list
                 adapter.setListType(TaskAdapter.ListType.SMART);
             }
             return true;

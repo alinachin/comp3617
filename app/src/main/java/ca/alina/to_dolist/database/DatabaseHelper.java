@@ -116,13 +116,13 @@ public class DatabaseHelper {
         startToday = DateHelper.getBeginningOfDay(new LocalDate());
 
         QueryBuilder<Task> qb = taskDao.queryBuilder();
-//        WhereCondition notDone = TaskDao.Properties.IsDone.eq(false);
-        WhereCondition notHidden = TaskDao.Properties.IsHidden.eq(false);
+        WhereCondition notDone = TaskDao.Properties.IsDone.eq(false);
+//        WhereCondition notHidden = TaskDao.Properties.IsHidden.eq(false);
         WhereCondition expired = TaskDao.Properties.StartTime.lt(startToday);
         WhereCondition todayOrAfter = TaskDao.Properties.StartTime.ge(startToday);
         // todo revise
 
-        qb.whereOr(qb.and(notHidden, expired), todayOrAfter).limit(LIMIT_SMART_LIST);
+        qb.whereOr(qb.and(notDone, expired), todayOrAfter).limit(LIMIT_SMART_LIST);
         qb.orderAsc(TaskDao.Properties.StartTime);
 
         return new TaskQuery(qb.build());
