@@ -4,4 +4,7 @@
     <string name="pref_notif_on_key">notifs_on</string>
     <string name="pref_notif_ringtone_key">notif_ringtone</string>
     <string name="pref_notif_vibrate_key">notif_vibrate</string>
+    <string name="pref_send_feedback_key">send_feedback</string>
+
+    <string name="feedback_email_uri">mailto:todolist.alpha@gmail.com</string>
 </resources>

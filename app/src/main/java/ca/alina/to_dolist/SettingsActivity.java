@@ -4,6 +4,7 @@ package ca.alina.to_dolist;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -219,6 +220,37 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             final String NOTIF_RINGTONE_KEY = getString(R.string.pref_notif_ringtone_key);
             bindPreferenceSummaryToValue(findPreference(TASK_LENGTH_KEY));
             bindPreferenceSummaryToValue(findPreference(NOTIF_RINGTONE_KEY));
+
+            final String FEEDBACK_KEY = getString(R.string.pref_send_feedback_key);
+            Preference feedbackPref = findPreference(FEEDBACK_KEY);
+            Intent emailIntent = feedbackPref.getIntent();
+            PackageManager pm = getActivity().getPackageManager();
+            if (emailIntent.resolveActivity(pm) != null) {
+                feedbackPref.getIntent().setData(getMailtoUri());
+            }
+            else {  // can't support sending email
+                // hide this pref
+                feedbackPref.setEnabled(false);
+            }
+        }
+
+        private Uri getMailtoUri() {
+            final String MAILTO = getString(R.string.feedback_email_uri);
+            final String SUBJ = "?subject=";
+            final String BODY = "&body=";
+            final String SUGGESTION_TEXT = getString(R.string.feedback_suggestion_text);
+            String subjText;
+            String bodyText;
+
+            subjText = "";
+
+            String version = BuildConfig.VERSION_NAME;
+            String os = Build.VERSION.RELEASE;
+            bodyText = "Version: " + version + "\n" + "Android version: " + os + "\n\n" + SUGGESTION_TEXT;
+
+            String uri = MAILTO + SUBJ + subjText + BODY + bodyText;
+
+            return Uri.parse(uri);
         }
     }
 
