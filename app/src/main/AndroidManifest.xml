@@ -50,7 +50,9 @@
                 android:value="ca.alina.to_dolist.MainActivity" />
         </activity>
 
-        <activity android:name=".DropboxWebActivity" />
+        <activity
+            android:name=".DropboxWebActivity"
+            android:label="Dropbox" />
 
         <receiver
             android:name=".NotificationPublisher"
@@ -61,6 +63,11 @@
             android:name=".database.DatabaseHelper$MarkDoneReceiver"
             android:enabled="true"
             android:exported="false" />
+
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="9b5fd8611d5965cfb848752343f1211bd38e028c"
+            />
     </application>
 
 </manifest>
