@@ -4,7 +4,6 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import ca.alina.to_dolist.database.DatabaseHelper;
 import ca.alina.to_dolist.database.schema.Task;
@@ -20,7 +19,7 @@ class NotificationHelper {
     }
 
     void scheduleNotification(Task task) {
-        Log.wtf("NotificationHelper", "scheduleNotification started");
+//        Log.wtf("NotificationHelper", "scheduleNotification started");
         boolean taskHasEndTime = (task.getEndTime() != null);
 
         AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
@@ -38,7 +37,7 @@ class NotificationHelper {
         // save to notif database & get requestCode
         int startNotifId = helper.makeStartNotif(task);
         if (startNotifId < 0) {
-            Log.e("NotificationHelper", "error writing to notif db");
+//            Log.e("NotificationHelper", "error writing to notif db");
             return;
         }
 
@@ -56,7 +55,7 @@ class NotificationHelper {
             // save to notif database & get requestCode
             int endNotifId = helper.makeEndNotif(task);
             if (endNotifId < 0) {
-                Log.e("NotificationHelper", "error writing to notif db");
+//                Log.e("NotificationHelper", "error writing to notif db");
                 return;
             }
 

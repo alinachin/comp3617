@@ -2,9 +2,10 @@ package ca.alina.to_dolist;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.crashlytics.android.Crashlytics;
 
 import java.util.Date;
 
@@ -23,7 +24,8 @@ public class CreateTaskActivity extends AbstractEditorActivity {
             suggestedStartTime = DateHelper.autoStartTime(new Date(date));
         }
         catch (Exception e) {
-            Log.e("CreateTaskActivity", "no start date passed to activity");
+            Crashlytics.logException(e);
+//            Log.e("CreateTaskActivity", "no start date passed to activity");
             suggestedStartTime = DateHelper.autoStartTime(); // suggest a time based on today
         }
 

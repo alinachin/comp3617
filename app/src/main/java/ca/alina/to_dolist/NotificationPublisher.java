@@ -11,7 +11,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.text.format.DateUtils;
-import android.util.Log;
 
 import java.util.Date;
 import java.util.List;
@@ -52,7 +51,7 @@ public class NotificationPublisher extends BroadcastReceiver {
     }
 
     private static Notification makeNotif(Context context, long taskId, boolean isEndTime, int notifId) {
-        Log.wtf("NotificationPublisher", "makeNotif started");
+//        Log.wtf("NotificationPublisher", "makeNotif started");
         // todo separate method for end notif style?
         DatabaseHelper databaseHelper;
         final Task task;
@@ -71,7 +70,7 @@ public class NotificationPublisher extends BroadcastReceiver {
         String doneActionText = context.getResources().getString(R.string.notif_action_mark_done);
 
         if (!notifOn) {
-            Log.d("NotificationPublisher", "notifications off");
+//            Log.d("NotificationPublisher", "notifications off");
             return null;
         }
 
@@ -83,7 +82,7 @@ public class NotificationPublisher extends BroadcastReceiver {
 
         // get task
         task = databaseHelper.getTask(taskId);
-        if (task == null) {
+        if (task == null || task.getIsDone()) {
             return null;
         }
 
@@ -138,7 +137,7 @@ public class NotificationPublisher extends BroadcastReceiver {
     }
 
     private static Notification.Builder buildSummary(Context context, Task titleTask, List<Task> otherTasks) {
-        Log.d("NotificationPublisher", "starting buildSummary()");
+//        Log.d("NotificationPublisher", "starting buildSummary()");
         String name;
         String timeInterval;
         int nCollapsed;
@@ -149,7 +148,7 @@ public class NotificationPublisher extends BroadcastReceiver {
         timeInterval = formatTimeRange(context, titleTask);
         nCollapsed = otherTasks.size() - 1;  // assume otherTasks already includes titleTask
 
-        Log.d("NotificationPublisher", "titleTask: " + titleTask.getName() + "\notherTasks: " + otherTasks.toString());
+//        Log.d("NotificationPublisher", "titleTask: " + titleTask.getName() + "\notherTasks: " + otherTasks.toString());
 
         style = new Notification.InboxStyle();
         style.setBigContentTitle(name);
@@ -162,7 +161,7 @@ public class NotificationPublisher extends BroadcastReceiver {
             }
         }
         nExpanded = nCollapsed - i + 1;
-        Log.d("NotificationPublisher", "nCollapsed: " + String.valueOf(nCollapsed) + " nExpanded: " + String.valueOf(nExpanded));
+//        Log.d("NotificationPublisher", "nCollapsed: " + String.valueOf(nCollapsed) + " nExpanded: " + String.valueOf(nExpanded));
 
         if (nExpanded > 0) {
             style.setSummaryText("+" + Integer.toString(nExpanded) + " more");
@@ -201,7 +200,7 @@ public class NotificationPublisher extends BroadcastReceiver {
         @Override
         protected Notification doInBackground(Params... params) {
             if (params.length < 1) {
-                Log.e("MakeNotificationTask", "missing params passed to async make-notification task");
+//                Log.e("MakeNotificationTask", "missing params passed to async make-notification task");
                 return null;
             }
 

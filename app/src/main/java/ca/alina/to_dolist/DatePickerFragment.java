@@ -5,7 +5,8 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+
+import com.crashlytics.android.Crashlytics;
 
 import java.util.Calendar;
 
@@ -65,8 +66,9 @@ public class DatePickerFragment extends DialogFragment {
             return new DatePickerDialog(getActivity(), listener, year, month, day);
         }
         catch (Exception e) {
-            Log.e("DatePickerFragment", "couldnt attach listener (needs to be R.id.bigDate)");
-            e.printStackTrace();
+            Crashlytics.logException(e);
+//            Log.e("DatePickerFragment", "couldnt attach listener (needs to be R.id.bigDate)");
+//            e.printStackTrace();
             return null;
         }
     }

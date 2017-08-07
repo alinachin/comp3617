@@ -5,7 +5,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
+
+import com.crashlytics.android.Crashlytics;
 
 import org.greenrobot.greendao.async.AsyncOperationListener;
 import org.greenrobot.greendao.async.AsyncSession;
@@ -80,7 +81,8 @@ public class DatabaseHelper {
             taskDao.insert(task);
         }
         catch (Exception e) {
-            e.printStackTrace();
+            Crashlytics.logException(e);
+//            e.printStackTrace();
         }
     }
 
@@ -89,7 +91,8 @@ public class DatabaseHelper {
             taskDao.update(task);
         }
         catch (Exception e) {  // TODO check
-            e.printStackTrace();
+            Crashlytics.logException(e);
+//            e.printStackTrace();
         }
     }
 
@@ -135,7 +138,7 @@ public class DatabaseHelper {
 
     public void deleteTask(Task task) {
         if (task == null) {
-            Log.e("DatabaseHelper", "deleteTask - null task given");
+//            Log.e("DatabaseHelper", "deleteTask - null task given");
             return;
         }
         // delete notif rows
@@ -144,7 +147,7 @@ public class DatabaseHelper {
     }
 
     public void deleteSelectedTasks(final List<Task> tasks, AsyncOperationListener callback) {
-        Log.d("DatabaseHelper", "async deleting selected tasks");
+//        Log.d("DatabaseHelper", "async deleting selected tasks");
         // cancel notifs
         for (Task t : tasks) {
             notifDao.deleteInTx(t.getNotifs());
@@ -208,7 +211,8 @@ public class DatabaseHelper {
 
                 return (int) notifId;
             } catch (Exception e) {
-                e.printStackTrace();
+                Crashlytics.logException(e);
+//                e.printStackTrace();
                 return -1;
             }
         }
@@ -240,7 +244,8 @@ public class DatabaseHelper {
 
                 return (int) notifId;
             } catch (Exception e) {
-                e.printStackTrace();
+                Crashlytics.logException(e);
+//                e.printStackTrace();
                 return -1;
             }
         }
@@ -288,7 +293,7 @@ public class DatabaseHelper {
             // mark task as done
             Task task = helper.getTask(taskId);
             if (task == null) {
-                Log.e("MarkDoneReceiver", "param " + String.valueOf(taskId) + ": task not found");
+//                Log.e("MarkDoneReceiver", "param " + String.valueOf(taskId) + ": task not found");
                 return;
             }
             helper.toggleDone(task, true);

@@ -15,6 +15,8 @@ import android.widget.DatePicker;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import com.crashlytics.android.Crashlytics;
+
 import org.joda.time.LocalDate;
 
 import java.util.Calendar;
@@ -76,7 +78,8 @@ public class BigDatePopupButton extends FrameLayout implements DatePickerDialog.
                     datePicker.show(fragmentManager, "datePicker");
                 }
                 catch (Exception e) {
-                    e.printStackTrace();
+                    Crashlytics.logException(e);
+//                    e.printStackTrace();
                 }
             }
         });

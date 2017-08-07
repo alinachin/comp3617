@@ -5,7 +5,8 @@ import android.app.DialogFragment;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.text.format.DateFormat;
-import android.util.Log;
+
+import com.crashlytics.android.Crashlytics;
 
 import java.util.Calendar;
 
@@ -66,8 +67,9 @@ public class TimePickerFragment extends DialogFragment {
             );
         }
         catch (Exception e) {
-            Log.e("TimePickerFragment", "couldnt attach listener (provided in args bundle)");
-            e.printStackTrace();
+            Crashlytics.logException(e);
+//            Log.e("TimePickerFragment", "couldnt attach listener (provided in args bundle)");
+//            e.printStackTrace();
             return null;
         }
     }

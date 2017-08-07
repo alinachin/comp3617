@@ -96,6 +96,7 @@ public class MainActivity
                 if (BuildConfig.DEBUG) {
                     Log.e("MainActivity", "couldn't retrieve saved list config from activity state");
                 }
+                Crashlytics.logException(e);
                 listType = TaskAdapter.ListType.SMART;
             }
         }
@@ -397,8 +398,11 @@ public class MainActivity
                     @Override
                     public void onCompleted(Exception e, Response<JsonObject> result) {
                         if (e != null) {
-                            Log.e("MainActivity", e.getMessage());
-                            e.printStackTrace();
+                            if (BuildConfig.DEBUG) {
+                                Log.e("MainActivity", e.getMessage());
+                                e.printStackTrace();
+                            }
+
                             if (e instanceof UnknownHostException) {
                                 Toast.makeText(MainActivity.this, "Backup failed - no Internet connection", Toast.LENGTH_LONG).show();
                             }
@@ -408,11 +412,13 @@ public class MainActivity
                         }
                         else {
                             if (result.getHeaders().code() != 200) {
-                                Log.e("MainActivity",
-                                        Integer.toString(result.getHeaders().code())
-                                                + " " + result.getHeaders().message());
-                                if (result.getResult() != null) {
-                                    Log.e("MainActivity", result.getResult().toString());
+                                if (BuildConfig.DEBUG) {
+                                    Log.e("MainActivity",
+                                            Integer.toString(result.getHeaders().code())
+                                                    + " " + result.getHeaders().message());
+                                    if (result.getResult() != null) {
+                                        Log.e("MainActivity", result.getResult().toString());
+                                    }
                                 }
 
                                 if (result.getHeaders().code() == 401) {
@@ -424,7 +430,7 @@ public class MainActivity
                                 }
                             }
                             else if (result.getResult() != null) {
-                                Log.d("MainActivity", result.getResult().toString());
+//                                Log.d("MainActivity", result.getResult().toString());
 
                                 // do something w/ success result?
                                 if (result.getResult().get("error") == null) {
@@ -461,8 +467,11 @@ public class MainActivity
                     @Override
                     public void onCompleted(Exception e, Response<File> result) {
                         if (e != null) {
-                            Log.e("MainActivity", e.getMessage());
-                            e.printStackTrace();
+                            if (BuildConfig.DEBUG) {
+                                Log.e("MainActivity", e.getMessage());
+                                e.printStackTrace();
+                            }
+
                             if (e instanceof UnknownHostException) {
                                 Toast.makeText(MainActivity.this, "Sync failed - no Internet connection", Toast.LENGTH_LONG).show();
                             }
@@ -472,9 +481,11 @@ public class MainActivity
                         }
                         else {
                             if (result.getHeaders().code() != 200) {
-                                Log.e("MainActivity",
-                                        Integer.toString(result.getHeaders().code())
-                                                + " " + result.getHeaders().message());
+                                if (BuildConfig.DEBUG) {
+                                    Log.e("MainActivity",
+                                            Integer.toString(result.getHeaders().code())
+                                                    + " " + result.getHeaders().message());
+                                }
 
                                 if (result.getHeaders().code() == 401) {
                                     Intent intent = new Intent(MainActivity.this, DropboxWebActivity.class);
@@ -492,13 +503,17 @@ public class MainActivity
                                 JsonObject resultJson = new JsonParser().parse(resultHeaders).getAsJsonObject();
 
                                 if (resultJson.get("error") == null) {
-                                    Log.d("MainActivity", "download successful");
+//                                    Log.d("MainActivity", "download successful");
                                     try {
                                         overwriteDb(cacheHandle, dbFileHandle);
                                     }
                                     catch (IOException exc) {
-                                        Log.e("MainActivity", "failed to copy downloaded backup to db folder");
-                                        exc.printStackTrace();
+                                        if (BuildConfig.DEBUG) {
+                                            Log.e("MainActivity", "failed to copy downloaded backup to db folder");
+                                            exc.printStackTrace();
+                                        }
+
+                                        Crashlytics.logException(exc);
                                         Toast.makeText(MainActivity.this, "Sync failed", Toast.LENGTH_LONG).show();
                                     }
                                 }
@@ -517,12 +532,12 @@ public class MainActivity
     private void overwriteDb(File source, File target) throws IOException {
         // check that target (actual DB) is empty!
         if (!DatabaseHelper.getInstance(this).isDatabaseEmpty()) {
-            Log.w("MainActivity", "trying to overwrite db from backup while there's something in it. Cancelling");
+//            Log.w("MainActivity", "trying to overwrite db from backup while there's something in it. Cancelling");
             // delete cached file (source)
             boolean cacheDeleted = source.delete();
-            if (!cacheDeleted) {
-                Log.d("MainActivity", "failed to delete cached downloaded db, let Android clean it");
-            }
+//            if (!cacheDeleted) {
+//                Log.d("MainActivity", "failed to delete cached downloaded db, let Android clean it");
+//            }
 
             return;
         }
@@ -561,9 +576,9 @@ public class MainActivity
 
         // delete cached file (source)
         boolean cacheDeleted = source.delete();
-        if (!cacheDeleted) {
-            Log.d("MainActivity", "failed to delete cached downloaded db, let Android clean it");
-        }
+//        if (!cacheDeleted) {
+//            Log.d("MainActivity", "failed to delete cached downloaded db, let Android clean it");
+//        }
 
         adapter.refresh();
         Toast.makeText(this, "Sync successful", Toast.LENGTH_LONG).show();
