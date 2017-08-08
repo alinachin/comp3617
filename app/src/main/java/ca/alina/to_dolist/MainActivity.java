@@ -21,7 +21,9 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -95,19 +97,14 @@ public class MainActivity
         PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
 
         // check for which initial setup tasks still need to be done
-        // background task???
-        StateMachine sm = new StateMachine(this);
-        int resultState = sm.run();
+        StateMachine stateMachine = new StateMachine(this);
+        int resultState = stateMachine.run();
         if (resultState != StateMachine.READY) {
-            // put in SharedPrefs
-
-            if (resultState == StateMachine.KV_RESTORE_NEEDED) {
-                // show AlertDialog? - either retry or proceed as if newly installed
-                sm.ignoreKVRestore();  // temp
-            }
-            else if (resultState == StateMachine.DB_RESTORE_NEEDED) {
+            if (resultState == StateMachine.DB_RESTORE_NEEDED) {
                 // perform db restore based on saved DB method
-
+                Log.e("MainActivity", "performing database restore");
+                if (stateMachine.getBackupType() == StateMachine.BACKUP_DROPBOX)
+                    actionDownloadDb();
             }
         }
 
@@ -203,7 +200,7 @@ public class MainActivity
                                 itemCount(),
                                 itemCount());
                         builder.setMessage(message)
-                                .setPositiveButton(R.string.alert_delete_yes, new DialogInterface.OnClickListener() {
+                                .setPositiveButton(R.string.alert_yes, new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         dialog.dismiss();
@@ -212,7 +209,7 @@ public class MainActivity
                                         mode.finish(); // Action picked, so close the CAB
                                     }
                                 })
-                                .setNegativeButton(R.string.alert_delete_no, new DialogInterface.OnClickListener() {
+                                .setNegativeButton(R.string.alert_no, new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         dialog.cancel();
@@ -296,8 +293,6 @@ public class MainActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
-
-        // TODO disable/hide "Backup" item based on settings
         return true;
     }
 
@@ -315,13 +310,7 @@ public class MainActivity
             return true;
         }
         if (id == R.id.action_backup) {
-//            Intent intent = new Intent(this, DropboxWebActivity.class);
-//            startActivity(intent);
             actionBackup();
-            return true;
-        }
-        if (id == R.id.action_temp_dl) {
-            actionDownloadDb();
             return true;
         }
         if (id == R.id.action_smart_list) {
@@ -382,11 +371,16 @@ public class MainActivity
         String paramString = new Gson().toJson(obj);
         //Log.e("MainActivity", paramString);
 
+        // add progress bar (hook up to Ion)
+        final ProgressBar pb = (ProgressBar) findViewById(R.id.progressBar);
+        pb.setVisibility(ProgressBar.VISIBLE);
+
         Ion.with(this)
                 .load(DropboxWebActivity.API_UPLOAD)
                 .addHeader("Authorization", "Bearer " + token)
                 .addHeader("Content-Type", "application/octet-stream")
                 .addHeader("Dropbox-API-Arg", paramString)
+                .progressBar(pb)
                 .setFileBody(dbFileHandle)
                 .asJsonObject()
                 .withResponse()
@@ -426,12 +420,17 @@ public class MainActivity
                                 // do something w/ success result?
                                 if (result.getResult().get("error") == null) {
                                     Toast.makeText(MainActivity.this, "Backup successful", Toast.LENGTH_LONG).show();
+
+                                    // store info about backup in SharedPrefs
+                                    new StateMachine(MainActivity.this).setBackupType(StateMachine.BACKUP_DROPBOX);
                                 }
                             }
                         }
+
+                        // hide progress bar
+                        pb.setVisibility(ProgressBar.GONE);
                     }
                 });
-
     }
 
     private void downloadBackup() {
@@ -448,10 +447,19 @@ public class MainActivity
         String paramString = new Gson().toJson(obj);
 //        Log.e("MainActivity", paramString);
 
+        // disable the FAB until backup is done (or failed)
+        final ImageButton fab = (ImageButton) findViewById(R.id.fab);
+        fab.setEnabled(false);
+
+        // add progress bar (hook up to Ion)
+        final ProgressBar pb = (ProgressBar) findViewById(R.id.progressBar);
+        pb.setVisibility(ProgressBar.VISIBLE);
+
         Ion.with(this)
                 .load(DropboxWebActivity.API_DOWNLOAD)
                 .addHeader("Authorization", "Bearer " + token)
                 .addHeader("Dropbox-API-Arg", paramString)
+                .progressBar(pb)
                 .write(cacheHandle)
                 .withResponse()
                 .setCallback(new FutureCallback<Response<File>>() {
@@ -492,6 +500,8 @@ public class MainActivity
                                     Log.d("MainActivity", "download successful");
                                     try {
                                         overwriteDb(cacheHandle, dbFileHandle);
+                                        adapter.refresh();
+                                        Toast.makeText(MainActivity.this, "Sync successful", Toast.LENGTH_LONG).show();
                                     }
                                     catch (IOException exc) {
                                         Log.e("MainActivity", "failed to copy downloaded backup to db folder");
@@ -505,6 +515,12 @@ public class MainActivity
 //                                }
                             }
                         }
+
+                        // hide progress bar again
+                        pb.setVisibility(ProgressBar.GONE);
+
+                        // re-enable floating action button
+                        fab.setEnabled(true);
                     }
                 });
 
@@ -561,9 +577,6 @@ public class MainActivity
         if (!cacheDeleted) {
             Log.d("MainActivity", "failed to delete cached downloaded db, let Android clean it");
         }
-
-        adapter.refresh();
-        Toast.makeText(this, "Sync successful", Toast.LENGTH_LONG).show();
     }
 
 }
