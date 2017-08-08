@@ -57,7 +57,7 @@ public class MainActivity
 
     static final String LIST_TYPE_KEY = "listType";
 
-    // action for IntentFilter
+    // action for IntentFilter for external receiver to refresh list
     public static final String REFRESH_ACTION = "refresh";
 
     private ListView listView;
@@ -91,10 +91,25 @@ public class MainActivity
         }
         //Log.e("MainActivity", "onCreate(): listType: " + listType.toString());
 
-
         // initialize preferences to default values if needed
         PreferenceManager.setDefaultValues(this, R.xml.pref_general, false);
 
+        // check for which initial setup tasks still need to be done
+        // background task???
+        StateMachine sm = new StateMachine(this);
+        int resultState = sm.run();
+        if (resultState != StateMachine.READY) {
+            // put in SharedPrefs
+
+            if (resultState == StateMachine.KV_RESTORE_NEEDED) {
+                // show AlertDialog? - either retry or proceed as if newly installed
+                sm.ignoreKVRestore();  // temp
+            }
+            else if (resultState == StateMachine.DB_RESTORE_NEEDED) {
+                // perform db restore based on saved DB method
+
+            }
+        }
 
         // display-drawing stuff
         setContentView(R.layout.activity_main);
@@ -188,7 +203,7 @@ public class MainActivity
                                 itemCount(),
                                 itemCount());
                         builder.setMessage(message)
-                                .setPositiveButton(R.string.alert_yes, new DialogInterface.OnClickListener() {
+                                .setPositiveButton(R.string.alert_delete_yes, new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         dialog.dismiss();
@@ -197,7 +212,7 @@ public class MainActivity
                                         mode.finish(); // Action picked, so close the CAB
                                     }
                                 })
-                                .setNegativeButton(R.string.alert_no, new DialogInterface.OnClickListener() {
+                                .setNegativeButton(R.string.alert_delete_no, new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         dialog.cancel();
@@ -550,4 +565,5 @@ public class MainActivity
         adapter.refresh();
         Toast.makeText(this, "Sync successful", Toast.LENGTH_LONG).show();
     }
+
 }
