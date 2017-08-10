@@ -16,8 +16,7 @@ public class MyBackupHelper extends BackupAgentHelper {
 
         SharedPreferencesBackupHelper backupHelper = new SharedPreferencesBackupHelper(
                 this,
-                defaultPrefsName,
-                StateMachine.STATE_PREF_FILE
+                defaultPrefsName
         );
         addHelper(myPrefs, backupHelper);
     }

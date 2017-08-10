@@ -43,7 +43,7 @@ import java.util.Date;
 
 import ca.alina.to_dolist.database.DatabaseHelper;
 
-import static ca.alina.to_dolist.DropboxWebActivity.PREF_FILE;
+import static ca.alina.to_dolist.DropboxWebActivity.DROPBOX_PREF_FILE;
 import static ca.alina.to_dolist.DropboxWebActivity.PREF_SESSION_KEY;
 
 public class MainActivity
@@ -338,7 +338,7 @@ public class MainActivity
     }
 
     private void actionBackup() {
-        String token = getSharedPreferences(PREF_FILE, MODE_PRIVATE)
+        String token = getSharedPreferences(DROPBOX_PREF_FILE, MODE_PRIVATE)
                 .getString(PREF_SESSION_KEY, "");
         if (token.isEmpty()) {
             Intent intent = new Intent(this, DropboxWebActivity.class);
@@ -360,7 +360,7 @@ public class MainActivity
 
         File dbFileHandle = getDatabasePath(DatabaseHelper.DB_NAME);
 
-        String token = getSharedPreferences(PREF_FILE, MODE_PRIVATE)
+        String token = getSharedPreferences(DROPBOX_PREF_FILE, MODE_PRIVATE)
                 .getString(PREF_SESSION_KEY, "");
         //Log.e("MainActivity", "token " + token);
 
@@ -422,7 +422,7 @@ public class MainActivity
                                     Toast.makeText(MainActivity.this, "Backup successful", Toast.LENGTH_LONG).show();
 
                                     // store info about backup in SharedPrefs
-                                    new StateMachine(MainActivity.this).setBackupType(StateMachine.BACKUP_DROPBOX);
+                                    new StateMachine(MainActivity.this).setBackupType(StateMachine.BACKUP_DROPBOX, new Date());
                                 }
                             }
                         }
@@ -439,7 +439,7 @@ public class MainActivity
         final File dbFileHandle = getDatabasePath(DatabaseHelper.DB_NAME);
         final File cacheHandle = new File(getCacheDir(), DatabaseHelper.DB_NAME);
 
-        String token = getSharedPreferences(PREF_FILE, MODE_PRIVATE)
+        String token = getSharedPreferences(DROPBOX_PREF_FILE, MODE_PRIVATE)
                 .getString(PREF_SESSION_KEY, "");
 
         JsonObject obj = new JsonObject();
