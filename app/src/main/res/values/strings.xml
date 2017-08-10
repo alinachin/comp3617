@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">To-Do List</string>
+    <string name="app_name">Tiny To-Do List</string>
 
     <string name="action_settings">Settings</string>
     <string name="action_backup">Backup now</string>
@@ -41,6 +41,7 @@
 
     <string name="title_activity_create_task">Create task</string>
     <string name="title_activity_edit_task">Edit task</string>
+    <string name="title_activity_dropbox">Login to Dropbox</string>
 
     <string name="editor_save">Done</string>
     <string name="editor_delete">Delete</string>

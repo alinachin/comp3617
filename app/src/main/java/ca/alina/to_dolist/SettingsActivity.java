@@ -2,6 +2,7 @@ package ca.alina.to_dolist;
 
 
 import android.annotation.TargetApi;
+import android.app.backup.BackupManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -81,6 +82,11 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 // simple string representation.
                 preference.setSummary(stringValue);
             }
+
+            // Also tell backup manager preference has been changed
+            BackupManager backupManager = new BackupManager(preference.getContext());
+            backupManager.dataChanged();
+
             return true;
         }
     };

@@ -5,9 +5,8 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
@@ -27,7 +26,7 @@ public class DropboxWebActivity extends AppCompatActivity {
     static final String API_UPLOAD = "https://content.dropboxapi.com/2/files/upload";
     static final String API_DOWNLOAD = "https://content.dropboxapi.com/2/files/download";
     static final String DROPBOX_FILENAME = "backup.db";
-    static final String PREF_FILE = "oauth";
+    static final String DROPBOX_PREF_FILE = "db_oauth";
     static final String PREF_SESSION_KEY = "token";
     static final String PREF_USER_KEY = "uid";
 
@@ -154,7 +153,7 @@ public class DropboxWebActivity extends AppCompatActivity {
 
         // todo check for error param
 
-        SharedPreferences.Editor editor = getSharedPreferences(PREF_FILE, MODE_PRIVATE).edit();
+        SharedPreferences.Editor editor = getSharedPreferences(DROPBOX_PREF_FILE, MODE_PRIVATE).edit();
 
         Uri parsedUri = Uri.parse(uri);
         String fragment = parsedUri.getFragment();
